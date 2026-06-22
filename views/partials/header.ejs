@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= typeof title !== 'undefined' ? title + ' | AI Createathon 2026' : 'AI Createathon 2026 | Prompt Your Ideas' %></title>
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="AI Createathon 2026: Create an AI-powered application, automation, artwork, or digital solution within 3 hours. Join live voting and follow updates.">
+  <meta name="keywords" content="AI Createathon, Malaysia University of Science and Technology, Hackathon, AI coding, public voting">
+  <meta name="author" content="AI Createathon Team">
+  
+  <!-- Google Fonts & Material Symbols -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;750&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Compiled Tailwind CSS -->
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="bg-background text-on-surface font-sans selection:bg-primary selection:text-white overflow-x-hidden transition-colors duration-300">
+  
+  <!-- Scrolling Marquee Top -->
+  <div class="bg-inverse-surface text-pure-white py-3 marquee brutal-border border-x-0 border-t-0 z-[60] relative">
+    <div class="marquee-content gap-8">
+      <span class="font-mono text-xs uppercase flex items-center gap-2"><span class="material-symbols-outlined text-primary">bolt</span> AI CREATEATHON 2026</span>
+      <span class="font-mono text-xs uppercase flex items-center gap-2"><span class="material-symbols-outlined text-primary">location_on</span> MALAYSIA UNIVERSITY OF SCIENCE &amp; TECHNOLOGY</span>
+      <span class="font-mono text-xs uppercase flex items-center gap-2"><span class="material-symbols-outlined text-primary">calendar_today</span> AUGUST 7, 2026</span>
+      <span class="font-mono text-xs uppercase flex items-center gap-2"><span class="material-symbols-outlined text-primary">bolt</span> AI CREATEATHON 2026</span>
+      <span class="font-mono text-xs uppercase flex items-center gap-2"><span class="material-symbols-outlined text-primary">location_on</span> MALAYSIA UNIVERSITY OF SCIENCE &amp; TECHNOLOGY</span>
+      <span class="font-mono text-xs uppercase flex items-center gap-2"><span class="material-symbols-outlined text-primary">calendar_today</span> AUGUST 7, 2026</span>
+    </div>
+  </div>
+
+  <!-- Nav -->
+  <nav class="sticky top-0 w-full z-50 bg-background brutal-border border-x-0 border-t-0 h-24 flex items-center">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex justify-between items-center">
+      <!-- Logo -->
+      <a href="/" class="flex items-center gap-4 group">
+        <div class="bg-primary p-2 brutal-border text-white transform group-hover:rotate-6 transition-transform">
+          <span class="material-symbols-outlined" style="font-size: 32px; display: block;">bolt</span>
+        </div>
+        <span class="text-3xl font-black text-on-surface uppercase tracking-tight font-heading">AI<span class="text-primary">CREATEATHON</span></span>
+      </a>
+
+      <!-- Desktop Navigation -->
+      <div class="hidden md:flex items-center gap-10 font-mono text-sm font-black uppercase">
+        <a class="hover:text-primary transition-colors <%= typeof activePage !== 'undefined' && activePage === 'home' ? 'text-primary underline decoration-4 decoration-primary underline-offset-4' : 'text-on-surface' %>" href="/">HOME</a>
+        <a class="hover:text-primary transition-colors <%= typeof activePage !== 'undefined' && activePage === 'voting' ? 'text-primary underline decoration-4 decoration-primary underline-offset-4' : 'text-on-surface' %>" href="/voting">VOTING</a>
+        <a class="hover:text-primary transition-colors <%= typeof activePage !== 'undefined' && activePage === 'team' ? 'text-primary underline decoration-4 decoration-primary underline-offset-4' : 'text-on-surface' %>" href="/#team">TEAM</a>
+      </div>
+
+      <!-- Right buttons -->
+      <div class="hidden md:flex items-center gap-4">
+        <% if (typeof session !== 'undefined' && session.isAdmin) { %>
+          <a href="/admin/dashboard" class="bg-inverse-surface text-pure-white font-mono text-xs px-6 py-3.5 brutal-border brutal-shadow-sm active:translate-x-1 active:translate-y-1 active:shadow-none transition-all uppercase font-black">
+            DASHBOARD
+          </a>
+        <% } else { %>
+          <a href="/login" class="bg-primary text-on-primary font-heading text-sm px-6 py-3.5 brutal-border brutal-shadow-sm active:translate-x-1 active:translate-y-1 active:shadow-none transition-all uppercase font-black">
+            ADMIN LOGIN
+          </a>
+        <% } %>
+      </div>
+
+      <!-- Mobile menu button -->
+      <button id="mobile-menu-btn" class="md:hidden p-2 text-on-surface border-2 border-on-surface bg-white shadow-brutal-sm hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all focus:outline-none" aria-label="Toggle Menu">
+        <i class="fa-solid fa-bars text-lg"></i>
+      </button>
+    </div>
+
+    <!-- Mobile Navigation Drawer -->
+    <div id="mobile-menu" class="hidden absolute top-24 left-0 w-full bg-background brutal-border border-x-0 border-t-0 p-6 flex flex-col gap-4 font-mono text-sm uppercase z-50">
+      <a class="block py-2 hover:text-primary transition-colors <%= typeof activePage !== 'undefined' && activePage === 'home' ? 'text-primary font-black' : 'text-on-surface' %>" href="/">HOME</a>
+      <a class="block py-2 hover:text-primary transition-colors <%= typeof activePage !== 'undefined' && activePage === 'voting' ? 'text-primary font-black' : 'text-on-surface' %>" href="/voting">VOTING</a>
+      <a class="block py-2 hover:text-primary transition-colors <%= typeof activePage !== 'undefined' && activePage === 'team' ? 'text-primary font-black' : 'text-on-surface' %>" href="/#team">TEAM</a>
+      <% if (typeof session !== 'undefined' && session.isAdmin) { %>
+        <a href="/admin/dashboard" class="block text-center bg-inverse-surface text-pure-white font-mono text-xs py-3 brutal-border font-black">
+          DASHBOARD
+        </a>
+      <% } else { %>
+        <a href="/login" class="block text-center bg-primary text-on-primary font-heading text-sm py-3 brutal-border font-black">
+          ADMIN LOGIN
+        </a>
+      <% } %>
+    </div>
+  </nav>
+
+  <!-- Interactive script for Mobile Menu -->
+  <script>
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const menuIcon = mobileMenuBtn?.querySelector('i');
+
+    mobileMenuBtn?.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+      if (mobileMenu.classList.contains('hidden')) {
+        menuIcon.className = 'fa-solid fa-bars text-xl';
+      } else {
+        menuIcon.className = 'fa-solid fa-xmark text-xl';
+      }
+    });
+
+    // Lightweight scroll-animation registry using IntersectionObserver
+    document.addEventListener("DOMContentLoaded", () => {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('active');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, {
+        threshold: 0.05,
+        rootMargin: "0px 0px -50px 0px"
+      });
+
+      document.querySelectorAll('.fade-up').forEach(el => {
+        observer.observe(el);
+      });
+    });
+  </script>
+
+  <!-- Main Container -->
+  <main class="flex-grow">

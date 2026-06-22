@@ -1,0 +1,66 @@
+<%- include('partials/header') %>
+
+<section class="py-16 md:py-24 bg-background flex items-center justify-center fade-up font-mono">
+  <div class="w-full max-w-md px-4">
+    
+    <!-- Login Card -->
+    <div class="bg-pure-white brutal-border brutal-shadow p-8">
+      
+      <!-- Card header -->
+      <div class="text-center mb-8 space-y-2">
+        <div class="w-12 h-12 bg-primary flex items-center justify-center text-white mx-auto brutal-border shadow-brutal-sm">
+          <span class="material-symbols-outlined text-2xl">lock_open</span>
+        </div>
+        <h2 class="text-3xl font-black text-on-surface uppercase tracking-tight font-heading">Admin Portal</h2>
+        <p class="text-xs text-on-surface/75">Access the control panel to manage posts and teams</p>
+      </div>
+
+      <!-- Flash Message Warnings -->
+      <% if (typeof error_msg !== 'undefined' && error_msg) { %>
+        <div class="mb-6 p-4 bg-pure-white brutal-border brutal-shadow-sm text-primary text-xs flex items-center gap-3">
+          <span class="material-symbols-outlined text-primary text-lg font-bold">error</span>
+          <p class="font-bold"><%= error_msg %></p>
+        </div>
+      <% } %>
+
+      <!-- Login Form -->
+      <form action="/login" method="POST" class="space-y-5 text-xs font-bold">
+        <div>
+          <label for="username" class="block uppercase text-on-surface mb-2 tracking-wider">Username</label>
+          <div class="relative text-on-surface">
+            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-on-surface/50">
+              <span class="material-symbols-outlined text-lg">person</span>
+            </span>
+            <input type="text" id="username" name="username" required placeholder="Enter username" 
+                   class="block w-full pl-10 pr-4 py-3.5 bg-background brutal-border text-sm focus:outline-none focus:bg-pure-white transition-all">
+          </div>
+        </div>
+
+        <div>
+          <label for="password" class="block uppercase text-on-surface mb-2 tracking-wider">Password</label>
+          <div class="relative text-on-surface">
+            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-on-surface/50">
+              <span class="material-symbols-outlined text-lg">key</span>
+            </span>
+            <input type="password" id="password" name="password" required placeholder="••••••••" 
+                   class="block w-full pl-10 pr-4 py-3.5 bg-background brutal-border text-sm focus:outline-none focus:bg-pure-white transition-all">
+          </div>
+        </div>
+
+        <button type="submit" class="w-full bg-primary text-white font-heading font-black text-sm uppercase py-4 brutal-border brutal-shadow-sm hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all flex items-center justify-center gap-2 mt-4">
+          <span class="material-symbols-outlined">login</span> Login to Dashboard
+        </button>
+      </form>
+
+      <!-- Bottom reminder -->
+      <div class="mt-6 pt-6 border-t-2 border-inverse-surface/10 text-center font-mono">
+        <p class="text-[10px] text-on-surface/70 font-bold flex items-center justify-center gap-1.5">
+          <span class="material-symbols-outlined text-primary text-sm font-bold">info</span> Authorized organizers only.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,165 @@
+<%- include('../partials/admin-header') %>
+
+<!-- DASHBOARD HEADER -->
+<div class="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+  <div>
+    <h1 class="text-3xl font-extrabold tracking-tight">Admin Dashboard</h1>
+    <p class="text-sm text-slate-400 mt-1">Overview of the event metrics, voting control, and standings.</p>
+  </div>
+  
+  <!-- Active Time indicator -->
+  <div class="flex items-center gap-3 px-4 py-2 rounded-xl bg-slate-800 border border-slate-700">
+    <div class="w-2.5 h-2.5 rounded-full bg-accent-teal animate-pulse-slow"></div>
+    <span class="text-xs font-bold uppercase tracking-wider text-slate-300">Live Session Status</span>
+  </div>
+</div>
+
+<!-- STATISTICS GRID -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+  
+  <!-- Total Teams -->
+  <div class="bg-slate-950 p-6 rounded-2xl border border-slate-800 flex items-center justify-between group hover:border-accent-teal/50 transition-colors">
+    <div class="space-y-1">
+      <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Teams</span>
+      <p class="text-3xl font-extrabold text-white"><%= stats.totalGroups %></p>
+      <a href="/admin/registration" class="text-[10px] font-bold text-accent-teal uppercase tracking-wider hover:text-white transition-colors block pt-2">
+        Manage Teams <i class="fa-solid fa-arrow-right ml-1"></i>
+      </a>
+    </div>
+    <div class="p-4 bg-slate-900 rounded-xl text-accent-teal group-hover:scale-105 transition-transform"><i class="fa-solid fa-people-group text-2xl"></i></div>
+  </div>
+
+  <!-- Total Participants -->
+  <div class="bg-slate-950 p-6 rounded-2xl border border-slate-800 flex items-center justify-between group hover:border-accent-red/50 transition-colors">
+    <div class="space-y-1">
+      <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Participants</span>
+      <p class="text-3xl font-extrabold text-white"><%= stats.totalParticipants %></p>
+      <a href="/admin/registration" class="text-[10px] font-bold text-accent-red uppercase tracking-wider hover:text-white transition-colors block pt-2">
+        Manage Members <i class="fa-solid fa-arrow-right ml-1"></i>
+      </a>
+    </div>
+    <div class="p-4 bg-slate-900 rounded-xl text-accent-red group-hover:scale-105 transition-transform"><i class="fa-solid fa-users text-2xl"></i></div>
+  </div>
+
+  <!-- Public Votes -->
+  <div class="bg-slate-950 p-6 rounded-2xl border border-slate-800 flex items-center justify-between group hover:border-yellow-500/50 transition-colors">
+    <div class="space-y-1">
+      <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Public Choice Votes</span>
+      <p class="text-3xl font-extrabold text-white"><%= stats.totalVotes %></p>
+      <a href="/voting" target="_blank" class="text-[10px] font-bold text-yellow-500 uppercase tracking-wider hover:text-white transition-colors block pt-2">
+        Public Leaderboard <i class="fa-solid fa-arrow-up-right-from-square ml-1"></i>
+      </a>
+    </div>
+    <div class="p-4 bg-slate-900 rounded-xl text-yellow-500 group-hover:scale-105 transition-transform"><i class="fa-solid fa-check-to-slot text-2xl"></i></div>
+  </div>
+
+  <!-- Voting Active State Control -->
+  <div class="bg-slate-950 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between hover:border-slate-700 transition-colors">
+    <div class="flex items-center justify-between">
+      <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Public Live Voting</span>
+      <% if (votingActive) { %>
+        <span class="px-2 py-0.5 text-[9px] font-bold bg-emerald-500/10 text-emerald-400 rounded border border-emerald-500/20 uppercase tracking-widest animate-pulse">Open</span>
+      <% } else { %>
+        <span class="px-2 py-0.5 text-[9px] font-bold bg-slate-800 text-slate-400 rounded border border-slate-700 uppercase tracking-widest">Closed</span>
+      <% } %>
+    </div>
+    <div class="mt-4">
+      <form action="/admin/settings/toggle-voting" method="POST">
+        <button type="submit" class="w-full py-2.5 px-4 text-xs font-bold uppercase tracking-wider rounded-xl transition-colors flex items-center justify-center gap-2 <%= votingActive ? 'bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white' : 'bg-accent-teal hover:bg-teal-400 text-slate-950' %>">
+          <% if (votingActive) { %>
+            <i class="fa-solid fa-circle-pause"></i> Pause Voting
+          <% } else { %>
+            <i class="fa-solid fa-circle-play"></i> Open Voting
+          <% } %>
+        </button>
+      </form>
+    </div>
+  </div>
+
+</div>
+
+<!-- DETAILED LEADERBOARD & RESULTS -->
+<div class="bg-slate-950 border border-slate-800 rounded-3xl p-6 md:p-8">
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+    <h3 class="text-lg font-bold text-white flex items-center gap-2">
+      <i class="fa-solid fa-trophy text-yellow-500"></i> Event Leaderboard (Public & Judges Scoring)
+    </h3>
+    <a href="/admin/scoring" class="inline-flex items-center gap-1.5 text-xs font-bold bg-slate-900 hover:bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-800 transition-colors">
+      <i class="fa-solid fa-plus text-accent-teal"></i> Record Judge Scores
+    </a>
+  </div>
+
+  <% if (leaderboard.length > 0) { %>
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-xs sm:text-sm">
+        <thead class="bg-slate-900 text-slate-400 uppercase font-bold text-[10px] border-b border-slate-800">
+          <tr>
+            <th class="py-4 px-4">Rank</th>
+            <th class="py-4 px-4">Team</th>
+            <th class="py-4 px-4 text-center">Public Votes (40%)</th>
+            <th class="py-4 px-4 text-center">Judge Avg (60%)</th>
+            <th class="py-4 px-4 text-center">Combined Score</th>
+            <th class="py-4 px-4 text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-850">
+          <% leaderboard.forEach((item, index) => { %>
+            <tr class="hover:bg-slate-900/50 transition-colors">
+              <!-- Rank -->
+              <td class="py-4 px-4 font-extrabold text-slate-300">
+                <% if (index === 0) { %>
+                  <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-yellow-500/20 text-yellow-500"><i class="fa-solid fa-medal"></i></span>
+                <% } else if (index === 1) { %>
+                  <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-slate-300/20 text-slate-300"><i class="fa-solid fa-medal"></i></span>
+                <% } else if (index === 2) { %>
+                  <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-amber-600/20 text-amber-600"><i class="fa-solid fa-medal"></i></span>
+                <% } else { %>
+                  #<%= index + 1 %>
+                <% } %>
+              </td>
+              <!-- Team -->
+              <td class="py-4 px-4 font-bold text-white flex items-center gap-3">
+                <img src="<%= item.logo_path %>" alt="" class="w-8 h-8 rounded-lg object-cover border border-slate-800">
+                <div>
+                  <p class="font-bold text-white"><%= item.name %></p>
+                  <p class="text-[10px] text-slate-400 font-medium">ID: #<%= item.id %> | <%= item.member_count %> member<%= item.member_count !== 1 ? 's' : '' %></p>
+                </div>
+              </td>
+              <!-- Public Votes percentage / counts -->
+              <td class="py-4 px-4 text-center font-semibold text-slate-300">
+                <div><%= item.vote_count %></div>
+                <div class="text-[9px] text-slate-500"><%= item.public_pct %>% weight</div>
+              </td>
+              <!-- Judge Average score -->
+              <td class="py-4 px-4 text-center font-semibold text-slate-300">
+                <div><%= item.judge_avg_raw %> / 30</div>
+                <div class="text-[9px] text-slate-500"><%= item.judge_pct %>% weight</div>
+              </td>
+              <!-- Combined Score -->
+              <td class="py-4 px-4 text-center font-extrabold text-accent-teal">
+                <%= item.combined_score %> / 100
+              </td>
+              <!-- Action -->
+              <td class="py-4 px-4 text-right">
+                <a href="/admin/scoring?groupId=<%= item.id %>" class="text-xs font-bold text-slate-400 hover:text-white transition-colors bg-slate-900 border border-slate-800 py-1.5 px-3 rounded-lg">
+                  Score Details
+                </a>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  <% } else { %>
+    <!-- Leaderboard Empty State -->
+    <div class="py-12 text-center max-w-sm mx-auto space-y-4">
+      <div class="w-12 h-12 bg-slate-900 text-slate-500 flex items-center justify-center rounded-2xl mx-auto border border-slate-800">
+        <i class="fa-solid fa-trophy text-lg"></i>
+      </div>
+      <h3 class="text-sm font-bold text-white">No Standings Yet</h3>
+      <p class="text-xs text-slate-400">Add teams and judges scores to compile the leaderboard rankings.</p>
+    </div>
+  <% } %>
+</div>
+
+<%- include('../partials/footer') %>

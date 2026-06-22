@@ -1,0 +1,346 @@
+<%- include('partials/header') %>
+
+<!-- HERO SECTION: Google High-Energy Brutalist Layout -->
+<section class="relative bg-background overflow-hidden min-h-[90vh] flex items-center py-16 md:py-24" id="hero">
+  <div class="diagonal-stripe absolute inset-0 opacity-40"></div>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      
+      <!-- Left: Headline & Actions -->
+      <div class="lg:col-span-7 space-y-8 text-left fade-up">
+        <div class="inline-block bg-inverse-surface text-pure-white px-6 py-2 brutal-border font-mono text-sm uppercase tracking-wider">
+          AUGUST 07, 2026
+        </div>
+        
+        <h1 class="font-heading text-6xl md:text-8xl text-on-surface mb-0 uppercase leading-none break-words">
+          PROMPT<br/>
+          <span class="text-primary">YOUR IDEAS</span>
+        </h1>
+        
+        <p class="font-heading text-headline-lg-mobile md:text-5xl text-on-surface-variant font-black uppercase tracking-tight leading-tight max-w-2xl">
+          THE ULTIMATE 3-HOUR AI DEVELOPMENT SPRINT.
+        </p>
+        
+        <div class="flex flex-col sm:flex-row gap-6 pt-4 items-start sm:items-center">
+          <a class="inline-block bg-primary text-on-primary px-10 py-5 font-heading text-xl brutal-border brutal-shadow hover-brutal transition-all uppercase text-center" href="/voting">
+            VOTE FOR PROJECTS
+          </a>
+          
+          <div class="flex items-center gap-4">
+            <div class="w-14 h-14 brutal-border bg-pure-white flex items-center justify-center text-on-surface">
+              <span class="material-symbols-outlined text-3xl">location_on</span>
+            </div>
+            <p class="font-mono font-bold text-sm leading-tight uppercase">4A1, MUST UNIVERSITY,<br/>MALAYSIA</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Live Countdown Wrapper -->
+      <div class="lg:col-span-5 flex flex-col items-center lg:items-end fade-up mt-8 lg:mt-0">
+        <div class="w-full max-w-md bg-pure-white brutal-border brutal-shadow p-8 text-on-surface relative">
+          <div class="absolute -top-6 -right-6 bg-primary text-white p-4 brutal-border font-heading text-2xl rotate-12 uppercase tracking-wide shadow-sm">
+            LIVE!
+          </div>
+
+          <h3 class="text-xs uppercase tracking-widest text-primary font-black font-mono mb-4">Countdown to Kickoff</h3>
+          
+          <!-- Countdown Timer container -->
+          <div id="countdown" class="grid grid-cols-4 gap-2.5 text-center my-6 font-mono">
+            <div class="bg-background brutal-border-sm p-3 shadow-brutal-sm">
+              <span id="days" class="text-3xl font-black text-primary">00</span>
+              <p class="text-[9px] uppercase font-bold text-on-surface/70 mt-1">Days</p>
+            </div>
+            <div class="bg-background brutal-border-sm p-3 shadow-brutal-sm">
+              <span id="hours" class="text-3xl font-black text-on-surface">00</span>
+              <p class="text-[9px] uppercase font-bold text-on-surface/70 mt-1">Hours</p>
+            </div>
+            <div class="bg-background brutal-border-sm p-3 shadow-brutal-sm">
+              <span id="minutes" class="text-3xl font-black text-on-surface">00</span>
+              <p class="text-[9px] uppercase font-bold text-on-surface/70 mt-1">Mins</p>
+            </div>
+            <div class="bg-background brutal-border-sm p-3 shadow-brutal-sm">
+              <span id="seconds" class="text-3xl font-black text-primary">00</span>
+              <p class="text-[9px] uppercase font-bold text-on-surface/70 mt-1">Secs</p>
+            </div>
+          </div>
+
+          <div class="h-1 bg-on-surface/10 my-6"></div>
+          
+          <div class="space-y-3.5 font-mono text-xs font-bold text-on-surface/80">
+            <div class="flex items-center gap-3">
+              <span class="material-symbols-outlined text-primary text-lg">check_box</span>
+              <p>RM15 ENTRY FEE</p>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="material-symbols-outlined text-primary text-lg">check_box</span>
+              <p>OFFICIAL T-SHIRT &amp; LUNCH</p>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="material-symbols-outlined text-primary text-lg">check_box</span>
+              <p>CERTIFICATE OF PARTICIPATION</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE SPLITTER -->
+<div class="bg-primary text-pure-white py-6 marquee brutal-border border-x-0 z-20 relative">
+  <div class="marquee-content gap-12 font-heading">
+    <span class="text-6xl uppercase italic font-black">NO PRE-BUILT APPS</span>
+    <span class="text-6xl uppercase italic font-black text-outline-black">BUILD LIVE</span>
+    <span class="text-6xl uppercase italic font-black">3 HOURS ONLY</span>
+    <span class="text-6xl uppercase italic font-black text-outline-black">AI REVOLUTION</span>
+    <span class="text-6xl uppercase italic font-black">NO PRE-BUILT APPS</span>
+    <span class="text-6xl uppercase italic font-black text-outline-black">BUILD LIVE</span>
+    <span class="text-6xl uppercase italic font-black">3 HOURS ONLY</span>
+    <span class="text-6xl uppercase italic font-black text-outline-black">AI REVOLUTION</span>
+  </div>
+</div>
+
+<!-- CHALLENGE DETAIL SECTION -->
+<section class="bg-pure-white border-b-8 border-inverse-surface py-20 relative" id="challenge">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-16">
+      
+      <!-- Left side: Challenge panel & grid indicators -->
+      <div class="lg:col-span-7 space-y-12 fade-up">
+        <h2 class="font-heading text-5xl md:text-8xl text-on-surface mb-0 uppercase leading-none">
+          THE<br/><span class="text-primary underline decoration-[12px] underline-offset-[16px]">CHALLENGE</span>
+        </h2>
+        <p class="font-sans text-xl md:text-3xl font-bold text-on-surface leading-tight">
+          Create an AI-powered application, automation, artwork, or digital solution from scratch.
+        </p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="brutal-border p-8 bg-background brutal-shadow-sm group hover:bg-primary hover:text-white transition-colors duration-300">
+            <span class="material-symbols-outlined text-5xl mb-6 text-primary group-hover:text-white">timer</span>
+            <h3 class="font-heading text-2xl mb-2 font-bold uppercase">3-Hour Sprint</h3>
+            <p class="font-sans text-sm opacity-80">Total creation time from prompt to presentation.</p>
+          </div>
+          <div class="brutal-border p-8 bg-background brutal-shadow-sm group hover:bg-primary hover:text-white transition-colors duration-300">
+            <span class="material-symbols-outlined text-5xl mb-6 text-primary group-hover:text-white">psychology</span>
+            <h3 class="font-heading text-2xl mb-2 font-bold uppercase">AI Toolset</h3>
+            <p class="font-sans text-sm opacity-80">Use any AI models: LLMs, Image Gen, or Automation tools.</p>
+          </div>
+          <div class="brutal-border p-8 bg-background brutal-shadow-sm group hover:bg-primary hover:text-white transition-colors duration-300">
+            <span class="material-symbols-outlined text-5xl mb-6 text-primary group-hover:text-white">groups</span>
+            <h3 class="font-heading text-2xl mb-2 font-bold uppercase">Live Voting</h3>
+            <p class="font-sans text-sm opacity-80">Presented live and voted by the community and judges.</p>
+          </div>
+          <div class="brutal-border p-8 bg-background brutal-shadow-sm group hover:bg-primary hover:text-white transition-colors duration-300">
+            <span class="material-symbols-outlined text-5xl mb-6 text-primary group-hover:text-white">military_tech</span>
+            <h3 class="font-heading text-2xl mb-2 font-bold uppercase">Prizes</h3>
+            <p class="font-sans text-sm opacity-80">RM 5,000 prize pool plus exclusive swag and credits.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right side: Pools & Statuses -->
+      <div class="lg:col-span-5 flex flex-col gap-8 fade-up justify-center">
+        <div class="bg-primary brutal-border p-10 text-white brutal-shadow">
+          <p class="font-mono text-xl mb-4 uppercase">Total Prize Pool</p>
+          <p class="font-heading text-7xl md:text-8xl leading-none font-black mb-6">RM 5K</p>
+          <div class="h-1 bg-white mb-6"></div>
+          <p class="font-sans text-sm font-bold">CASH PRIZES &bull; SOFTWARE CREDITS &bull; HARDWARE TECH</p>
+        </div>
+        <div class="bg-inverse-surface brutal-border p-10 text-white brutal-shadow">
+          <p class="font-mono text-xl mb-4 uppercase">Registration Status</p>
+          <p class="font-heading text-5xl leading-tight font-black text-primary">FILLING FAST</p>
+          <p class="font-sans text-sm opacity-80 mt-4 leading-relaxed">Only 200 slots available. Secure yours before they're gone.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- LIVE UPDATE TIMELINE SECTION -->
+<section id="updates" class="py-20 bg-background border-b-8 border-inverse-surface scroll-mt-20">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16 space-y-4 fade-up">
+      <div class="inline-block bg-primary text-white brutal-border px-4 py-1.5 font-mono text-xs uppercase font-bold tracking-wider">
+        Event Feed
+      </div>
+      <h2 class="font-heading text-5xl md:text-7xl text-on-surface mb-0 uppercase leading-none">
+        LIVE<br/><span class="text-primary underline decoration-[8px] underline-offset-[12px]">UPDATES</span>
+      </h2>
+      <p class="text-on-surface/80 font-mono text-xs max-w-md mx-auto">Follow along with announcements, updates, and photos directly from the organizing committee.</p>
+    </div>
+
+    <!-- Timeline Wrapper -->
+    <div class="relative border-l-4 border-inverse-surface ml-4 md:ml-6 space-y-12">
+      <% if (typeof posts !== 'undefined' && posts.length > 0) { %>
+        <% posts.forEach((post, index) => { %>
+          <div class="relative pl-8 md:pl-10 group fade-up">
+            <!-- Timeline Node Indicator -->
+            <div class="absolute -left-[14px] top-1.5 w-6 h-6 rounded-full bg-primary border-4 border-inverse-surface shadow-brutal-sm group-hover:scale-110 transition-transform"></div>
+            
+            <!-- Post Card -->
+            <div class="brutal-border p-8 bg-pure-white brutal-shadow hover-brutal hover:bg-background transition-colors duration-300">
+              <div class="flex items-center justify-between gap-4 mb-4 font-mono text-xs">
+                <span class="font-bold text-primary">
+                  <i class="fa-solid fa-user-tie mr-1"></i> <%= post.author || 'Organizer' %>
+                </span>
+                <span class="font-medium text-on-surface/60">
+                  <i class="fa-regular fa-clock mr-1"></i> <%= new Date(post.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) %>
+                </span>
+              </div>
+
+              <h3 class="text-2xl font-black font-heading text-on-surface mb-3 uppercase leading-none"><%= post.title %></h3>
+              <p class="text-on-surface/90 text-sm leading-relaxed mb-6 whitespace-pre-line font-sans"><%= post.content %></p>
+              
+              <% if (post.image_path) { %>
+                <div class="overflow-hidden brutal-border max-h-96">
+                  <img src="<%= post.image_path %>" alt="<%= post.title %>" class="w-full h-full object-cover">
+                </div>
+              <% } %>
+            </div>
+          </div>
+        <% }) %>
+      <% } else { %>
+        <!-- Empty Timeline State -->
+        <div class="relative pl-8 md:pl-10 fade-up">
+          <div class="absolute -left-[14px] top-1.5 w-6 h-6 rounded-full bg-pure-white border-4 border-inverse-surface"></div>
+          <div class="brutal-border p-8 bg-pure-white brutal-shadow text-center space-y-4">
+            <div class="w-12 h-12 brutal-border bg-background flex items-center justify-center text-primary mx-auto">
+              <span class="material-symbols-outlined text-3xl animate-pulse">timer</span>
+            </div>
+            <h3 class="text-xl font-bold uppercase font-heading text-on-surface">The clock is ticking...</h3>
+            <p class="text-on-surface/75 font-mono text-xs max-w-sm mx-auto">No timeline updates have been posted yet. Live blogging will start as soon as the hackers begin pitching!</p>
+          </div>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</section>
+
+<!-- MEET THE TEAM SECTION -->
+<section id="team" class="py-20 bg-background scroll-mt-20">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16 space-y-4 fade-up">
+      <div class="inline-block bg-primary text-white brutal-border px-4 py-1.5 font-mono text-xs uppercase font-bold tracking-wider">
+        Organizing Committee
+      </div>
+      <h2 class="font-heading text-5xl md:text-7xl text-on-surface mb-0 uppercase leading-none">
+        MEET THE<br/><span class="text-primary underline decoration-[8px] underline-offset-[12px]">TEAM</span>
+      </h2>
+      <p class="text-on-surface/85 font-mono text-xs max-w-md mx-auto">The dedicated group behind the planning, design, and execution of AI Createathon 2026.</p>
+    </div>
+
+    <!-- Team grid (4-columns) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+      
+      <!-- Team Card 1 -->
+      <div class="brutal-border brutal-shadow hover-brutal bg-pure-white p-8 flex flex-col justify-between h-full fade-up group">
+        <div>
+          <!-- Icon avatar descriptor -->
+          <div class="w-16 h-16 brutal-border bg-background flex items-center justify-center text-primary mb-6 group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+            <span class="material-symbols-outlined text-4xl">school</span>
+          </div>
+          <h3 class="font-heading font-black text-2xl text-on-surface uppercase leading-none mb-2"><%= typeof doctorName !== 'undefined' ? doctorName : 'Dr. Jane Doe' %></h3>
+          <p class="text-xs uppercase font-bold text-primary font-mono mb-4">Event Chair</p>
+          <p class="text-xs text-on-surface/80 font-sans leading-relaxed">Representing Malaysia University of Science & Technology (MUST) faculty.</p>
+        </div>
+        <!-- Contact -->
+        <div class="flex gap-4 mt-8 text-on-surface/60 text-sm">
+          <a href="#" class="hover:text-primary transition-colors"><i class="fa-solid fa-envelope"></i></a>
+          <a href="#" class="hover:text-primary transition-colors"><i class="fa-brands fa-linkedin"></i></a>
+        </div>
+      </div>
+
+      <!-- Team Card 2 -->
+      <div class="brutal-border brutal-shadow hover-brutal bg-pure-white p-8 flex flex-col justify-between h-full fade-up group">
+        <div>
+          <div class="w-16 h-16 brutal-border bg-background flex items-center justify-center text-primary mb-6 group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+            <span class="material-symbols-outlined text-4xl">terminal</span>
+          </div>
+          <h3 class="font-heading font-black text-2xl text-on-surface uppercase leading-none mb-2">Alex Mercer</h3>
+          <p class="text-xs uppercase font-bold text-primary font-mono mb-4">AI Technical Lead</p>
+          <p class="text-xs text-on-surface/80 font-sans leading-relaxed">Handles coding frameworks, platform architecture, and API access keys.</p>
+        </div>
+        <div class="flex gap-4 mt-8 text-on-surface/60 text-sm">
+          <a href="#" class="hover:text-primary transition-colors"><i class="fa-brands fa-github"></i></a>
+          <a href="#" class="hover:text-primary transition-colors"><i class="fa-brands fa-linkedin"></i></a>
+        </div>
+      </div>
+
+      <!-- Team Card 3 -->
+      <div class="brutal-border brutal-shadow hover-brutal bg-pure-white p-8 flex flex-col justify-between h-full fade-up group">
+        <div>
+          <div class="w-16 h-16 brutal-border bg-background flex items-center justify-center text-primary mb-6 group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+            <span class="material-symbols-outlined text-4xl">palette</span>
+          </div>
+          <h3 class="font-heading font-black text-2xl text-on-surface uppercase leading-none mb-2">Sarah Connor</h3>
+          <p class="text-xs uppercase font-bold text-primary font-mono mb-4">Creative Director</p>
+          <p class="text-xs text-on-surface/80 font-sans leading-relaxed">Designed the promotional flyers, theme styling, and visual elements.</p>
+        </div>
+        <div class="flex gap-4 mt-8 text-on-surface/60 text-sm">
+          <a href="#" class="hover:text-primary transition-colors"><i class="fa-brands fa-behance"></i></a>
+          <a href="#" class="hover:text-primary transition-colors"><i class="fa-brands fa-linkedin"></i></a>
+        </div>
+      </div>
+
+      <!-- Team Card 4 -->
+      <div class="brutal-border brutal-shadow hover-brutal bg-pure-white p-8 flex flex-col justify-between h-full fade-up group">
+        <div>
+          <div class="w-16 h-16 brutal-border bg-background flex items-center justify-center text-primary mb-6 group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+            <span class="material-symbols-outlined text-4xl">groups</span>
+          </div>
+          <h3 class="font-heading font-black text-2xl text-on-surface uppercase leading-none mb-2">Aiman Mohamed</h3>
+          <p class="text-xs uppercase font-bold text-primary font-mono mb-4">Operations Coordinator</p>
+          <p class="text-xs text-on-surface/80 font-sans leading-relaxed">Manages registration databases, check-ins, and participant logistics.</p>
+        </div>
+        <div class="flex gap-4 mt-8 text-on-surface/60 text-sm">
+          <a href="#" class="hover:text-primary transition-colors"><i class="fa-solid fa-envelope"></i></a>
+          <a href="#" class="hover:text-primary transition-colors"><i class="fa-brands fa-linkedin"></i></a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Countdown Timer JavaScript -->
+<script>
+  // Event Date: July 8, 2026 10:00:00 AM (Based on flyer details)
+  const eventDate = new Date('2026-07-08T10:00:00').getTime();
+
+  function updateCountdown() {
+    const now = new Date().getTime();
+    const diff = eventDate - now;
+
+    if (diff <= 0) {
+      document.getElementById('countdown').innerHTML = `
+        <div class="col-span-4 bg-primary text-white py-4 px-2 brutal-border text-center font-extrabold text-sm uppercase tracking-wider animate-pulse font-mono">
+          <i class="fa-solid fa-play mr-2"></i>Createathon is LIVE!
+        </div>
+      `;
+      return;
+    }
+
+    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+    const daysEl = document.getElementById('days');
+    const hoursEl = document.getElementById('hours');
+    const minsEl = document.getElementById('minutes');
+    const secsEl = document.getElementById('seconds');
+
+    if (daysEl) daysEl.innerText = d.toString().padStart(2, '0');
+    if (hoursEl) hoursEl.innerText = h.toString().padStart(2, '0');
+    if (minsEl) minsEl.innerText = m.toString().padStart(2, '0');
+    if (secsEl) secsEl.innerText = s.toString().padStart(2, '0');
+  }
+
+  // Initial and tick
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+</script>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,107 @@
+<%- include('../partials/admin-header') %>
+
+<!-- PAGE HEADER -->
+<div class="mb-10">
+  <h1 class="text-3xl font-extrabold tracking-tight">System Settings & Controls</h1>
+  <p class="text-sm text-slate-400 mt-1">Configure event management flags, wipe public voting data, or reset passwords.</p>
+</div>
+
+<!-- ALERTS -->
+<% if (typeof success_msg !== 'undefined' && success_msg) { %>
+  <div class="mb-8 p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center gap-3">
+    <i class="fa-solid fa-circle-check text-emerald-500 text-lg"></i>
+    <p class="text-xs font-semibold"><%= success_msg %></p>
+  </div>
+<% } %>
+
+<% if (typeof error_msg !== 'undefined' && error_msg) { %>
+  <div class="mb-8 p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center gap-3">
+    <i class="fa-solid fa-circle-exclamation text-rose-500 text-lg"></i>
+    <p class="text-xs font-semibold"><%= error_msg %></p>
+  </div>
+<% } %>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+  
+  <!-- Voting Control & Data Management (Left side) -->
+  <div class="space-y-8">
+    
+    <!-- Voting State Toggle -->
+    <div class="bg-slate-950 border border-slate-800 p-6 md:p-8 rounded-3xl">
+      <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+        <i class="fa-solid fa-sliders text-accent-teal"></i> Public Voting Controls
+      </h3>
+      
+      <p class="text-xs text-slate-400 leading-relaxed mb-6">
+        Open or close public Choice voting page submissions. When open, a countdown page allows viewers to choose their team.
+      </p>
+
+      <form action="/admin/settings/toggle-voting" method="POST" class="flex items-center gap-4">
+        <span class="text-sm font-semibold text-slate-300">Current Status:</span>
+        <% if (votingActive) { %>
+          <span class="px-2.5 py-1 rounded bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-bold text-xs uppercase tracking-wider animate-pulse">Voting Open</span>
+          <button type="submit" class="ml-auto py-2.5 px-4 bg-slate-850 hover:bg-slate-800 text-slate-300 font-bold text-xs uppercase rounded-xl transition-colors">
+            <i class="fa-solid fa-circle-pause mr-1"></i> Close Voting
+          </button>
+        <% } else { %>
+          <span class="px-2.5 py-1 rounded bg-slate-800 border border-slate-700 text-slate-400 font-bold text-xs uppercase tracking-wider">Voting Closed</span>
+          <button type="submit" class="ml-auto py-2.5 px-4 bg-accent-teal hover:bg-teal-400 text-slate-950 font-bold text-xs uppercase rounded-xl transition-all shadow-md">
+            <i class="fa-solid fa-circle-play mr-1"></i> Open Voting
+          </button>
+        <% } %>
+      </form>
+    </div>
+
+    <!-- Data Reset -->
+    <div class="bg-slate-950 border border-slate-800 p-6 md:p-8 rounded-3xl">
+      <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2 text-rose-500">
+        <i class="fa-solid fa-triangle-exclamation"></i> Danger Zone
+      </h3>
+      
+      <p class="text-xs text-slate-400 leading-relaxed mb-6">
+        Reset live public Choice votes. This action will permanently remove all cast IP-address votes in the database.
+      </p>
+
+      <form action="/admin/settings/reset-votes" method="POST" onsubmit="return confirm('WARNING: Are you absolutely sure you want to delete ALL live public votes? This action is permanent and cannot be undone.');">
+        <button type="submit" class="w-full py-3 bg-slate-950 hover:bg-rose-950 text-rose-500 hover:text-rose-400 font-extrabold text-xs uppercase tracking-wider rounded-xl border border-rose-950 hover:border-rose-900 transition-all">
+          <i class="fa-solid fa-trash-can mr-1.5"></i> Delete All Public Votes
+        </button>
+      </form>
+    </div>
+
+  </div>
+
+  <!-- Security / Password management (Right side) -->
+  <div class="bg-slate-950 border border-slate-800 p-6 md:p-8 rounded-3xl">
+    <h3 class="text-lg font-bold text-white mb-6 flex items-center gap-2">
+      <i class="fa-solid fa-shield-halved text-accent-red"></i> Change Admin Password
+    </h3>
+    
+    <form action="/admin/settings/change-password" method="POST" class="space-y-4">
+      <div>
+        <label for="oldPassword" class="block text-xs uppercase font-extrabold tracking-wider text-slate-400 mb-2">Current Password</label>
+        <input type="password" id="oldPassword" name="old_password" required placeholder="••••••••"
+               class="block w-full px-4 py-3 bg-slate-900 border border-slate-800 text-white rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-accent-red/35 focus:border-accent-red transition-all">
+      </div>
+
+      <div>
+        <label for="newPassword" class="block text-xs uppercase font-extrabold tracking-wider text-slate-400 mb-2">New Password</label>
+        <input type="password" id="newPassword" name="new_password" required placeholder="Min 6 characters"
+               class="block w-full px-4 py-3 bg-slate-900 border border-slate-800 text-white rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-accent-red/35 focus:border-accent-red transition-all">
+      </div>
+
+      <div>
+        <label for="confirmNewPassword" class="block text-xs uppercase font-extrabold tracking-wider text-slate-400 mb-2">Confirm New Password</label>
+        <input type="password" id="confirmNewPassword" name="confirm_new_password" required placeholder="Match new password"
+               class="block w-full px-4 py-3 bg-slate-900 border border-slate-800 text-white rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-accent-red/35 focus:border-accent-red transition-all">
+      </div>
+
+      <button type="submit" class="w-full mt-4 py-3.5 px-4 bg-accent-red hover:bg-red-650 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all shadow-lg shadow-accent-red/10">
+        <i class="fa-solid fa-key"></i> Update Security Credentials
+      </button>
+    </form>
+  </div>
+
+</div>
+
+<%- include('../partials/footer') %>

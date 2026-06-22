@@ -1,0 +1,174 @@
+<%- include('partials/header') %>
+
+<!-- VOTING PORTAL HERO -->
+<section class="py-12 bg-background border-b-8 border-inverse-surface fade-up">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+      
+      <!-- Left side info -->
+      <div class="text-center md:text-left space-y-2">
+        <div class="inline-flex items-center gap-2">
+          <% if (votingActive) { %>
+            <span class="flex h-3 w-3 relative">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+            </span>
+            <span class="text-xs font-mono font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 uppercase tracking-widest">Voting is Active</span>
+          <% } else { %>
+            <span class="h-3 w-3 rounded-full bg-inverse-surface inline-block"></span>
+            <span class="text-xs font-mono font-bold text-on-surface/60 bg-pure-white border border-on-surface/25 px-2 py-0.5 uppercase tracking-widest">Voting is Closed</span>
+          <% } %>
+        </div>
+
+        <h1 class="text-4xl md:text-5xl font-black text-on-surface uppercase tracking-tight font-heading">Public Choice Award</h1>
+        <p class="text-xs text-on-surface/70 font-mono mt-1">Cast your vote for your favorite AI project. Only one vote allowed per device.</p>
+      </div>
+
+      <!-- Right side voting count -->
+      <div class="px-6 py-4 bg-pure-white brutal-border brutal-shadow flex items-center gap-4 hover:-translate-y-0.5 transition-all">
+        <div class="p-3 bg-primary text-white brutal-border">
+          <span class="material-symbols-outlined text-2xl" style="display: block;">ballot</span>
+        </div>
+        <div class="text-left font-mono">
+          <p class="text-[9px] text-on-surface/50 uppercase font-bold tracking-wider">Total Votes Cast</p>
+          <p class="text-2xl font-black text-on-surface"><%= totalVotes %></p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- MAIN VOTING LAYOUT -->
+<section class="py-16 bg-background">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    
+    <% if (typeof success_msg !== 'undefined' && success_msg) { %>
+      <div class="mb-8 p-4 bg-pure-white brutal-border brutal-shadow text-emerald-700 font-mono text-xs flex items-center gap-3 fade-up">
+        <span class="material-symbols-outlined text-emerald-500 text-lg">check_circle</span>
+        <p class="font-bold"><%= success_msg %></p>
+      </div>
+    <% } %>
+
+    <% if (typeof error_msg !== 'undefined' && error_msg) { %>
+      <div class="mb-8 p-4 bg-pure-white brutal-border brutal-shadow text-primary font-mono text-xs flex items-center gap-3 fade-up">
+        <span class="material-symbols-outlined text-primary text-lg">error</span>
+        <p class="font-bold"><%= error_msg %></p>
+      </div>
+    <% } %>
+
+    <!-- LEADERBOARD BAR CHART -->
+    <% if (groups.length > 0) { %>
+      <div class="mb-16 bg-pure-white brutal-border p-6 md:p-8 brutal-shadow fade-up">
+        <h3 class="text-xl font-black text-on-surface mb-6 flex items-center gap-2 uppercase tracking-tight border-b-4 border-inverse-surface pb-3 font-heading">
+          <span class="material-symbols-outlined text-primary" style="font-size: 28px;">bar_chart</span> Current Live Standings
+        </h3>
+        
+        <div class="space-y-6 font-mono">
+          <% 
+            // Calculate max votes to scale progress bars
+            const maxVotes = Math.max(...groups.map(g => g.vote_count), 1);
+          %>
+          <% groups.forEach(group => { %>
+            <% 
+              const percentage = totalVotes > 0 ? Math.round((group.vote_count / totalVotes) * 100) : 0;
+              const barWidth = Math.max(Math.round((group.vote_count / maxVotes) * 100), 5);
+            %>
+            <div class="space-y-2">
+              <div class="flex items-center justify-between text-xs font-bold text-on-surface">
+                <span class="flex items-center gap-2 text-sm font-sans font-black uppercase tracking-tight">
+                  <img src="<%= group.logo_path %>" alt="" class="w-6 h-6 border-2 border-inverse-surface object-cover">
+                  <%= group.name %>
+                </span>
+                <span><%= group.vote_count %> vote<%= group.vote_count !== 1 ? 's' : '' %> (<%= percentage %>%)</span>
+              </div>
+              <div class="w-full bg-background brutal-border h-5 overflow-hidden">
+                <div class="bg-primary border-r-4 border-inverse-surface h-full transition-all duration-1000" style="width: <%= barWidth %>%"></div>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      </div>
+    <% } %>
+
+    <!-- GROUPS & PROJECTS CONTAINER -->
+    <div class="text-center mb-10 fade-up">
+      <div class="inline-block bg-primary text-white brutal-border px-4 py-1.5 font-mono text-xs uppercase font-bold tracking-wider mb-3">Hackathon Submissions</div>
+      <h2 class="text-3xl font-black text-on-surface uppercase tracking-tight font-heading">Participating Teams</h2>
+      <p class="text-xs text-on-surface/70 font-mono mt-1">Review the projects and cast your vote below.</p>
+    </div>
+
+    <% if (groups.length > 0) { %>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <% groups.forEach(group => { %>
+          <div class="brutal-border brutal-shadow hover-brutal bg-pure-white p-6 md:p-8 flex flex-col justify-between fade-up">
+            <!-- Group Header -->
+            <div>
+              <div class="flex items-center gap-4 mb-4">
+                <img src="<%= group.logo_path %>" alt="<%= group.name %>" class="w-16 h-16 brutal-border shadow-brutal-sm object-cover bg-white">
+                <div>
+                  <h3 class="text-2xl font-black text-on-surface tracking-tight uppercase leading-none font-heading"><%= group.name %></h3>
+                  <span class="text-[9px] font-mono font-bold text-primary bg-primary/10 border border-primary/20 px-2 py-0.5 mt-2 inline-block">Team ID: #<%= group.id %></span>
+                </div>
+              </div>
+
+              <!-- Project Description -->
+              <p class="text-sm text-on-surface/90 leading-relaxed mb-6 font-sans">
+                <%= group.description || 'Creating an innovative AI-powered application. Read update blog posts for latest milestones.' %>
+              </p>
+
+              <!-- Group Members list -->
+              <div class="border-t-4 border-inverse-surface/10 pt-4 mb-6">
+                <h4 class="text-xs uppercase font-mono font-bold tracking-wider text-on-surface/60 mb-3">Team Members</h4>
+                <div class="flex flex-wrap gap-2">
+                  <% if (group.members && group.members.length > 0) { %>
+                    <% group.members.forEach(member => { %>
+                      <div class="inline-flex items-center gap-2 bg-background border-2 border-inverse-surface py-1 px-2.5">
+                        <img src="<%= member.avatar_path %>" alt="" class="w-5 h-5 rounded-full object-cover border border-inverse-surface">
+                        <span class="text-xs font-mono font-bold text-on-surface"><%= member.name %></span>
+                      </div>
+                    <% }) %>
+                  <% } else { %>
+                    <span class="text-xs font-mono text-on-surface/50 italic">No registered members assigned.</span>
+                  <% } %>
+                </div>
+              </div>
+            </div>
+
+            <!-- Voting Action Button -->
+            <div class="pt-4 border-t-4 border-inverse-surface/10 mt-4">
+              <% if (!votingActive) { %>
+                <button disabled class="w-full py-3 bg-background text-on-surface/40 font-mono font-bold text-xs uppercase border-brutal cursor-not-allowed text-center">
+                  <i class="fa-solid fa-ban mr-1.5"></i> Voting Closed
+                </button>
+              <% } else if (hasVoted) { %>
+                <button disabled class="w-full py-3 bg-pure-white text-emerald-600 font-mono font-bold text-xs uppercase border-brutal shadow-brutal-sm cursor-not-allowed flex items-center justify-center gap-1.5">
+                  <i class="fa-solid fa-circle-check text-emerald-500"></i> Vote Registered
+                </button>
+              <% } else { %>
+                <form action="/vote" method="POST">
+                  <input type="hidden" name="groupId" value="<%= group.id %>">
+                  <button type="submit" class="w-full bg-primary text-white font-heading font-black text-sm uppercase py-4 brutal-border brutal-shadow-sm hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all flex items-center justify-center gap-1.5">
+                    <span class="material-symbols-outlined">bolt</span> Vote for <%= group.name %>
+                  </button>
+                </form>
+              <% } %>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    <% } else { %>
+      <!-- No groups empty state -->
+      <div class="bg-pure-white border-brutal p-12 text-center max-w-md mx-auto space-y-4 shadow-brutal fade-up">
+        <div class="w-16 h-16 border-brutal bg-background flex items-center justify-center text-on-surface mx-auto">
+          <span class="material-symbols-outlined text-4xl">groups</span>
+        </div>
+        <h3 class="text-xl font-bold uppercase font-heading text-on-surface">No Teams Registered Yet</h3>
+        <p class="text-on-surface/70 font-mono text-xs">The organizing committee has not registered any groups on the site. Please check back shortly once registration opens.</p>
+      </div>
+    <% } %>
+
+  </div>
+</section>
+
+<%- include('partials/footer') %>
