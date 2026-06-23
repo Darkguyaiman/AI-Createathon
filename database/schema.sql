@@ -6,6 +6,7 @@ USE `ai_createathon`;
 CREATE TABLE IF NOT EXISTS `admins` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `username` VARCHAR(50) UNIQUE NOT NULL,
+  `email` VARCHAR(100) UNIQUE NOT NULL,
   `password_hash` VARCHAR(255) NOT NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
@@ -71,6 +72,14 @@ CREATE TABLE IF NOT EXISTS `settings` (
   `value_name` VARCHAR(255) NOT NULL
 ) ENGINE=InnoDB;
 
+-- Table for express-session MySQL storage
+CREATE TABLE IF NOT EXISTS `sessions` (
+  `session_id` VARCHAR(128) COLLATE utf8mb4_bin NOT NULL,
+  `expires` INT(11) UNSIGNED NOT NULL,
+  `data` MEDIUMTEXT COLLATE utf8mb4_bin,
+  PRIMARY KEY (`session_id`)
+) ENGINE=InnoDB;
+
 -- Seed default settings
 INSERT INTO `settings` (`key_name`, `value_name`) VALUES 
 ('voting_active', 'false')
@@ -78,7 +87,11 @@ ON DUPLICATE KEY UPDATE `value_name` = `value_name`;
 
 -- Seed default admin account
 -- Username: admin
--- Password: AdminPassword123! (bcrypt hash generated with 10 salt rounds)
-INSERT INTO `admins` (`id`, `username`, `password_hash`) VALUES 
-(1, 'admin', '$2a$10$9vD3vL.G6Zq0qM/8YQeH3.uQ8U1wD3U136t6Ua1s9K0XwW5b7aMpe')
-ON DUPLICATE KEY UPDATE `username` = `username`;
+-- Email: admin@admin.com
+-- Password: 1234567890 (bcrypt hash generated with 10 salt rounds)
+INSERT INTO `admins` (`id`, `username`, `email`, `password_hash`) VALUES 
+(1, 'admin', 'admin@admin.com', '$2b$10$/cCiMjMpH/m5fAr/bbocoOEJwDFQdJ27/EfesMUb5IcjTTO9neXhe')
+ON DUPLICATE KEY UPDATE
+  `username` = VALUES(`username`),
+  `email` = VALUES(`email`),
+  `password_hash` = VALUES(`password_hash`);

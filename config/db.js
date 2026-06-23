@@ -43,7 +43,7 @@ async function initDatabase() {
     const [tables] = await pool.query(`SHOW TABLES LIKE 'admins'`);
     if (tables.length === 0) {
       console.log('Database tables not found. Initializing schema from schema.sql...');
-      const schemaPath = path.join(__dirname, 'schema.sql');
+      const schemaPath = path.join(__dirname, '..', 'database', 'schema.sql');
       if (fs.existsSync(schemaPath)) {
         const schemaSql = fs.readFileSync(schemaPath, 'utf8');
         await pool.query(schemaSql);
@@ -61,7 +61,7 @@ async function initDatabase() {
 }
 
 // Helper query function
-async function query(sql, params) {
+async function query(sql, params = []) {
   if (!pool) {
     throw new Error('Database pool not initialized. Run initDatabase first.');
   }

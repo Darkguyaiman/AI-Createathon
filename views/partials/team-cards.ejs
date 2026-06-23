@@ -1,0 +1,122 @@
+<%
+  const teamMembers = [
+    {
+      name: 'Mohamed Aiman',
+      studentId: 'D25010001',
+      role: 'Group Leader, Main Host & Lead Developer',
+      image: '/team/Mohamed Aiman.png'
+    },
+    {
+      name: 'Muhammad Danial Aiman Bin Ridwan',
+      studentId: 'D25080022',
+      role: 'Second Group Leader & Project Advisor',
+      signatureName: 'Danial Aiman',
+      image: '/team/Danial Aiman.png'
+    },
+    {
+      name: 'Nur Hidayah Fatimah Binti Pardy',
+      studentId: 'D26050004',
+      role: 'Second Host & Proofreader',
+      signatureName: 'Hidayah Fatimah',
+      image: '/team/Hidayah Fatimah.png'
+    },
+    {
+      name: 'Nur Hana Qaireen Sabrina Binti Aris',
+      studentId: 'D26050011',
+      role: 'Treasurer',
+      signatureName: 'Hana Qaireen',
+      image: '/team/Hana Qaireen.png'
+    },
+    {
+      name: 'Jairus A/L Denial',
+      studentId: 'B26050044',
+      role: 'Second Treasurer',
+      signatureName: 'Jairus Denial',
+      image: '/team/Jairus Denial.png'
+    },
+    {
+      name: 'Putri Surina Natasya',
+      studentId: 'D26050090',
+      role: 'Registrar',
+      signatureName: 'Putri Surina',
+      image: '/team/Putri Surina.png'
+    },
+    {
+      name: 'Muhammad Aliff Izhar Bin Sufardi',
+      studentId: 'D26050060',
+      role: 'Registrar',
+      signatureName: 'Aliff Izhar',
+      image: '/team/Aliff Izhar.png'
+    },
+    {
+      name: 'David Jeevan Raj A/L Rames',
+      studentId: 'D26050012',
+      role: 'Graphic Designer',
+      signatureName: 'David Jeevan',
+      image: '/team/David Jeevan.png'
+    },
+    {
+      name: 'Muhamad Aiman Saifullah Bin Nor Azizi',
+      studentId: 'D26050088',
+      role: 'Graphic Designer',
+      signatureName: 'Aiman Saifullah',
+      image: '/team/Aiman Saifullah.png'
+    },
+    {
+      name: 'Premkumar A/L Muniandy',
+      studentId: 'D26050055',
+      role: 'Technical Support',
+      signatureName: 'Premkumar Muniandy',
+      image: '/team/Premkumar Muniandy.png'
+    },
+    {
+      name: 'Marcus Hoy Jit Hong',
+      studentId: 'D26050003',
+      role: 'Technical Support',
+      signatureName: 'Marcus Hoy',
+      image: '/team/Marcus Hoy.png'
+    },
+    {
+      name: 'Trisher Devan A/L Coomerlan Naidu',
+      studentId: 'D26050026',
+      role: 'Hospitality Officer',
+      signatureName: 'Trisher Devan',
+      image: '/team/Trisher Devan.png'
+    },
+    {
+      name: 'Sharvesh A/L Letchumanan',
+      studentId: 'D26050091',
+      role: 'Hospitality Officer',
+      signatureName: 'Sharvesh Letchumanan',
+      image: '/team/Sharvesh Letchumanan.png'
+    }
+  ];
+%>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+  <% teamMembers.forEach(member => { %>
+    <article class="team-card brutal-border brutal-shadow bg-pure-white p-5 min-h-[220px] fade-up group">
+      <div class="team-signature" aria-hidden="true">
+        <% (member.signatureName || member.name).split(' ').forEach(word => { %>
+          <span><%= word %></span>
+        <% }) %>
+      </div>
+
+      <div class="team-card-copy">
+        <p class="font-mono text-[10px] uppercase font-black text-primary mb-3 tracking-widest team-card-kicker"><%= member.studentId %></p>
+        <h3 class="font-heading font-black text-lg text-on-surface uppercase leading-tight mb-3 team-card-name"><%= member.name %></h3>
+        <p class="text-xs uppercase font-black text-primary font-mono leading-relaxed team-card-role"><%= member.role %></p>
+      </div>
+
+      <div class="team-photo brutal-border bg-background overflow-hidden">
+        <% if (member.image) { %>
+          <img src="<%= member.image %>" alt="<%= member.name %>" class="w-full h-full object-cover" loading="lazy" decoding="async">
+        <% } else { %>
+          <div class="team-placeholder" aria-label="<%= member.name %> photo placeholder">
+            <span class="material-symbols-outlined">person</span>
+          </div>
+        <% } %>
+      </div>
+    </article>
+  <% }) %>
+</div>

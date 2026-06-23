@@ -1,0 +1,35 @@
+<%- include('partials/header') %>
+
+<section class="bg-background border-b-8 border-inverse-surface py-16 md:py-24">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-end">
+      <div class="lg:col-span-8 space-y-6 fade-up">
+        <div class="inline-flex items-center gap-2 bg-primary text-white brutal-border px-4 py-2 font-mono text-xs uppercase font-black">
+          <span class="material-symbols-outlined text-sm">groups</span>
+          Organizing Committee
+        </div>
+        <h1 class="display-title-stroke font-heading text-5xl md:text-7xl text-on-surface font-black uppercase leading-none">
+          Meet the <span class="text-primary underline decoration-[8px] underline-offset-[12px]">Team</span>
+        </h1>
+        <p class="max-w-3xl text-on-surface/85 text-lg md:text-xl leading-relaxed">
+          The 14-member student committee coordinating hosting, registration, technical support, design, finance, hospitality, and live operations for AI Createathon 2026.
+        </p>
+      </div>
+
+      <div class="lg:col-span-4 bg-pure-white brutal-border brutal-shadow p-6 fade-up">
+        <p class="font-mono text-xs uppercase font-black text-primary mb-3">Event base</p>
+        <p class="font-heading text-2xl font-black uppercase leading-tight text-on-surface">Malaysia University of Science & Technology</p>
+        <div class="mt-5 h-1 bg-inverse-surface"></div>
+        <p class="mt-5 font-mono text-xs uppercase font-bold text-on-surface/70">July 8, 2026</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="py-20 bg-background">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <%- include('partials/team-cards') %>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

@@ -9,6 +9,13 @@
   <meta name="description" content="AI Createathon 2026: Create an AI-powered application, automation, artwork, or digital solution within 3 hours. Join live voting and follow updates.">
   <meta name="keywords" content="AI Createathon, Malaysia University of Science and Technology, Hackathon, AI coding, public voting">
   <meta name="author" content="AI Createathon Team">
+
+  <!-- App Icons -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
   
   <!-- Google Fonts & Material Symbols -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,18 +27,18 @@
   
   <!-- Compiled Tailwind CSS -->
   <link rel="stylesheet" href="/css/style.css">
+
+  <!-- Smooth scroll -->
+  <script src="/vendor/lenis/lenis.min.js" defer></script>
 </head>
 <body class="bg-background text-on-surface font-sans selection:bg-primary selection:text-white overflow-x-hidden transition-colors duration-300">
   
   <!-- Scrolling Marquee Top -->
   <div class="bg-inverse-surface text-pure-white py-3 marquee brutal-border border-x-0 border-t-0 z-[60] relative">
-    <div class="marquee-content gap-8">
+    <div class="marquee-content marquee-content--top" data-infinite-marquee>
       <span class="font-mono text-xs uppercase flex items-center gap-2"><span class="material-symbols-outlined text-primary">bolt</span> AI CREATEATHON 2026</span>
       <span class="font-mono text-xs uppercase flex items-center gap-2"><span class="material-symbols-outlined text-primary">location_on</span> MALAYSIA UNIVERSITY OF SCIENCE &amp; TECHNOLOGY</span>
-      <span class="font-mono text-xs uppercase flex items-center gap-2"><span class="material-symbols-outlined text-primary">calendar_today</span> AUGUST 7, 2026</span>
-      <span class="font-mono text-xs uppercase flex items-center gap-2"><span class="material-symbols-outlined text-primary">bolt</span> AI CREATEATHON 2026</span>
-      <span class="font-mono text-xs uppercase flex items-center gap-2"><span class="material-symbols-outlined text-primary">location_on</span> MALAYSIA UNIVERSITY OF SCIENCE &amp; TECHNOLOGY</span>
-      <span class="font-mono text-xs uppercase flex items-center gap-2"><span class="material-symbols-outlined text-primary">calendar_today</span> AUGUST 7, 2026</span>
+      <span class="font-mono text-xs uppercase flex items-center gap-2"><span class="material-symbols-outlined text-primary">calendar_today</span> JULY 8, 2026</span>
     </div>
   </div>
 
@@ -41,16 +48,16 @@
       <!-- Logo -->
       <a href="/" class="flex items-center gap-4 group">
         <div class="bg-primary p-2 brutal-border text-white transform group-hover:rotate-6 transition-transform">
-          <span class="material-symbols-outlined" style="font-size: 32px; display: block;">bolt</span>
+          <span class="material-symbols-outlined" style="font-size: 32px; display: block;">smart_toy</span>
         </div>
-        <span class="text-3xl font-black text-on-surface uppercase tracking-tight font-heading">AI<span class="text-primary">CREATEATHON</span></span>
+        <span class="text-3xl font-black text-on-surface uppercase tracking-tight font-heading">AI-<span class="text-primary">CREATEATHON</span></span>
       </a>
 
       <!-- Desktop Navigation -->
       <div class="hidden md:flex items-center gap-10 font-mono text-sm font-black uppercase">
         <a class="hover:text-primary transition-colors <%= typeof activePage !== 'undefined' && activePage === 'home' ? 'text-primary underline decoration-4 decoration-primary underline-offset-4' : 'text-on-surface' %>" href="/">HOME</a>
         <a class="hover:text-primary transition-colors <%= typeof activePage !== 'undefined' && activePage === 'voting' ? 'text-primary underline decoration-4 decoration-primary underline-offset-4' : 'text-on-surface' %>" href="/voting">VOTING</a>
-        <a class="hover:text-primary transition-colors <%= typeof activePage !== 'undefined' && activePage === 'team' ? 'text-primary underline decoration-4 decoration-primary underline-offset-4' : 'text-on-surface' %>" href="/#team">TEAM</a>
+        <a class="hover:text-primary transition-colors <%= typeof activePage !== 'undefined' && activePage === 'team' ? 'text-primary underline decoration-4 decoration-primary underline-offset-4' : 'text-on-surface' %>" href="/team">TEAM</a>
       </div>
 
       <!-- Right buttons -->
@@ -76,7 +83,7 @@
     <div id="mobile-menu" class="hidden absolute top-24 left-0 w-full bg-background brutal-border border-x-0 border-t-0 p-6 flex flex-col gap-4 font-mono text-sm uppercase z-50">
       <a class="block py-2 hover:text-primary transition-colors <%= typeof activePage !== 'undefined' && activePage === 'home' ? 'text-primary font-black' : 'text-on-surface' %>" href="/">HOME</a>
       <a class="block py-2 hover:text-primary transition-colors <%= typeof activePage !== 'undefined' && activePage === 'voting' ? 'text-primary font-black' : 'text-on-surface' %>" href="/voting">VOTING</a>
-      <a class="block py-2 hover:text-primary transition-colors <%= typeof activePage !== 'undefined' && activePage === 'team' ? 'text-primary font-black' : 'text-on-surface' %>" href="/#team">TEAM</a>
+      <a class="block py-2 hover:text-primary transition-colors <%= typeof activePage !== 'undefined' && activePage === 'team' ? 'text-primary font-black' : 'text-on-surface' %>" href="/team">TEAM</a>
       <% if (typeof session !== 'undefined' && session.isAdmin) { %>
         <a href="/admin/dashboard" class="block text-center bg-inverse-surface text-pure-white font-mono text-xs py-3 brutal-border font-black">
           DASHBOARD
@@ -106,6 +113,61 @@
 
     // Lightweight scroll-animation registry using IntersectionObserver
     document.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll('[data-infinite-marquee]').forEach(track => {
+        const sourceItems = Array.from(track.children).map(item => item.cloneNode(true));
+        let resizeTimer;
+
+        const buildMarquee = () => {
+          if (!sourceItems.length) return;
+
+          track.style.animation = 'none';
+          track.textContent = '';
+
+          const segment = document.createElement('div');
+          segment.className = 'marquee-segment';
+
+          const appendSourceItems = () => {
+            sourceItems.forEach(item => segment.appendChild(item.cloneNode(true)));
+          };
+
+          appendSourceItems();
+          track.appendChild(segment);
+
+          let guard = 0;
+          while (segment.scrollWidth < window.innerWidth + 96 && guard < 24) {
+            appendSourceItems();
+            guard += 1;
+          }
+
+          track.appendChild(segment.cloneNode(true));
+          track.style.animation = '';
+        };
+
+        buildMarquee();
+
+        window.addEventListener('resize', () => {
+          clearTimeout(resizeTimer);
+          resizeTimer = setTimeout(buildMarquee, 150);
+        });
+      });
+
+      if (window.Lenis && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        const lenis = new Lenis({
+          duration: 1.15,
+          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+          smoothWheel: true,
+          wheelMultiplier: 0.9,
+          touchMultiplier: 1.2
+        });
+
+        function raf(time) {
+          lenis.raf(time);
+          requestAnimationFrame(raf);
+        }
+
+        requestAnimationFrame(raf);
+      }
+
       const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
@@ -121,6 +183,47 @@
       document.querySelectorAll('.fade-up').forEach(el => {
         observer.observe(el);
       });
+
+      const qrModal = document.querySelector('[data-qr-modal]');
+      const qrOpenButton = document.querySelector('[data-qr-modal-open]');
+      const qrCloseButtons = document.querySelectorAll('[data-qr-modal-close]');
+
+      qrOpenButton?.addEventListener('click', () => {
+        if (qrModal?.showModal) {
+          qrModal.showModal();
+        }
+      });
+
+      qrCloseButtons.forEach(button => {
+        button.addEventListener('click', () => qrModal?.close());
+      });
+
+      qrModal?.addEventListener('click', event => {
+        if (event.target === qrModal) {
+          qrModal.close();
+        }
+      });
+
+      const darkSections = Array.from(document.querySelectorAll('.dark-scroll-section'));
+      if (darkSections.length) {
+        const visibleDarkSections = new Set();
+        const darkObserver = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              visibleDarkSections.add(entry.target);
+            } else {
+              visibleDarkSections.delete(entry.target);
+            }
+          });
+
+          document.body.classList.toggle('dark-page-active', visibleDarkSections.size > 0);
+        }, {
+          threshold: 0.24,
+          rootMargin: "-12% 0px -12% 0px"
+        });
+
+        darkSections.forEach(section => darkObserver.observe(section));
+      }
     });
   </script>
 
