@@ -4,91 +4,72 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= typeof title !== 'undefined' ? title + ' | Admin Panel' : 'Admin Panel | AI Createathon 2026' %></title>
-  
-  <!-- Google Fonts -->
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+  <link rel="shortcut icon" href="/favicon.ico">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
-  
-  <!-- FontAwesome Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;750&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
-  <!-- Compiled Tailwind CSS -->
   <link rel="stylesheet" href="/css/style.css">
 </head>
-<body class="flex flex-col min-h-screen bg-slate-900 text-slate-100 font-sans selection:bg-laracon-red selection:text-white">
+<body class="admin-app min-h-screen bg-background text-on-surface font-sans selection:bg-primary selection:text-white">
+  <div class="min-h-screen lg:grid lg:grid-cols-[280px_minmax(0,1fr)]">
+    <aside class="admin-sidebar bg-inverse-surface text-pure-white lg:sticky lg:top-0 lg:h-screen lg:border-r-4 border-primary">
+      <div class="flex h-full flex-col">
+        <div class="p-5 lg:p-6 border-b-4 border-primary">
+          <a href="/" class="flex items-center gap-3 group" aria-label="AI Createathon home">
+            <span class="grid h-12 w-12 place-items-center bg-primary text-white brutal-border-sm group-hover:rotate-6 transition-transform">
+              <span class="material-symbols-outlined text-3xl">smart_toy</span>
+            </span>
+            <span class="min-w-0">
+              <span class="block font-heading text-xl font-black uppercase leading-none">AI-<span class="text-primary">Createathon</span></span>
+              <span class="block font-mono text-[10px] font-black uppercase tracking-widest text-pure-white/70 mt-1">Admin Control</span>
+            </span>
+          </a>
+        </div>
 
-  <!-- Top bar -->
-  <div class="h-2 bg-laracon-dark border-b border-slate-800"></div>
-
-  <!-- Admin navigation -->
-  <header class="bg-slate-950 border-b border-slate-800">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between h-16">
-        <!-- Logo link to public site -->
-        <a href="/" class="flex items-center gap-3 group">
-          <div class="w-8 h-8 bg-laracon-red flex items-center justify-center text-white border border-slate-700 shadow transform group-hover:rotate-6 transition-transform">
-            <i class="fa-solid fa-screwdriver-wrench text-sm"></i>
-          </div>
-          <div class="flex flex-col">
-            <span class="text-sm font-black tracking-tight text-white uppercase font-sans">AI Createathon</span>
-            <span class="text-[9px] uppercase font-bold text-accent-teal tracking-widest font-mono">Admin Control</span>
-          </div>
-        </a>
-
-        <!-- Navigation items -->
-        <nav class="hidden md:flex items-center gap-6 font-mono text-xs uppercase tracking-wider">
-          <a href="/admin/dashboard" class="font-bold hover:text-accent-teal transition-colors <%= typeof activePage !== 'undefined' && activePage === 'dashboard' ? 'text-accent-teal border-b border-accent-teal' : 'text-slate-400' %>">
+        <nav class="admin-nav grid gap-2 p-4 lg:p-5 font-mono text-xs font-black uppercase" aria-label="Admin navigation">
+          <a href="/admin/dashboard" class="admin-nav-link <%= typeof activePage !== 'undefined' && activePage === 'dashboard' ? 'is-active' : '' %>">
+            <span class="material-symbols-outlined">dashboard</span>
             Dashboard
           </a>
-          <a href="/admin/registration" class="font-bold hover:text-accent-teal transition-colors <%= typeof activePage !== 'undefined' && activePage === 'registration' ? 'text-accent-teal border-b border-accent-teal' : 'text-slate-400' %>">
+          <a href="/admin/registration" class="admin-nav-link <%= typeof activePage !== 'undefined' && activePage === 'registration' ? 'is-active' : '' %>">
+            <span class="material-symbols-outlined">groups</span>
             Registration
           </a>
-          <a href="/admin/posts" class="font-bold hover:text-accent-teal transition-colors <%= typeof activePage !== 'undefined' && activePage === 'posts' ? 'text-accent-teal border-b border-accent-teal' : 'text-slate-400' %>">
+          <a href="/admin/posts" class="admin-nav-link <%= typeof activePage !== 'undefined' && activePage === 'posts' ? 'is-active' : '' %>">
+            <span class="material-symbols-outlined">campaign</span>
             Blogging
           </a>
-          <a href="/admin/scoring" class="font-bold hover:text-accent-teal transition-colors <%= typeof activePage !== 'undefined' && activePage === 'scoring' ? 'text-accent-teal border-b border-accent-teal' : 'text-slate-400' %>">
+          <a href="/admin/scoring" class="admin-nav-link <%= typeof activePage !== 'undefined' && activePage === 'scoring' ? 'is-active' : '' %>">
+            <span class="material-symbols-outlined">trophy</span>
             Scoring
           </a>
-          <a href="/admin/settings" class="font-bold hover:text-accent-teal transition-colors <%= typeof activePage !== 'undefined' && activePage === 'settings' ? 'text-accent-teal border-b border-accent-teal' : 'text-slate-400' %>">
+          <a href="/admin/settings" class="admin-nav-link <%= typeof activePage !== 'undefined' && activePage === 'settings' ? 'is-active' : '' %>">
+            <span class="material-symbols-outlined">settings</span>
             Settings
           </a>
         </nav>
 
-        <!-- Admin dropdown/logout -->
-        <div class="flex items-center gap-4">
-          <span class="hidden sm:inline-block text-xs font-mono font-bold px-2.5 py-1 rounded bg-slate-800 text-slate-300">
-            <i class="fa-solid fa-user text-laracon-red mr-1"></i> <%= session.username %>
-          </span>
-          <a href="/" class="text-xs font-semibold text-slate-400 hover:text-white transition-colors">
-            <i class="fa-solid fa-globe mr-1"></i> Public Site
-          </a>
-          <a href="/logout" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold bg-laracon-red hover:bg-red-600 text-white rounded-lg transition-colors border border-laracon-dark">
-            <i class="fa-solid fa-right-from-bracket"></i> Logout
-          </a>
+        <div class="mt-auto p-4 lg:p-5 border-t-4 border-primary/70">
+          <div class="bg-background text-on-surface brutal-border-sm p-4">
+            <p class="font-mono text-[10px] font-black uppercase text-primary tracking-widest">Signed in</p>
+            <p class="mt-1 truncate font-heading text-lg font-black uppercase"><%= session.username %></p>
+            <div class="mt-4 grid grid-cols-2 gap-2">
+              <a href="/" class="admin-side-action" aria-label="Open public site">
+                <span class="material-symbols-outlined">public</span>
+              </a>
+              <a href="/logout" class="admin-side-action admin-side-action--danger" aria-label="Logout">
+                <span class="material-symbols-outlined">logout</span>
+              </a>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </header>
+    </aside>
 
-  <!-- Mobile navigation sidebar (horizontal scroll on mobile) -->
-  <div class="md:hidden flex overflow-x-auto items-center bg-slate-950/80 backdrop-blur border-b border-slate-800 px-4 py-3 gap-6 scrollbar-none font-mono text-xs">
-    <a href="/admin/dashboard" class="flex-shrink-0 font-bold uppercase tracking-wider <%= typeof activePage !== 'undefined' && activePage === 'dashboard' ? 'text-accent-teal' : 'text-slate-400' %>">
-      Dashboard
-    </a>
-    <a href="/admin/registration" class="flex-shrink-0 font-bold uppercase tracking-wider <%= typeof activePage !== 'undefined' && activePage === 'registration' ? 'text-accent-teal' : 'text-slate-400' %>">
-      Registration
-    </a>
-    <a href="/admin/posts" class="flex-shrink-0 font-bold uppercase tracking-wider <%= typeof activePage !== 'undefined' && activePage === 'posts' ? 'text-accent-teal' : 'text-slate-400' %>">
-      Blogging
-    </a>
-    <a href="/admin/scoring" class="flex-shrink-0 font-bold uppercase tracking-wider <%= typeof activePage !== 'undefined' && activePage === 'scoring' ? 'text-accent-teal' : 'text-slate-400' %>">
-      Scoring
-    </a>
-    <a href="/admin/settings" class="flex-shrink-0 font-bold uppercase tracking-wider <%= typeof activePage !== 'undefined' && activePage === 'settings' ? 'text-accent-teal' : 'text-slate-400' %>">
-      Settings
-    </a>
-  </div>
-
-  <!-- Content section -->
-  <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main class="admin-main min-w-0 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">

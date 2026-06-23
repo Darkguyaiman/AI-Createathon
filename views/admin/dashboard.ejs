@@ -84,7 +84,7 @@
     <h3 class="text-lg font-bold text-white flex items-center gap-2">
       <i class="fa-solid fa-trophy text-yellow-500"></i> Event Leaderboard (Public & Judges Scoring)
     </h3>
-    <a href="/admin/scoring" class="inline-flex items-center gap-1.5 text-xs font-bold bg-slate-900 hover:bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-800 transition-colors">
+    <a href="/admin/scores/new" class="inline-flex items-center gap-1.5 text-xs font-bold bg-slate-900 hover:bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-800 transition-colors">
       <i class="fa-solid fa-plus text-accent-teal"></i> Record Judge Scores
     </a>
   </div>
@@ -141,8 +141,8 @@
               </td>
               <!-- Action -->
               <td class="py-4 px-4 text-right">
-                <a href="/admin/scoring?groupId=<%= item.id %>" class="text-xs font-bold text-slate-400 hover:text-white transition-colors bg-slate-900 border border-slate-800 py-1.5 px-3 rounded-lg">
-                  Score Details
+                <a href="/admin/scores/new?groupId=<%= item.id %>" class="text-xs font-bold text-slate-400 hover:text-white transition-colors bg-slate-900 border border-slate-800 py-1.5 px-3 rounded-lg">
+                  Record Score
                 </a>
               </td>
             </tr>
@@ -162,4 +162,4 @@
   <% } %>
 </div>
 
-<%- include('../partials/footer') %>
+<%- include('../partials/admin-footer') %>

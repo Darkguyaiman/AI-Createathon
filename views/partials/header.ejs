@@ -184,6 +184,39 @@
         observer.observe(el);
       });
 
+      const scrollRotators = Array.from(document.querySelectorAll('[data-scroll-motion="rotate"]'));
+      const scrollBobbers = Array.from(document.querySelectorAll('[data-scroll-motion="bob"]'));
+      if ((scrollRotators.length || scrollBobbers.length) && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        let lastScrollY = window.scrollY;
+        let rotation = 0;
+        let bob = 0;
+        let ticking = false;
+
+        const applyScrollMotion = () => {
+          scrollRotators.forEach(element => {
+            element.style.setProperty('--scroll-rotate', `${rotation}deg`);
+          });
+          scrollBobbers.forEach(element => {
+            element.style.setProperty('--scroll-bob', `${bob}px`);
+          });
+          ticking = false;
+        };
+
+        window.addEventListener('scroll', () => {
+          const currentScrollY = window.scrollY;
+          const delta = currentScrollY - lastScrollY;
+          lastScrollY = currentScrollY;
+
+          rotation = (rotation + delta * 0.035) % 360;
+          bob = Math.sin(currentScrollY * 0.025) * 12;
+
+          if (!ticking) {
+            window.requestAnimationFrame(applyScrollMotion);
+            ticking = true;
+          }
+        }, { passive: true });
+      }
+
       const qrModal = document.querySelector('[data-qr-modal]');
       const qrOpenButton = document.querySelector('[data-qr-modal-open]');
       const qrCloseButtons = document.querySelectorAll('[data-qr-modal-close]');

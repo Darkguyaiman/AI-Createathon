@@ -1,0 +1,46 @@
+<%- include('../partials/admin-header') %>
+
+<div class="mb-8 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+  <div>
+    <p class="font-mono text-xs font-black uppercase tracking-widest text-primary mb-2">Live Feed</p>
+    <h1 class="text-3xl font-extrabold tracking-tight">Create Live Post</h1>
+    <p class="text-sm text-slate-400 mt-1">Publish an announcement, event trigger, or image update to the home page timeline.</p>
+  </div>
+  <a href="/admin/posts" class="inline-flex items-center justify-center gap-2 bg-slate-900 text-slate-300 px-4 py-3 text-xs font-bold uppercase tracking-wider border border-slate-800 transition-colors">
+    <i class="fa-solid fa-arrow-left"></i> Back to posts
+  </a>
+</div>
+
+<%- include('../partials/admin-alerts') %>
+
+<div class="max-w-2xl bg-slate-950 border border-slate-800 p-6 md:p-8">
+  <h3 class="text-lg font-bold text-white mb-6 flex items-center gap-2">
+    <i class="fa-solid fa-square-rss text-accent-teal"></i> Post Details
+  </h3>
+
+  <form action="/admin/posts" method="POST" enctype="multipart/form-data" class="space-y-4">
+    <div>
+      <label for="postTitle" class="block text-xs uppercase font-extrabold tracking-wider text-slate-400 mb-2">Headline / Title</label>
+      <input type="text" id="postTitle" name="title" required placeholder="e.g. Hackathon Kickoff!"
+             class="block w-full px-4 py-3 bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-teal/35 focus:border-accent-teal transition-all">
+    </div>
+
+    <div>
+      <label for="postContent" class="block text-xs uppercase font-extrabold tracking-wider text-slate-400 mb-2">Body Content</label>
+      <textarea id="postContent" name="content" required placeholder="Write update text details..." rows="7"
+                class="block w-full px-4 py-3 bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-teal/35 focus:border-accent-teal transition-all resize-none"></textarea>
+    </div>
+
+    <div>
+      <label for="postImage" class="block text-xs uppercase font-extrabold tracking-wider text-slate-400 mb-2">Attach Event Image</label>
+      <input type="file" id="postImage" name="image" accept="image/*"
+             class="block w-full text-xs text-slate-400 file:mr-4 file:py-2.5 file:px-4 file:border-0 file:text-xs file:font-bold file:bg-slate-900 file:text-slate-200 hover:file:bg-slate-800 file:cursor-pointer">
+    </div>
+
+    <button type="submit" class="w-full mt-4 py-3.5 px-4 bg-accent-teal hover:bg-teal-400 text-slate-950 font-extrabold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2">
+      <i class="fa-solid fa-bullhorn"></i> Publish Live Post
+    </button>
+  </form>
+</div>
+
+<%- include('../partials/admin-footer') %>

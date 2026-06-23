@@ -1,64 +1,73 @@
 <%- include('partials/header') %>
 
-<section class="py-16 md:py-24 bg-background flex items-center justify-center fade-up font-mono">
-  <div class="w-full max-w-md px-4">
-    
-    <!-- Login Card -->
-    <div class="bg-pure-white brutal-border brutal-shadow p-8">
-      
-      <!-- Card header -->
-      <div class="text-center mb-8 space-y-2">
-        <div class="w-12 h-12 bg-primary flex items-center justify-center text-white mx-auto brutal-border shadow-brutal-sm">
-          <span class="material-symbols-outlined text-2xl">lock_open</span>
-        </div>
-        <h2 class="text-3xl font-black text-on-surface uppercase tracking-tight font-heading">Admin Portal</h2>
-        <p class="text-xs text-on-surface/75">Access the control panel to manage posts and teams</p>
-      </div>
+<section class="py-16 md:py-24 bg-background fade-up font-mono">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+      <div class="lg:col-span-5 xl:col-span-4">
+        <!-- Login Card -->
+        <div class="bg-pure-white brutal-border brutal-shadow p-8">
+          <!-- Card header -->
+          <div class="text-center mb-8 space-y-2">
+            <div class="w-12 h-12 bg-primary flex items-center justify-center text-white mx-auto brutal-border shadow-brutal-sm">
+              <span class="material-symbols-outlined text-2xl">lock_open</span>
+            </div>
+            <h2 class="text-3xl font-black text-on-surface uppercase tracking-tight font-heading">Admin Portal</h2>
+            <p class="text-xs text-on-surface/75">Access the control panel to manage posts and teams</p>
+          </div>
 
-      <!-- Flash Message Warnings -->
-      <% if (typeof error_msg !== 'undefined' && error_msg) { %>
-        <div class="mb-6 p-4 bg-pure-white brutal-border brutal-shadow-sm text-primary text-xs flex items-center gap-3">
-          <span class="material-symbols-outlined text-primary text-lg font-bold">error</span>
-          <p class="font-bold"><%= error_msg %></p>
-        </div>
-      <% } %>
+          <!-- Flash Message Warnings -->
+          <% if (typeof error_msg !== 'undefined' && error_msg) { %>
+            <div class="mb-6 p-4 bg-pure-white brutal-border brutal-shadow-sm text-primary text-xs flex items-center gap-3">
+              <span class="material-symbols-outlined text-primary text-lg font-bold">error</span>
+              <p class="font-bold"><%= error_msg %></p>
+            </div>
+          <% } %>
 
-      <!-- Login Form -->
-      <form action="/login" method="POST" class="space-y-5 text-xs font-bold">
-        <div>
-          <label for="username" class="block uppercase text-on-surface mb-2 tracking-wider">Username or Email</label>
-          <div class="relative text-on-surface">
-            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-on-surface/50">
-              <span class="material-symbols-outlined text-lg">person</span>
-            </span>
-            <input type="text" id="username" name="username" required placeholder="Enter username or email" 
-                   class="block w-full pl-10 pr-4 py-3.5 bg-background brutal-border text-sm focus:outline-none focus:bg-pure-white transition-all">
+          <!-- Login Form -->
+          <form action="/login" method="POST" class="space-y-5 text-xs font-bold">
+            <div>
+              <label for="username" class="block uppercase text-on-surface mb-2 tracking-wider">Username or Email</label>
+              <div class="relative text-on-surface">
+                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-on-surface/50">
+                  <span class="material-symbols-outlined text-lg">person</span>
+                </span>
+                <input type="text" id="username" name="username" required placeholder="Enter username or email" 
+                       class="block w-full pl-10 pr-4 py-3.5 bg-background brutal-border text-sm focus:outline-none focus:bg-pure-white transition-all">
+              </div>
+            </div>
+
+            <div>
+              <label for="password" class="block uppercase text-on-surface mb-2 tracking-wider">Password</label>
+              <div class="relative text-on-surface">
+                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-on-surface/50">
+                  <span class="material-symbols-outlined text-lg">key</span>
+                </span>
+                <input type="password" id="password" name="password" required placeholder="Password" 
+                       class="block w-full pl-10 pr-4 py-3.5 bg-background brutal-border text-sm focus:outline-none focus:bg-pure-white transition-all">
+              </div>
+            </div>
+
+            <button type="submit" class="w-full bg-primary text-white font-heading font-black text-sm uppercase py-4 brutal-border brutal-shadow-sm hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all flex items-center justify-center gap-2 mt-4">
+              <span class="material-symbols-outlined">login</span> Login to Dashboard
+            </button>
+          </form>
+
+          <!-- Bottom reminder -->
+          <div class="mt-6 pt-6 border-t-2 border-inverse-surface/10 text-center font-mono">
+            <p class="text-[10px] text-on-surface/70 font-bold flex items-center justify-center gap-1.5">
+              <span class="material-symbols-outlined text-primary text-sm font-bold">info</span> Authorized organizers only.
+            </p>
           </div>
         </div>
-
-        <div>
-          <label for="password" class="block uppercase text-on-surface mb-2 tracking-wider">Password</label>
-          <div class="relative text-on-surface">
-            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-on-surface/50">
-              <span class="material-symbols-outlined text-lg">key</span>
-            </span>
-            <input type="password" id="password" name="password" required placeholder="••••••••" 
-                   class="block w-full pl-10 pr-4 py-3.5 bg-background brutal-border text-sm focus:outline-none focus:bg-pure-white transition-all">
-          </div>
-        </div>
-
-        <button type="submit" class="w-full bg-primary text-white font-heading font-black text-sm uppercase py-4 brutal-border brutal-shadow-sm hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all flex items-center justify-center gap-2 mt-4">
-          <span class="material-symbols-outlined">login</span> Login to Dashboard
-        </button>
-      </form>
-
-      <!-- Bottom reminder -->
-      <div class="mt-6 pt-6 border-t-2 border-inverse-surface/10 text-center font-mono">
-        <p class="text-[10px] text-on-surface/70 font-bold flex items-center justify-center gap-1.5">
-          <span class="material-symbols-outlined text-primary text-sm font-bold">info</span> Authorized organizers only.
-        </p>
       </div>
 
+      <div class="lg:col-span-7 xl:col-span-8 flex items-center justify-center lg:justify-end">
+        <div class="relative w-full max-w-xl min-h-[320px] md:min-h-[460px] grid place-items-center">
+          <div class="absolute inset-6 md:inset-10 bg-primary/10 brutal-border rotate-2" aria-hidden="true"></div>
+          <div class="absolute left-4 right-4 top-1/2 h-8 -translate-y-1/2 bg-primary/20" aria-hidden="true"></div>
+          <img src="/assets/phoenix.svg" alt="AI Createathon phoenix" class="relative z-10 w-[280px] sm:w-[360px] md:w-[460px] lg:w-[520px] max-w-full drop-shadow-[14px_14px_0_rgba(183,16,42,0.24)]">
+        </div>
+      </div>
     </div>
   </div>
 </section>

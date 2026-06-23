@@ -1,0 +1,13 @@
+<% if (typeof success_msg !== 'undefined' && success_msg) { %>
+  <div class="mb-8 p-4 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center gap-3">
+    <i class="fa-solid fa-circle-check text-emerald-500 text-lg"></i>
+    <p class="text-xs font-semibold"><%= success_msg %></p>
+  </div>
+<% } %>
+
+<% if (typeof error_msg !== 'undefined' && error_msg) { %>
+  <div class="mb-8 p-4 bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center gap-3">
+    <i class="fa-solid fa-circle-exclamation text-rose-500 text-lg"></i>
+    <p class="text-xs font-semibold"><%= error_msg %></p>
+  </div>
+<% } %>

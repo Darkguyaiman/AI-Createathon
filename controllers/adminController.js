@@ -38,11 +38,25 @@ async function showRegistration(req, res) {
   }
 }
 
+function showNewGroup(req, res) {
+  renderWithAlerts(req, res, 'admin/group-form', { activePage: 'registration' });
+}
+
+async function showNewParticipant(req, res) {
+  try {
+    const groups = await groupModel.findAll();
+    renderWithAlerts(req, res, 'admin/participant-form', { activePage: 'registration', groups });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error loading participant form');
+  }
+}
+
 async function createGroup(req, res) {
   const { name, description } = req.body;
 
   if (!name) {
-    return redirectWithFlash(req, res, '/admin/registration', 'error', 'Team name is required.');
+    return redirectWithFlash(req, res, '/admin/groups/new', 'error', 'Team name is required.');
   }
 
   const logoPath = req.file ? '/uploads/' + req.file.filename : '/uploads/default-group.svg';
@@ -52,10 +66,10 @@ async function createGroup(req, res) {
     redirectWithFlash(req, res, '/admin/registration', 'success', `Team "${name}" created successfully!`);
   } catch (error) {
     if (error.code === 'ER_DUP_ENTRY') {
-      redirectWithFlash(req, res, '/admin/registration', 'error', 'A team with this name already exists.');
+      redirectWithFlash(req, res, '/admin/groups/new', 'error', 'A team with this name already exists.');
     } else {
       console.error(error);
-      redirectWithFlash(req, res, '/admin/registration', 'error', 'Error creating team.');
+      redirectWithFlash(req, res, '/admin/groups/new', 'error', 'Error creating team.');
     }
   }
 }
@@ -64,7 +78,7 @@ async function createParticipant(req, res) {
   const { name, email, groupId } = req.body;
 
   if (!name || !email) {
-    return redirectWithFlash(req, res, '/admin/registration', 'error', 'Name and email are required.');
+    return redirectWithFlash(req, res, '/admin/participants/new', 'error', 'Name and email are required.');
   }
 
   const avatarPath = req.file ? '/uploads/' + req.file.filename : '/uploads/default-avatar.svg';
@@ -75,10 +89,10 @@ async function createParticipant(req, res) {
     redirectWithFlash(req, res, '/admin/registration', 'success', `Participant "${name}" registered successfully!`);
   } catch (error) {
     if (error.code === 'ER_DUP_ENTRY') {
-      redirectWithFlash(req, res, '/admin/registration', 'error', 'A participant with this email address already exists.');
+      redirectWithFlash(req, res, '/admin/participants/new', 'error', 'A participant with this email address already exists.');
     } else {
       console.error(error);
-      redirectWithFlash(req, res, '/admin/registration', 'error', 'Error registering participant.');
+      redirectWithFlash(req, res, '/admin/participants/new', 'error', 'Error registering participant.');
     }
   }
 }
@@ -113,11 +127,15 @@ async function showPosts(req, res) {
   }
 }
 
+function showNewPost(req, res) {
+  renderWithAlerts(req, res, 'admin/post-form', { activePage: 'posts' });
+}
+
 async function createPost(req, res) {
   const { title, content } = req.body;
 
   if (!title || !content) {
-    return redirectWithFlash(req, res, '/admin/posts', 'error', 'Headline and body content are required.');
+    return redirectWithFlash(req, res, '/admin/posts/new', 'error', 'Headline and body content are required.');
   }
 
   const imagePath = req.file ? '/uploads/' + req.file.filename : null;
@@ -127,7 +145,7 @@ async function createPost(req, res) {
     redirectWithFlash(req, res, '/admin/posts', 'success', 'Live blog update published successfully!');
   } catch (error) {
     console.error(error);
-    redirectWithFlash(req, res, '/admin/posts', 'error', 'Error creating timeline post.');
+    redirectWithFlash(req, res, '/admin/posts/new', 'error', 'Error creating timeline post.');
   }
 }
 
@@ -153,11 +171,22 @@ async function showScoring(req, res) {
   }
 }
 
+async function showNewScore(req, res) {
+  try {
+    const selectedGroupId = req.query.groupId || null;
+    const groups = await groupModel.findAll();
+    renderWithAlerts(req, res, 'admin/score-form', { activePage: 'scoring', groups, selectedGroupId });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error loading score form');
+  }
+}
+
 async function saveScore(req, res) {
   const { group_id, judge_name, score_innovation, score_design, score_execution, feedback } = req.body;
 
   if (!group_id || !judge_name) {
-    return redirectWithFlash(req, res, '/admin/scoring', 'error', 'Judge name and target team are required.');
+    return redirectWithFlash(req, res, '/admin/scores/new', 'error', 'Judge name and target team are required.');
   }
 
   const innovation = parseInt(score_innovation, 10);
@@ -165,7 +194,7 @@ async function saveScore(req, res) {
   const execution = parseInt(score_execution, 10);
 
   if (innovation < 1 || innovation > 10 || design < 1 || design > 10 || execution < 1 || execution > 10) {
-    return redirectWithFlash(req, res, '/admin/scoring', 'error', 'Scoring metrics must range from 1 to 10.');
+    return redirectWithFlash(req, res, `/admin/scores/new?groupId=${encodeURIComponent(group_id)}`, 'error', 'Scoring metrics must range from 1 to 10.');
   }
 
   try {
@@ -181,7 +210,7 @@ async function saveScore(req, res) {
     redirectWithFlash(req, res, '/admin/scoring', 'success', `Evaluation by "${judge_name}" recorded successfully.`);
   } catch (error) {
     console.error(error);
-    redirectWithFlash(req, res, '/admin/scoring', 'error', 'Database error saving scores.');
+    redirectWithFlash(req, res, `/admin/scores/new?groupId=${encodeURIComponent(group_id || '')}`, 'error', 'Database error saving scores.');
   }
 }
 
@@ -203,6 +232,10 @@ async function showSettings(req, res) {
     console.error(error);
     res.status(500).send('Error loading settings');
   }
+}
+
+function showPasswordForm(req, res) {
+  renderWithAlerts(req, res, 'admin/password-form', { activePage: 'settings' });
 }
 
 async function toggleVoting(req, res) {
@@ -230,15 +263,15 @@ async function changePassword(req, res) {
   const { old_password, new_password, confirm_new_password } = req.body;
 
   if (!old_password || !new_password || !confirm_new_password) {
-    return redirectWithFlash(req, res, '/admin/settings', 'error', 'All password fields are required.');
+    return redirectWithFlash(req, res, '/admin/settings/password', 'error', 'All password fields are required.');
   }
 
   if (new_password !== confirm_new_password) {
-    return redirectWithFlash(req, res, '/admin/settings', 'error', 'New passwords do not match.');
+    return redirectWithFlash(req, res, '/admin/settings/password', 'error', 'New passwords do not match.');
   }
 
   if (new_password.length < 6) {
-    return redirectWithFlash(req, res, '/admin/settings', 'error', 'New password must be at least 6 characters long.');
+    return redirectWithFlash(req, res, '/admin/settings/password', 'error', 'New password must be at least 6 characters long.');
   }
 
   try {
@@ -248,28 +281,33 @@ async function changePassword(req, res) {
       await adminModel.updatePassword(req.session.adminId, new_password);
       redirectWithFlash(req, res, '/admin/settings', 'success', 'Admin password changed successfully!');
     } else {
-      redirectWithFlash(req, res, '/admin/settings', 'error', 'Incorrect current password.');
+      redirectWithFlash(req, res, '/admin/settings/password', 'error', 'Incorrect current password.');
     }
   } catch (error) {
     console.error(error);
-    redirectWithFlash(req, res, '/admin/settings', 'error', 'Database security update error.');
+    redirectWithFlash(req, res, '/admin/settings/password', 'error', 'Database security update error.');
   }
 }
 
 module.exports = {
   showDashboard,
   showRegistration,
+  showNewGroup,
   createGroup,
+  showNewParticipant,
   createParticipant,
   deleteGroup,
   deleteParticipant,
   showPosts,
+  showNewPost,
   createPost,
   deletePost,
   showScoring,
+  showNewScore,
   saveScore,
   deleteScore,
   showSettings,
+  showPasswordForm,
   toggleVoting,
   resetVotes,
   changePassword
