@@ -3,6 +3,7 @@ const participantModel = require('../models/participantModel');
 const postModel = require('../models/postModel');
 const settingModel = require('../models/settingModel');
 const voteModel = require('../models/voteModel');
+const dashboardModel = require('../models/dashboardModel');
 const { redirectWithFlash, renderWithAlerts } = require('../utils/flash');
 
 function getVisitorIp(req) {
@@ -11,11 +12,44 @@ function getVisitorIp(req) {
 
 async function showHome(req, res) {
   try {
-    const posts = await postModel.findAllWithAuthors();
-    renderWithAlerts(req, res, 'index', { activePage: 'home', posts });
+    const allPosts = await postModel.findAllWithAuthors();
+    const posts = allPosts.slice(0, 3);
+    const hasMore = allPosts.length > 3;
+    renderWithAlerts(req, res, 'index', { activePage: 'home', posts, hasMore });
   } catch (error) {
     console.error(error);
     res.status(500).send('Database connection error');
+  }
+}
+
+async function showUpdates(req, res) {
+  try {
+    const posts = await postModel.findAllWithAuthors();
+    renderWithAlerts(req, res, 'updates', { activePage: 'updates', posts });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Database connection error');
+  }
+}
+
+async function showLeaderboard(req, res) {
+  try {
+    const votingActive = await settingModel.isVotingActive();
+    if (!votingActive) {
+      return redirectWithFlash(req, res, '/', 'error', 'Leaderboard is only accessible when public voting is active.');
+    }
+
+    const stats = await dashboardModel.getDashboardStats();
+    const leaderboard = await dashboardModel.getLeaderboard(stats.totalVotes);
+
+    renderWithAlerts(req, res, 'leaderboard', {
+      activePage: 'leaderboard',
+      leaderboard,
+      totalVotes: stats.totalVotes
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error loading live leaderboard.');
   }
 }
 
@@ -76,6 +110,8 @@ async function castVote(req, res) {
 
 module.exports = {
   showHome,
+  showUpdates,
+  showLeaderboard,
   showVoting,
   showTeam,
   castVote

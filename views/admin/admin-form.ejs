@@ -1,0 +1,80 @@
+<%- include('../partials/admin-header') %>
+<% const isEditing = typeof admin !== 'undefined' && admin; %>
+
+<div class="mb-8 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+  <div>
+    <p class="font-mono text-xs font-black uppercase tracking-widest text-primary mb-2">Settings & Security</p>
+    <h1 class="text-3xl font-extrabold tracking-tight"><%= isEditing ? 'Edit Administrator' : 'Create Administrator' %></h1>
+    <p class="text-sm text-slate-400 mt-1"><%= isEditing ? 'Update the details and role for this administrator account.' : 'Register a new administrative account and set access privileges.' %></p>
+  </div>
+  <a href="/admin/settings/admins" class="inline-flex items-center justify-center gap-2 bg-slate-900 text-slate-300 px-4 py-3 text-xs font-bold uppercase tracking-wider border border-slate-800 transition-colors">
+    <i class="fa-solid fa-arrow-left"></i> Back to roster
+  </a>
+</div>
+
+<%- include('../partials/admin-alerts') %>
+
+<div class="w-full bg-slate-950 border border-slate-800 p-6 md:p-8">
+  <h3 class="text-lg font-bold text-white mb-6 flex items-center gap-2">
+    <i class="fa-solid <%= isEditing ? 'fa-user-pen' : 'fa-user-plus' %> text-accent-teal"></i> Account Credentials
+  </h3>
+
+  <form action="<%= isEditing ? '/admin/settings/admins/' + admin.id + '/edit' : '/admin/settings/admins' %>" method="POST" class="space-y-4">
+    <div>
+      <label for="adminUsername" class="block text-xs uppercase font-extrabold tracking-wider text-slate-400 mb-2">Username</label>
+      <input type="text" id="adminUsername" name="username" required placeholder="e.g. system_admin" value="<%= isEditing ? admin.username : '' %>"
+             class="block w-full px-4 py-3 bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-teal/35 focus:border-accent-teal transition-all">
+    </div>
+
+    <div>
+      <label for="adminEmail" class="block text-xs uppercase font-extrabold tracking-wider text-slate-400 mb-2">Email Address</label>
+      <input type="email" id="adminEmail" name="email" required placeholder="e.g. user@admin.com" value="<%= isEditing ? admin.email : '' %>"
+             class="block w-full px-4 py-3 bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-teal/35 focus:border-accent-teal transition-all">
+    </div>
+
+    <div>
+      <label for="adminPassword" class="block text-xs uppercase font-extrabold tracking-wider text-slate-400 mb-2">
+        Password <%= isEditing ? '(Leave blank to keep current)' : '' %>
+      </label>
+      <div class="relative text-white">
+        <input type="password" id="adminPassword" name="password" <%= isEditing ? '' : 'required' %> minlength="6" placeholder="<%= isEditing ? 'Enter new password or leave blank' : 'At least 6 characters' %>"
+               class="block w-full pl-4 pr-10 py-3 bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-teal/35 focus:border-accent-teal transition-all">
+        <button type="button" id="toggleAdminPassword" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-white transition-colors" aria-label="Toggle Password Visibility">
+          <i class="fa-solid fa-eye text-sm"></i>
+        </button>
+      </div>
+    </div>
+
+    <div>
+      <label for="adminRole" class="block text-xs uppercase font-extrabold tracking-wider text-slate-400 mb-2">Access Role</label>
+      <select id="adminRole" name="role" required
+              class="block w-full px-4 py-3 bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-teal/35 focus:border-accent-teal transition-all">
+        <option value="normal" <%= isEditing && admin.role === 'normal' ? 'selected' : '' %>>Normal Admin (Operational access; cannot manage admins)</option>
+        <option value="super" <%= isEditing && admin.role === 'super' ? 'selected' : '' %>>Super Admin (Full access; can create and delete other admins)</option>
+      </select>
+    </div>
+
+    <button type="submit" class="w-full mt-4 py-3.5 px-4 bg-accent-teal hover:bg-teal-400 text-slate-950 font-extrabold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2">
+      <i class="fa-solid <%= isEditing ? 'fa-floppy-disk' : 'fa-user-plus' %>"></i> <%= isEditing ? 'Update Admin Account' : 'Create Admin Account' %>
+    </button>
+  </form>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const togglePassword = document.getElementById('toggleAdminPassword');
+    const passwordInput = document.getElementById('adminPassword');
+
+    togglePassword?.addEventListener('click', () => {
+      const isPassword = passwordInput.type === 'password';
+      passwordInput.type = isPassword ? 'text' : 'password';
+      
+      const icon = togglePassword.querySelector('i');
+      if (icon) {
+        icon.className = isPassword ? 'fa-solid fa-eye-slash text-sm' : 'fa-solid fa-eye text-sm';
+      }
+    });
+  });
+</script>
+
+<%- include('../partials/admin-footer') %>

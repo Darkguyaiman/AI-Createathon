@@ -9,11 +9,9 @@
   <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
   <link rel="shortcut icon" href="/favicon.ico">
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;750&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/vendor/google-fonts/fonts.css">
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/vendor/fontawesome/css/all.min.css">
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body class="admin-app min-h-screen bg-background text-on-surface font-sans selection:bg-primary selection:text-white">
@@ -53,6 +51,12 @@
             <span class="material-symbols-outlined">settings</span>
             Settings
           </a>
+          <% if (typeof session !== 'undefined' && session.role === 'super') { %>
+            <a href="/admin/settings/admins" class="admin-nav-link <%= typeof activePage !== 'undefined' && activePage === 'admins' ? 'is-active' : '' %>">
+              <span class="material-symbols-outlined">shield_person</span>
+              Admins
+            </a>
+          <% } %>
         </nav>
 
         <div class="mt-auto p-4 lg:p-5 border-t-4 border-primary/70">

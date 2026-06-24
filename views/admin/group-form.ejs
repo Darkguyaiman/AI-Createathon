@@ -1,10 +1,11 @@
 <%- include('../partials/admin-header') %>
+<% const isEditing = typeof group !== 'undefined' && group; %>
 
 <div class="mb-8 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
   <div>
     <p class="font-mono text-xs font-black uppercase tracking-widest text-primary mb-2">Registration</p>
-    <h1 class="text-3xl font-extrabold tracking-tight">Create New Team</h1>
-    <p class="text-sm text-slate-400 mt-1">Add a project group before assigning participants to it.</p>
+    <h1 class="text-3xl font-extrabold tracking-tight"><%= isEditing ? 'Edit Team' : 'Create New Team' %></h1>
+    <p class="text-sm text-slate-400 mt-1"><%= isEditing ? 'Update this project group and keep the roster aligned.' : 'Add a project group before assigning participants to it.' %></p>
   </div>
   <a href="/admin/registration" class="inline-flex items-center justify-center gap-2 bg-slate-900 text-slate-300 px-4 py-3 text-xs font-bold uppercase tracking-wider border border-slate-800 transition-colors">
     <i class="fa-solid fa-arrow-left"></i> Back to registration
@@ -13,32 +14,38 @@
 
 <%- include('../partials/admin-alerts') %>
 
-<div class="max-w-2xl bg-slate-950 border border-slate-800 p-6 md:p-8">
+<div class="w-full bg-slate-950 border border-slate-800 p-6 md:p-8">
   <h3 class="text-lg font-bold text-white mb-6 flex items-center gap-2">
     <i class="fa-solid fa-people-group text-accent-teal"></i> Team Details
   </h3>
 
-  <form action="/admin/groups" method="POST" enctype="multipart/form-data" class="space-y-4">
+  <form action="<%= isEditing ? '/admin/groups/' + group.id + '/edit' : '/admin/groups' %>" method="POST" enctype="multipart/form-data" class="space-y-4">
     <div>
       <label for="groupName" class="block text-xs uppercase font-extrabold tracking-wider text-slate-400 mb-2">Team Name</label>
-      <input type="text" id="groupName" name="name" required placeholder="e.g. Prompt Engineers"
+      <input type="text" id="groupName" name="name" required placeholder="e.g. Prompt Engineers" value="<%= isEditing ? group.name : '' %>"
              class="block w-full px-4 py-3 bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-teal/35 focus:border-accent-teal transition-all">
     </div>
 
     <div>
       <label for="groupDescription" class="block text-xs uppercase font-extrabold tracking-wider text-slate-400 mb-2">Project Description</label>
       <textarea id="groupDescription" name="description" placeholder="Briefly describe the AI project they are creating..." rows="4"
-                class="block w-full px-4 py-3 bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-teal/35 focus:border-accent-teal transition-all resize-none"></textarea>
+                class="block w-full px-4 py-3 bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-teal/35 focus:border-accent-teal transition-all resize-none"><%= isEditing ? (group.description || '') : '' %></textarea>
     </div>
 
     <div>
       <label for="groupLogo" class="block text-xs uppercase font-extrabold tracking-wider text-slate-400 mb-2">Team Logo / Picture</label>
+      <% if (isEditing && group.logo_path) { %>
+        <div class="mb-3 flex items-center gap-3 text-xs text-slate-400">
+          <img src="<%= group.logo_path %>" alt="" class="w-12 h-12 object-cover border border-slate-800">
+          <span>Current image stays unless you upload a replacement.</span>
+        </div>
+      <% } %>
       <input type="file" id="groupLogo" name="logo" accept="image/*"
              class="block w-full text-xs text-slate-400 file:mr-4 file:py-2.5 file:px-4 file:border-0 file:text-xs file:font-bold file:bg-slate-900 file:text-slate-200 hover:file:bg-slate-800 file:cursor-pointer">
     </div>
 
     <button type="submit" class="w-full mt-4 py-3 px-4 bg-accent-teal hover:bg-teal-400 text-slate-950 font-extrabold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2">
-      <i class="fa-solid fa-plus"></i> Save Team
+      <i class="fa-solid <%= isEditing ? 'fa-floppy-disk' : 'fa-plus' %>"></i> <%= isEditing ? 'Update Team' : 'Save Team' %>
     </button>
   </form>
 </div>

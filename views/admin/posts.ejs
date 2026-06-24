@@ -34,17 +34,24 @@
               <p class="text-xs text-slate-300 mt-2 whitespace-pre-line leading-relaxed"><%= post.content %></p>
             </div>
 
-            <form action="/admin/posts/delete" method="POST" onsubmit="return confirm('Are you sure you want to delete this live update?');">
-              <input type="hidden" name="postId" value="<%= post.id %>">
-              <button type="submit" class="p-2 bg-slate-950 hover:bg-rose-950 hover:text-rose-500 text-slate-400 border border-slate-850 hover:border-rose-900 transition-colors" aria-label="Delete <%= post.title %>">
-                <i class="fa-solid fa-trash-can text-xs"></i>
-              </button>
-            </form>
+            <div class="flex items-center gap-2">
+              <a href="/admin/posts/<%= post.id %>/edit" class="p-2 bg-slate-950 hover:bg-slate-800 hover:text-white text-slate-400 border border-slate-850 transition-colors" aria-label="Edit <%= post.title %>">
+                <i class="fa-solid fa-pen-to-square text-xs"></i>
+              </a>
+              <form action="/admin/posts/delete" method="POST" onsubmit="return confirm('Are you sure you want to delete this live update?');">
+                <input type="hidden" name="postId" value="<%= post.id %>">
+                <button type="submit" class="p-2 bg-slate-950 hover:bg-rose-950 hover:text-rose-500 text-slate-400 border border-slate-850 hover:border-rose-900 transition-colors" aria-label="Delete <%= post.title %>">
+                  <i class="fa-solid fa-trash-can text-xs"></i>
+                </button>
+              </form>
+            </div>
           </div>
 
           <% if (post.image_path) { %>
-            <div class="overflow-hidden border border-slate-850 max-h-64 mt-2">
-              <img src="<%= post.image_path %>" alt="" class="w-full h-full object-cover">
+            <div class="border border-slate-850 bg-slate-950 mt-2">
+              <button type="button" class="block w-full cursor-zoom-in" data-post-image-open data-image-src="<%= post.image_path %>" data-image-title="<%= post.title %>" aria-label="Open full image for <%= post.title %>">
+                <img src="<%= post.image_path %>" alt="" class="w-full h-auto object-contain" style="max-height: 420px;">
+              </button>
             </div>
           <% } %>
         </div>
@@ -62,5 +69,41 @@
     </div>
   <% } %>
 </div>
+
+<dialog class="bg-slate-950 text-white border border-slate-700 p-0 w-full" style="width: min(92vw, 1040px); max-height: 90vh;" data-post-image-modal>
+  <div class="flex items-center justify-between gap-4 border-b border-slate-800 px-4 py-3">
+    <h3 class="text-sm font-extrabold truncate" data-post-image-title>Image preview</h3>
+    <button type="button" class="w-10 h-10 bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 transition-colors grid place-items-center" data-post-image-close aria-label="Close image preview">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+  <div class="bg-slate-950 p-4">
+    <img src="" alt="" class="mx-auto max-w-full h-auto object-contain" style="max-height: 76vh;" data-post-image-preview>
+  </div>
+</dialog>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const modal = document.querySelector('[data-post-image-modal]');
+    const preview = document.querySelector('[data-post-image-preview]');
+    const title = document.querySelector('[data-post-image-title]');
+    const closeButton = document.querySelector('[data-post-image-close]');
+
+    document.querySelectorAll('[data-post-image-open]').forEach(button => {
+      button.addEventListener('click', () => {
+        if (!modal?.showModal || !preview) return;
+        preview.src = button.dataset.imageSrc || '';
+        preview.alt = button.dataset.imageTitle || 'Post image preview';
+        if (title) title.textContent = button.dataset.imageTitle || 'Image preview';
+        modal.showModal();
+      });
+    });
+
+    closeButton?.addEventListener('click', () => modal?.close());
+    modal?.addEventListener('click', event => {
+      if (event.target === modal) modal.close();
+    });
+  });
+</script>
 
 <%- include('../partials/admin-footer') %>

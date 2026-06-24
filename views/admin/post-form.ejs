@@ -1,10 +1,11 @@
 <%- include('../partials/admin-header') %>
+<% const isEditing = typeof post !== 'undefined' && post; %>
 
 <div class="mb-8 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
   <div>
     <p class="font-mono text-xs font-black uppercase tracking-widest text-primary mb-2">Live Feed</p>
-    <h1 class="text-3xl font-extrabold tracking-tight">Create Live Post</h1>
-    <p class="text-sm text-slate-400 mt-1">Publish an announcement, event trigger, or image update to the home page timeline.</p>
+    <h1 class="text-3xl font-extrabold tracking-tight"><%= isEditing ? 'Edit Live Post' : 'Create Live Post' %></h1>
+    <p class="text-sm text-slate-400 mt-1"><%= isEditing ? 'Update an existing timeline update shown on the home page.' : 'Publish an announcement, event trigger, or image update to the home page timeline.' %></p>
   </div>
   <a href="/admin/posts" class="inline-flex items-center justify-center gap-2 bg-slate-900 text-slate-300 px-4 py-3 text-xs font-bold uppercase tracking-wider border border-slate-800 transition-colors">
     <i class="fa-solid fa-arrow-left"></i> Back to posts
@@ -13,34 +14,150 @@
 
 <%- include('../partials/admin-alerts') %>
 
-<div class="max-w-2xl bg-slate-950 border border-slate-800 p-6 md:p-8">
+<div class="w-full bg-slate-950 border border-slate-800 p-6 md:p-8">
   <h3 class="text-lg font-bold text-white mb-6 flex items-center gap-2">
     <i class="fa-solid fa-square-rss text-accent-teal"></i> Post Details
   </h3>
 
-  <form action="/admin/posts" method="POST" enctype="multipart/form-data" class="space-y-4">
+  <form action="<%= isEditing ? '/admin/posts/' + post.id + '/edit' : '/admin/posts' %>" method="POST" enctype="multipart/form-data" class="space-y-4">
     <div>
       <label for="postTitle" class="block text-xs uppercase font-extrabold tracking-wider text-slate-400 mb-2">Headline / Title</label>
-      <input type="text" id="postTitle" name="title" required placeholder="e.g. Hackathon Kickoff!"
+      <input type="text" id="postTitle" name="title" required placeholder="e.g. Hackathon Kickoff!" value="<%= isEditing ? post.title : '' %>"
              class="block w-full px-4 py-3 bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-teal/35 focus:border-accent-teal transition-all">
     </div>
 
     <div>
       <label for="postContent" class="block text-xs uppercase font-extrabold tracking-wider text-slate-400 mb-2">Body Content</label>
       <textarea id="postContent" name="content" required placeholder="Write update text details..." rows="7"
-                class="block w-full px-4 py-3 bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-teal/35 focus:border-accent-teal transition-all resize-none"></textarea>
+                class="block w-full px-4 py-3 bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-teal/35 focus:border-accent-teal transition-all resize-none"><%= isEditing ? post.content : '' %></textarea>
     </div>
 
     <div>
       <label for="postImage" class="block text-xs uppercase font-extrabold tracking-wider text-slate-400 mb-2">Attach Event Image</label>
+      <% if (isEditing && post.image_path) { %>
+        <div class="mb-3 border border-slate-800 bg-slate-900">
+          <button type="button" class="block w-full cursor-zoom-in" data-upload-preview-existing="<%= post.image_path %>" data-upload-preview-title="<%= post.title %>" aria-label="Open current post image">
+            <img src="<%= post.image_path %>" alt="" class="w-full h-auto object-contain" style="max-height: 260px;">
+          </button>
+        </div>
+        <p class="mb-3 text-xs text-slate-400">Current image stays unless you upload a replacement.</p>
+      <% } %>
       <input type="file" id="postImage" name="image" accept="image/*"
              class="block w-full text-xs text-slate-400 file:mr-4 file:py-2.5 file:px-4 file:border-0 file:text-xs file:font-bold file:bg-slate-900 file:text-slate-200 hover:file:bg-slate-800 file:cursor-pointer">
+      <p id="postImageError" class="text-xs text-red-500 mt-2 font-bold uppercase tracking-wider hidden"></p>
+      <button type="button" class="hidden mt-3 w-full py-2.5 px-4 bg-slate-900 hover:bg-slate-800 text-slate-200 font-extrabold text-xs uppercase tracking-wider border border-slate-800 transition-colors items-center justify-center gap-2" data-upload-preview-open>
+        <i class="fa-solid fa-magnifying-glass-plus"></i> Preview Selected Image
+      </button>
     </div>
 
     <button type="submit" class="w-full mt-4 py-3.5 px-4 bg-accent-teal hover:bg-teal-400 text-slate-950 font-extrabold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2">
-      <i class="fa-solid fa-bullhorn"></i> Publish Live Post
+      <i class="fa-solid <%= isEditing ? 'fa-floppy-disk' : 'fa-bullhorn' %>"></i> <%= isEditing ? 'Update Live Post' : 'Publish Live Post' %>
     </button>
   </form>
 </div>
+
+<dialog class="bg-slate-950 text-white border border-slate-700 p-0 w-full" style="width: min(92vw, 1040px); max-height: 90vh;" data-upload-preview-modal>
+  <div class="flex items-center justify-between gap-4 border-b border-slate-800 px-4 py-3">
+    <h3 class="text-sm font-extrabold truncate" data-upload-preview-heading>Image preview</h3>
+    <button type="button" class="w-10 h-10 bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 transition-colors grid place-items-center" data-upload-preview-close aria-label="Close image preview">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+  <div class="bg-slate-950 p-4">
+    <img src="" alt="" class="mx-auto max-w-full h-auto object-contain" style="max-height: 76vh;" data-upload-preview-image>
+  </div>
+</dialog>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const fileInput = document.getElementById('postImage');
+    const openButton = document.querySelector('[data-upload-preview-open]');
+    const existingButton = document.querySelector('[data-upload-preview-existing]');
+    const modal = document.querySelector('[data-upload-preview-modal]');
+    const image = document.querySelector('[data-upload-preview-image]');
+    const heading = document.querySelector('[data-upload-preview-heading]');
+    const closeButton = document.querySelector('[data-upload-preview-close]');
+    let selectedImageUrl = '';
+
+    const openPreview = (src, title) => {
+      if (!modal?.showModal || !image || !src) return;
+      image.src = src;
+      image.alt = title || 'Selected post image preview';
+      if (heading) heading.textContent = title || 'Image preview';
+      modal.showModal();
+    };
+
+    fileInput?.addEventListener('change', () => {
+      if (selectedImageUrl) {
+        URL.revokeObjectURL(selectedImageUrl);
+        selectedImageUrl = '';
+      }
+
+      const file = fileInput.files && fileInput.files[0];
+      const errorEl = document.getElementById('postImageError');
+      if (errorEl) {
+        errorEl.textContent = '';
+        errorEl.classList.add('hidden');
+      }
+
+      if (!file) {
+        openButton?.classList.add('hidden');
+        openButton?.classList.remove('inline-flex');
+        return;
+      }
+
+      // Check file type
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml'];
+      const fileExtension = file.name.split('.').pop().toLowerCase();
+      const allowedExtensions = ['jpeg', 'jpg', 'png', 'gif', 'webp', 'svg'];
+      
+      if (!allowedTypes.includes(file.type) && !allowedExtensions.includes(fileExtension)) {
+        if (errorEl) {
+          errorEl.textContent = 'Error: Only image files (jpeg, jpg, png, gif, webp, svg) are allowed.';
+          errorEl.classList.remove('hidden');
+        }
+        fileInput.value = '';
+        openButton?.classList.add('hidden');
+        openButton?.classList.remove('inline-flex');
+        return;
+      }
+
+      // Check file size (5MB limit)
+      const maxSize = 5 * 1024 * 1024;
+      if (file.size > maxSize) {
+        if (errorEl) {
+          errorEl.textContent = 'Error: Image size must not exceed 5MB.';
+          errorEl.classList.remove('hidden');
+        }
+        fileInput.value = '';
+        openButton?.classList.add('hidden');
+        openButton?.classList.remove('inline-flex');
+        return;
+      }
+
+      selectedImageUrl = URL.createObjectURL(file);
+      openButton?.classList.remove('hidden');
+      openButton?.classList.add('inline-flex');
+    });
+
+    openButton?.addEventListener('click', () => {
+      const file = fileInput?.files && fileInput.files[0];
+      openPreview(selectedImageUrl, file?.name || 'Selected image preview');
+    });
+
+    existingButton?.addEventListener('click', () => {
+      openPreview(existingButton.dataset.uploadPreviewExisting, existingButton.dataset.uploadPreviewTitle || 'Current image preview');
+    });
+
+    closeButton?.addEventListener('click', () => modal?.close());
+    modal?.addEventListener('click', event => {
+      if (event.target === modal) modal.close();
+    });
+
+    window.addEventListener('beforeunload', () => {
+      if (selectedImageUrl) URL.revokeObjectURL(selectedImageUrl);
+    });
+  });
+</script>
 
 <%- include('../partials/admin-footer') %>

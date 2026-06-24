@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS `admins` (
   `username` VARCHAR(50) UNIQUE NOT NULL,
   `email` VARCHAR(100) UNIQUE NOT NULL,
   `password_hash` VARCHAR(255) NOT NULL,
+  `role` VARCHAR(20) DEFAULT 'normal' NOT NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
@@ -89,9 +90,10 @@ ON DUPLICATE KEY UPDATE `value_name` = `value_name`;
 -- Username: admin
 -- Email: admin@admin.com
 -- Password: 1234567890 (bcrypt hash generated with 10 salt rounds)
-INSERT INTO `admins` (`id`, `username`, `email`, `password_hash`) VALUES 
-(1, 'admin', 'admin@admin.com', '$2b$10$/cCiMjMpH/m5fAr/bbocoOEJwDFQdJ27/EfesMUb5IcjTTO9neXhe')
+INSERT INTO `admins` (`id`, `username`, `email`, `password_hash`, `role`) VALUES 
+(1, 'admin', 'admin@admin.com', '$2b$10$/cCiMjMpH/m5fAr/bbocoOEJwDFQdJ27/EfesMUb5IcjTTO9neXhe', 'super')
 ON DUPLICATE KEY UPDATE
   `username` = VALUES(`username`),
   `email` = VALUES(`email`),
-  `password_hash` = VALUES(`password_hash`);
+  `password_hash` = VALUES(`password_hash`),
+  `role` = VALUES(`role`);

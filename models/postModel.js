@@ -9,10 +9,22 @@ async function findAllWithAuthors() {
   `);
 }
 
+async function findById(id) {
+  const posts = await db.query('SELECT * FROM posts WHERE id = ?', [id]);
+  return posts[0];
+}
+
 async function create({ title, content, imagePath, adminId }) {
   return db.query(
     'INSERT INTO posts (title, content, image_path, admin_id) VALUES (?, ?, ?, ?)',
     [title, content, imagePath, adminId]
+  );
+}
+
+async function update(id, { title, content, imagePath, adminId }) {
+  return db.query(
+    'UPDATE posts SET title = ?, content = ?, image_path = ?, admin_id = ? WHERE id = ?',
+    [title, content, imagePath, adminId, id]
   );
 }
 
@@ -22,6 +34,8 @@ async function remove(id) {
 
 module.exports = {
   findAllWithAuthors,
+  findById,
   create,
+  update,
   remove
 };

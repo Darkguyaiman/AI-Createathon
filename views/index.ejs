@@ -78,11 +78,11 @@
             </div>
             <div class="flex items-center gap-3">
               <span class="material-symbols-outlined text-primary text-lg">check_box</span>
-              <p>OFFICIAL T-SHIRT &amp; LUNCH</p>
+              <p>FREE INTRODUCTION TO AI WORKSHOP</p>
             </div>
             <div class="flex items-center gap-3">
               <span class="material-symbols-outlined text-primary text-lg">check_box</span>
-              <p>CERTIFICATE OF PARTICIPATION</p>
+              <p>COMPLIMENTARY SNACKS &amp; REFRESHMENTS</p>
             </div>
           </div>
         </div>
@@ -282,8 +282,10 @@
               <p class="text-on-surface/90 text-sm leading-relaxed mb-6 whitespace-pre-line font-sans"><%= post.content %></p>
               
               <% if (post.image_path) { %>
-                <div class="overflow-hidden brutal-border max-h-96">
-                  <img src="<%= post.image_path %>" alt="<%= post.title %>" class="w-full h-full object-cover">
+                <div class="mt-6 flex justify-start">
+                  <div class="brutal-border bg-background overflow-hidden inline-block">
+                    <img src="<%= post.image_path %>" alt="<%= post.title %>" class="max-h-[520px] w-auto max-w-full block">
+                  </div>
                 </div>
               <% } %>
             </div>
@@ -303,6 +305,14 @@
         </div>
       <% } %>
     </div>
+    <% if (typeof hasMore !== 'undefined' && hasMore) { %>
+      <div class="mt-12 text-center fade-up">
+        <a href="/updates" class="inline-flex items-center gap-3 bg-primary text-on-primary font-heading text-sm px-6 py-3.5 brutal-border brutal-shadow-sm active:translate-x-1 active:translate-y-1 active:shadow-none transition-all uppercase font-black">
+          View All Updates
+          <span class="material-symbols-outlined text-lg">arrow_forward</span>
+        </a>
+      </div>
+    <% } %>
   </div>
 </section>
 

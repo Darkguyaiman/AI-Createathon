@@ -1,0 +1,90 @@
+<%- include('partials/header') %>
+
+<!-- DEDICATED UPDATES HERO -->
+<section class="py-12 bg-background border-b-8 border-inverse-surface fade-up">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+      
+      <!-- Left side info -->
+      <div class="text-center md:text-left space-y-2">
+        <div class="inline-flex items-center gap-2">
+          <span class="flex h-3 w-3 relative">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
+          </span>
+          <span class="text-xs font-mono font-bold text-primary bg-primary/10 border border-primary/20 px-2 py-0.5 uppercase tracking-widest">Live Updates Feed</span>
+        </div>
+
+        <h1 class="text-4xl md:text-5xl font-black text-on-surface uppercase tracking-tight font-heading">Event Feed</h1>
+        <p class="text-xs text-on-surface/70 font-mono mt-1">Real-time announcements, timeline events, and photos directly from the organizing committee.</p>
+      </div>
+
+      <!-- Right side badge / status indicator -->
+      <div class="px-6 py-4 bg-pure-white brutal-border brutal-shadow flex items-center gap-4 hover:-translate-y-0.5 transition-all">
+        <div class="p-3 bg-primary text-white brutal-border">
+          <span class="material-symbols-outlined text-2xl" style="display: block;">rss_feed</span>
+        </div>
+        <div class="text-left font-mono">
+          <p class="text-[9px] text-on-surface/50 uppercase font-bold tracking-wider">Total Broadcasts</p>
+          <p class="text-2xl font-black text-on-surface"><%= typeof posts !== 'undefined' ? posts.length : 0 %></p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ALL LIVE UPDATE TIMELINE SECTION -->
+<section class="py-16 bg-background">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    
+    <!-- Timeline Wrapper -->
+    <div class="relative border-l-4 border-inverse-surface ml-4 md:ml-6 space-y-12">
+      <% if (typeof posts !== 'undefined' && posts.length > 0) { %>
+        <% posts.forEach((post, index) => { %>
+          <div class="relative pl-8 md:pl-10 group fade-up">
+            <!-- Timeline Node Indicator -->
+            <div class="absolute -left-[14px] top-1.5 w-6 h-6 rounded-full bg-primary border-4 border-inverse-surface shadow-brutal-sm group-hover:scale-110 transition-transform"></div>
+            
+            <!-- Post Card -->
+            <div class="brutal-border p-8 bg-pure-white brutal-shadow hover-brutal hover:bg-background transition-colors duration-300">
+              <div class="flex items-center justify-between gap-4 mb-4 font-mono text-xs">
+                <span class="font-bold text-primary">
+                  <i class="fa-solid fa-user-tie mr-1"></i> <%= post.author || 'Organizer' %>
+                </span>
+                <span class="font-medium text-on-surface/60">
+                  <i class="fa-regular fa-clock mr-1"></i> <%= new Date(post.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) %>
+                </span>
+              </div>
+
+              <h3 class="text-2xl font-black font-heading text-on-surface mb-3 uppercase leading-none"><%= post.title %></h3>
+              <p class="text-on-surface/90 text-sm leading-relaxed mb-6 whitespace-pre-line font-sans"><%= post.content %></p>
+              
+              <% if (post.image_path) { %>
+                <div class="mt-6 flex justify-start">
+                  <div class="brutal-border bg-background overflow-hidden inline-block">
+                    <img src="<%= post.image_path %>" alt="<%= post.title %>" class="max-h-[520px] w-auto max-w-full block">
+                  </div>
+                </div>
+              <% } %>
+            </div>
+          </div>
+        <% }) %>
+      <% } else { %>
+        <!-- Empty Timeline State -->
+        <div class="relative pl-8 md:pl-10 fade-up">
+          <div class="absolute -left-[14px] top-1.5 w-6 h-6 rounded-full bg-pure-white border-4 border-inverse-surface"></div>
+          <div class="brutal-border p-8 bg-pure-white brutal-shadow text-center space-y-4">
+            <div class="w-12 h-12 brutal-border bg-background flex items-center justify-center text-primary mx-auto">
+              <span class="material-symbols-outlined text-3xl animate-pulse">timer</span>
+            </div>
+            <h3 class="text-xl font-bold uppercase font-heading text-on-surface">The clock is ticking...</h3>
+            <p class="text-on-surface/75 font-mono text-xs max-w-sm mx-auto">No timeline updates have been posted yet. Live blogging will start as soon as the hackers begin pitching!</p>
+          </div>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

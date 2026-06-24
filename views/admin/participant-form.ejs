@@ -1,10 +1,11 @@
 <%- include('../partials/admin-header') %>
+<% const isEditing = typeof participant !== 'undefined' && participant; %>
 
 <div class="mb-8 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
   <div>
     <p class="font-mono text-xs font-black uppercase tracking-widest text-primary mb-2">Registration</p>
-    <h1 class="text-3xl font-extrabold tracking-tight">Register Participant</h1>
-    <p class="text-sm text-slate-400 mt-1">Create a participant record and optionally assign them to a team.</p>
+    <h1 class="text-3xl font-extrabold tracking-tight"><%= isEditing ? 'Edit Participant' : 'Register Participant' %></h1>
+    <p class="text-sm text-slate-400 mt-1"><%= isEditing ? 'Update participant details and team assignment.' : 'Create a participant record and optionally assign them to a team.' %></p>
   </div>
   <a href="/admin/registration" class="inline-flex items-center justify-center gap-2 bg-slate-900 text-slate-300 px-4 py-3 text-xs font-bold uppercase tracking-wider border border-slate-800 transition-colors">
     <i class="fa-solid fa-arrow-left"></i> Back to registration
@@ -13,22 +14,22 @@
 
 <%- include('../partials/admin-alerts') %>
 
-<div class="max-w-3xl bg-slate-950 border border-slate-800 p-6 md:p-8">
+<div class="w-full bg-slate-950 border border-slate-800 p-6 md:p-8">
   <h3 class="text-lg font-bold text-white mb-6 flex items-center gap-2">
     <i class="fa-solid fa-user-plus text-accent-red"></i> Participant Details
   </h3>
 
-  <form action="/admin/participants" method="POST" enctype="multipart/form-data" class="space-y-4">
+  <form action="<%= isEditing ? '/admin/participants/' + participant.id + '/edit' : '/admin/participants' %>" method="POST" enctype="multipart/form-data" class="space-y-4">
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <div>
         <label for="memberName" class="block text-xs uppercase font-extrabold tracking-wider text-slate-400 mb-2">Full Name</label>
-        <input type="text" id="memberName" name="name" required placeholder="e.g. John Doe"
+        <input type="text" id="memberName" name="name" required placeholder="e.g. John Doe" value="<%= isEditing ? participant.name : '' %>"
                class="block w-full px-4 py-3 bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-red/35 focus:border-accent-red transition-all">
       </div>
 
       <div>
         <label for="memberEmail" class="block text-xs uppercase font-extrabold tracking-wider text-slate-400 mb-2">Email Address</label>
-        <input type="email" id="memberEmail" name="email" required placeholder="e.g. john@must.edu.my"
+        <input type="email" id="memberEmail" name="email" required placeholder="e.g. john@must.edu.my" value="<%= isEditing ? participant.email : '' %>"
                class="block w-full px-4 py-3 bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-red/35 focus:border-accent-red transition-all">
       </div>
     </div>
@@ -40,20 +41,26 @@
                 class="block w-full px-4 py-3 bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-red/35 focus:border-accent-red transition-all">
           <option value="">-- Select Team (Optional) --</option>
           <% groups.forEach(group => { %>
-            <option value="<%= group.id %>"><%= group.name %></option>
+            <option value="<%= group.id %>" <%= isEditing && participant.group_id == group.id ? 'selected' : '' %>><%= group.name %></option>
           <% }) %>
         </select>
       </div>
 
       <div>
         <label for="memberAvatar" class="block text-xs uppercase font-extrabold tracking-wider text-slate-400 mb-2">Profile Picture / Avatar</label>
+        <% if (isEditing && participant.avatar_path) { %>
+          <div class="mb-3 flex items-center gap-3 text-xs text-slate-400">
+            <img src="<%= participant.avatar_path %>" alt="" class="w-10 h-10 object-cover border border-slate-800">
+            <span>Current avatar stays unless you upload a replacement.</span>
+          </div>
+        <% } %>
         <input type="file" id="memberAvatar" name="avatar" accept="image/*"
                class="block w-full text-xs text-slate-400 file:mr-4 file:py-2.5 file:px-4 file:border-0 file:text-xs file:font-bold file:bg-slate-900 file:text-slate-200 hover:file:bg-slate-800 file:cursor-pointer">
       </div>
     </div>
 
     <button type="submit" class="w-full mt-4 py-3 px-4 bg-accent-red hover:bg-red-600 text-white font-extrabold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2">
-      <i class="fa-solid fa-user-plus"></i> Register Participant
+      <i class="fa-solid <%= isEditing ? 'fa-floppy-disk' : 'fa-user-plus' %>"></i> <%= isEditing ? 'Update Participant' : 'Register Participant' %>
     </button>
   </form>
 </div>

@@ -9,6 +9,11 @@ async function findAllWithGroupNames() {
   `);
 }
 
+async function findById(id) {
+  const participants = await db.query('SELECT * FROM participants WHERE id = ?', [id]);
+  return participants[0];
+}
+
 async function findByGroupId(groupId) {
   return db.query('SELECT name, avatar_path FROM participants WHERE group_id = ?', [groupId]);
 }
@@ -30,15 +35,24 @@ async function create({ name, email, avatarPath, groupId }) {
   );
 }
 
+async function update(id, { name, email, avatarPath, groupId }) {
+  return db.query(
+    'UPDATE participants SET name = ?, email = ?, avatar_path = ?, group_id = ? WHERE id = ?',
+    [name, email, avatarPath, groupId, id]
+  );
+}
+
 async function remove(id) {
   return db.query('DELETE FROM participants WHERE id = ?', [id]);
 }
 
 module.exports = {
   findAllWithGroupNames,
+  findById,
   findByGroupId,
   countByGroupId,
   countAll,
   create,
+  update,
   remove
 };

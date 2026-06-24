@@ -17,13 +17,11 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="manifest" href="/site.webmanifest">
   
-  <!-- Google Fonts & Material Symbols -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;750&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <!-- Local vendor fonts & icons -->
+  <link rel="stylesheet" href="/vendor/google-fonts/fonts.css">
   
   <!-- FontAwesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/vendor/fontawesome/css/all.min.css">
   
   <!-- Compiled Tailwind CSS -->
   <link rel="stylesheet" href="/css/style.css">
@@ -56,7 +54,11 @@
       <!-- Desktop Navigation -->
       <div class="hidden md:flex items-center gap-10 font-mono text-sm font-black uppercase">
         <a class="hover:text-primary transition-colors <%= typeof activePage !== 'undefined' && activePage === 'home' ? 'text-primary underline decoration-4 decoration-primary underline-offset-4' : 'text-on-surface' %>" href="/">HOME</a>
+        <a class="hover:text-primary transition-colors <%= typeof activePage !== 'undefined' && activePage === 'updates' ? 'text-primary underline decoration-4 decoration-primary underline-offset-4' : 'text-on-surface' %>" href="/updates">UPDATES</a>
         <a class="hover:text-primary transition-colors <%= typeof activePage !== 'undefined' && activePage === 'voting' ? 'text-primary underline decoration-4 decoration-primary underline-offset-4' : 'text-on-surface' %>" href="/voting">VOTING</a>
+        <% if (typeof votingActive !== 'undefined' && votingActive) { %>
+          <a class="hover:text-primary transition-colors <%= typeof activePage !== 'undefined' && activePage === 'leaderboard' ? 'text-primary underline decoration-4 decoration-primary underline-offset-4' : 'text-on-surface' %>" href="/leaderboard">LEADERBOARD</a>
+        <% } %>
         <a class="hover:text-primary transition-colors <%= typeof activePage !== 'undefined' && activePage === 'team' ? 'text-primary underline decoration-4 decoration-primary underline-offset-4' : 'text-on-surface' %>" href="/team">TEAM</a>
       </div>
 
@@ -82,7 +84,11 @@
     <!-- Mobile Navigation Drawer -->
     <div id="mobile-menu" class="hidden absolute top-24 left-0 w-full bg-background brutal-border border-x-0 border-t-0 p-6 flex flex-col gap-4 font-mono text-sm uppercase z-50">
       <a class="block py-2 hover:text-primary transition-colors <%= typeof activePage !== 'undefined' && activePage === 'home' ? 'text-primary font-black' : 'text-on-surface' %>" href="/">HOME</a>
+      <a class="block py-2 hover:text-primary transition-colors <%= typeof activePage !== 'undefined' && activePage === 'updates' ? 'text-primary font-black' : 'text-on-surface' %>" href="/updates">UPDATES</a>
       <a class="block py-2 hover:text-primary transition-colors <%= typeof activePage !== 'undefined' && activePage === 'voting' ? 'text-primary font-black' : 'text-on-surface' %>" href="/voting">VOTING</a>
+      <% if (typeof votingActive !== 'undefined' && votingActive) { %>
+        <a class="block py-2 hover:text-primary transition-colors <%= typeof activePage !== 'undefined' && activePage === 'leaderboard' ? 'text-primary font-black' : 'text-on-surface' %>" href="/leaderboard">LEADERBOARD</a>
+      <% } %>
       <a class="block py-2 hover:text-primary transition-colors <%= typeof activePage !== 'undefined' && activePage === 'team' ? 'text-primary font-black' : 'text-on-surface' %>" href="/team">TEAM</a>
       <% if (typeof session !== 'undefined' && session.isAdmin) { %>
         <a href="/admin/dashboard" class="block text-center bg-inverse-surface text-pure-white font-mono text-xs py-3 brutal-border font-black">

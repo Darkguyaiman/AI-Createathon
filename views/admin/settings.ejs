@@ -40,21 +40,23 @@
       </form>
     </div>
 
-    <div class="bg-slate-950 border border-slate-800 p-6 md:p-8">
-      <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2 text-rose-500">
-        <i class="fa-solid fa-triangle-exclamation"></i> Danger Zone
-      </h3>
-
-      <p class="text-xs text-slate-400 leading-relaxed mb-6">
-        Reset live public Choice votes. This permanently removes all cast IP-address votes in the database.
-      </p>
-
-      <form action="/admin/settings/reset-votes" method="POST" onsubmit="return confirm('WARNING: Are you absolutely sure you want to delete ALL live public votes? This action is permanent and cannot be undone.');">
-        <button type="submit" class="w-full py-3 bg-slate-950 hover:bg-rose-950 text-rose-500 hover:text-rose-400 font-extrabold text-xs uppercase tracking-wider border border-rose-950 hover:border-rose-900 transition-all">
-          <i class="fa-solid fa-trash-can mr-1.5"></i> Delete All Public Votes
-        </button>
-      </form>
-    </div>
+    <% if (typeof session !== 'undefined' && session.role === 'super') { %>
+      <div class="bg-slate-950 border border-slate-800 p-6 md:p-8">
+        <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2 text-rose-500">
+          <i class="fa-solid fa-triangle-exclamation"></i> Danger Zone
+        </h3>
+  
+        <p class="text-xs text-slate-400 leading-relaxed mb-6">
+          Reset live public Choice votes. This permanently removes all cast IP-address votes in the database.
+        </p>
+  
+        <form action="/admin/settings/reset-votes" method="POST" onsubmit="return confirm('WARNING: Are you absolutely sure you want to delete ALL live public votes? This action is permanent and cannot be undone.');">
+          <button type="submit" class="w-full py-3 bg-slate-950 hover:bg-rose-950 text-rose-500 hover:text-rose-400 font-extrabold text-xs uppercase tracking-wider border border-rose-950 hover:border-rose-900 transition-all">
+            <i class="fa-solid fa-trash-can mr-1.5"></i> Delete All Public Votes
+          </button>
+        </form>
+      </div>
+    <% } %>
   </div>
 
   <div class="bg-slate-950 border border-slate-800 p-6 md:p-8 h-fit">

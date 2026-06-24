@@ -20,6 +20,7 @@ async function login(req, res) {
       req.session.isAdmin = true;
       req.session.adminId = admin.id;
       req.session.username = admin.username;
+      req.session.role = admin.role || 'normal';
 
       return req.session.save(() => {
         res.redirect('/admin/dashboard');

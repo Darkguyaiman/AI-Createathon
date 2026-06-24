@@ -1,0 +1,128 @@
+<%- include('partials/header') %>
+
+<!-- LEADERBOARD HERO -->
+<section class="py-12 bg-background border-b-8 border-inverse-surface fade-up">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+      
+      <!-- Left side info -->
+      <div class="text-center md:text-left space-y-2">
+        <div class="inline-flex items-center gap-2">
+          <span class="flex h-3 w-3 relative">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
+          </span>
+          <span class="text-xs font-mono font-bold text-primary bg-primary/10 border border-primary/20 px-2 py-0.5 uppercase tracking-widest">Live Standings</span>
+        </div>
+
+        <h1 class="text-4xl md:text-5xl font-black text-on-surface uppercase tracking-tight font-heading">Event Leaderboard</h1>
+        <p class="text-xs text-on-surface/70 font-mono mt-1">Calculated live based on Public Choice Votes (40% weight) and Judges' Scores (60% weight).</p>
+      </div>
+
+      <!-- Right side badge / status indicator -->
+      <div class="px-6 py-4 bg-pure-white brutal-border brutal-shadow flex items-center gap-4 hover:-translate-y-0.5 transition-all">
+        <div class="p-3 bg-primary text-white brutal-border">
+          <span class="material-symbols-outlined text-2xl" style="display: block;">trophy</span>
+        </div>
+        <div class="text-left font-mono">
+          <p class="text-[9px] text-on-surface/50 uppercase font-bold tracking-wider">Total Public Votes</p>
+          <p class="text-2xl font-black text-on-surface"><%= totalVotes %></p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- MAIN LEADERBOARD LAYOUT -->
+<section class="py-16 bg-background">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <% if (typeof success_msg !== 'undefined' && success_msg) { %>
+      <div class="mb-8 p-4 bg-pure-white brutal-border brutal-shadow text-emerald-700 font-mono text-xs flex items-center gap-3 fade-up">
+        <span class="material-symbols-outlined text-emerald-500 text-lg">check_circle</span>
+        <p class="font-bold"><%= success_msg %></p>
+      </div>
+    <% } %>
+
+    <% if (typeof error_msg !== 'undefined' && error_msg) { %>
+      <div class="mb-8 p-4 bg-pure-white brutal-border brutal-shadow text-primary font-mono text-xs flex items-center gap-3 fade-up">
+        <span class="material-symbols-outlined text-primary text-lg">error</span>
+        <p class="font-bold"><%= error_msg %></p>
+      </div>
+    <% } %>
+
+    <!-- LEADERBOARD TABLE -->
+    <div class="bg-pure-white brutal-border p-6 md:p-8 brutal-shadow fade-up">
+      <% if (leaderboard && leaderboard.length > 0) { %>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs sm:text-sm font-mono border-collapse">
+            <thead class="bg-background text-on-surface uppercase font-bold text-[10px] border-b-4 border-inverse-surface">
+              <tr>
+                <th class="py-4 px-4 brutal-border-sm border-t-0 border-l-0">Rank</th>
+                <th class="py-4 px-4 brutal-border-sm border-t-0">Team</th>
+                <th class="py-4 px-4 text-center brutal-border-sm border-t-0">Public Votes (40%)</th>
+                <th class="py-4 px-4 text-center brutal-border-sm border-t-0">Judge Score (60%)</th>
+                <th class="py-4 px-4 text-center brutal-border-sm border-t-0 border-r-0">Combined Score</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y-2 divide-inverse-surface">
+              <% leaderboard.forEach((item, index) => { %>
+                <tr class="hover:bg-background/40 transition-colors">
+                  <!-- Rank -->
+                  <td class="py-5 px-4 font-black text-on-surface text-center brutal-border-sm border-b-0 border-l-0">
+                    <% if (index === 0) { %>
+                      <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white brutal-border-sm"><i class="fa-solid fa-trophy text-sm"></i></span>
+                    <% } else if (index === 1) { %>
+                      <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-cream-dark text-on-surface brutal-border-sm font-bold">2</span>
+                    <% } else if (index === 2) { %>
+                      <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-cream-dark/50 text-on-surface brutal-border-sm font-bold">3</span>
+                    <% } else { %>
+                      #<%= index + 1 %>
+                    <% } %>
+                  </td>
+                  <!-- Team -->
+                  <td class="py-5 px-4 brutal-border-sm border-b-0">
+                    <div class="flex items-center gap-3.5">
+                      <img src="<%= item.logo_path %>" alt="" class="w-10 h-10 brutal-border-sm object-cover bg-white">
+                      <div>
+                        <p class="font-sans font-black uppercase text-base text-on-surface tracking-tight leading-none"><%= item.name %></p>
+                        <p class="text-[10px] text-on-surface/50 font-bold uppercase tracking-wider mt-1.5">ID: #<%= item.id %> | <%= item.member_count %> Member<%= item.member_count !== 1 ? 's' : '' %></p>
+                      </div>
+                    </div>
+                  </td>
+                  <!-- Public Votes -->
+                  <td class="py-5 px-4 text-center brutal-border-sm border-b-0">
+                    <div class="font-black text-base text-on-surface"><%= item.vote_count %></div>
+                    <div class="text-[9px] text-on-surface/50 font-bold uppercase mt-1.5"><%= item.public_pct %>% weight</div>
+                  </td>
+                  <!-- Judge Score -->
+                  <td class="py-5 px-4 text-center brutal-border-sm border-b-0">
+                    <div class="font-black text-base text-on-surface"><%= item.judge_avg_raw %> / 30</div>
+                    <div class="text-[9px] text-on-surface/50 font-bold uppercase mt-1.5"><%= item.judge_pct %>% weight</div>
+                  </td>
+                  <!-- Combined Score -->
+                  <td class="py-5 px-4 text-center font-black text-lg text-primary brutal-border-sm border-b-0 border-r-0">
+                    <%= item.combined_score %> / 100
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      <% } else { %>
+        <!-- Empty State -->
+        <div class="py-12 text-center max-w-md mx-auto space-y-4 font-mono">
+          <div class="w-12 h-12 brutal-border bg-background flex items-center justify-center text-primary mx-auto">
+            <span class="material-symbols-outlined text-3xl animate-pulse">trophy</span>
+          </div>
+          <h3 class="text-xl font-bold uppercase font-heading text-on-surface">No standings computed</h3>
+          <p class="text-on-surface/75 text-xs max-w-sm mx-auto">The standings will compile once participants are registered and voting starts.</p>
+        </div>
+      <% } %>
+    </div>
+
+  </div>
+</section>
+
+<%- include('partials/footer') %>

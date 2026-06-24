@@ -53,6 +53,15 @@ async function initDatabase() {
       }
     } else {
       console.log('Database tables verified.');
+      // Ensure 'role' column exists in 'admins' table
+      const [columns] = await pool.query(`SHOW COLUMNS FROM \`admins\` LIKE 'role'`);
+      if (columns.length === 0) {
+        console.log('Adding "role" column to "admins" table...');
+        await pool.query(`ALTER TABLE \`admins\` ADD COLUMN \`role\` VARCHAR(20) DEFAULT 'normal' NOT NULL;`);
+        // Update the default admin to be super admin
+        await pool.query(`UPDATE \`admins\` SET \`role\` = 'super' WHERE \`username\` = 'admin';`);
+        console.log('"role" column added and configured.');
+      }
     }
   } catch (error) {
     console.error('Error initializing MySQL database:', error.message);

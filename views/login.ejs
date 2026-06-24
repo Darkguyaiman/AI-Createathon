@@ -3,7 +3,7 @@
 <section class="py-16 md:py-24 bg-background fade-up font-mono">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
-      <div class="lg:col-span-5 xl:col-span-4">
+      <div class="lg:col-span-6 xl:col-span-5">
         <!-- Login Card -->
         <div class="bg-pure-white brutal-border brutal-shadow p-8">
           <!-- Card header -->
@@ -43,8 +43,28 @@
                   <span class="material-symbols-outlined text-lg">key</span>
                 </span>
                 <input type="password" id="password" name="password" required placeholder="Password" 
-                       class="block w-full pl-10 pr-4 py-3.5 bg-background brutal-border text-sm focus:outline-none focus:bg-pure-white transition-all">
+                       class="block w-full pl-10 pr-10 py-3.5 bg-background brutal-border text-sm focus:outline-none focus:bg-pure-white transition-all">
+                <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-on-surface/50 hover:text-primary transition-colors" aria-label="Toggle Password Visibility">
+                  <span class="material-symbols-outlined text-lg">visibility</span>
+                </button>
               </div>
+              
+              <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                  const togglePassword = document.getElementById('togglePassword');
+                  const passwordInput = document.getElementById('password');
+ 
+                  togglePassword?.addEventListener('click', () => {
+                    const isPassword = passwordInput.type === 'password';
+                    passwordInput.type = isPassword ? 'text' : 'password';
+                    
+                    const icon = togglePassword.querySelector('span');
+                    if (icon) {
+                      icon.textContent = isPassword ? 'visibility_off' : 'visibility';
+                    }
+                  });
+                });
+              </script>
             </div>
 
             <button type="submit" class="w-full bg-primary text-white font-heading font-black text-sm uppercase py-4 brutal-border brutal-shadow-sm hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all flex items-center justify-center gap-2 mt-4">
@@ -61,7 +81,7 @@
         </div>
       </div>
 
-      <div class="lg:col-span-7 xl:col-span-8 flex items-center justify-center lg:justify-end">
+      <div class="lg:col-span-6 xl:col-span-7 flex items-center justify-center lg:justify-end">
         <div class="relative w-full max-w-xl min-h-[320px] md:min-h-[460px] grid place-items-center">
           <div class="absolute inset-6 md:inset-10 bg-primary/10 brutal-border rotate-2" aria-hidden="true"></div>
           <div class="absolute left-4 right-4 top-1/2 h-8 -translate-y-1/2 bg-primary/20" aria-hidden="true"></div>

@@ -9,6 +9,11 @@ async function findAllWithGroupNames() {
   `);
 }
 
+async function findById(id) {
+  const scores = await db.query('SELECT * FROM judge_scores WHERE id = ?', [id]);
+  return scores[0];
+}
+
 async function getAveragesByGroupId(groupId) {
   const rows = await db.query(`
     SELECT
@@ -35,13 +40,23 @@ async function upsert({ groupId, judgeName, innovation, design, execution, feedb
   `, [groupId, judgeName, innovation, design, execution, feedback]);
 }
 
+async function update(id, { groupId, judgeName, innovation, design, execution, feedback }) {
+  return db.query(`
+    UPDATE judge_scores
+    SET group_id = ?, judge_name = ?, score_innovation = ?, score_design = ?, score_execution = ?, feedback = ?
+    WHERE id = ?
+  `, [groupId, judgeName, innovation, design, execution, feedback, id]);
+}
+
 async function remove(id) {
   return db.query('DELETE FROM judge_scores WHERE id = ?', [id]);
 }
 
 module.exports = {
   findAllWithGroupNames,
+  findById,
   getAveragesByGroupId,
   upsert,
+  update,
   remove
 };

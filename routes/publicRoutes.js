@@ -5,6 +5,8 @@ const publicController = require('../controllers/publicController');
 const router = express.Router();
 
 router.get('/', publicController.showHome);
+router.get('/updates', publicController.showUpdates);
+router.get('/leaderboard', publicController.showLeaderboard);
 router.get('/voting', publicController.showVoting);
 router.get('/team', publicController.showTeam);
 router.post('/vote', publicController.castVote);
