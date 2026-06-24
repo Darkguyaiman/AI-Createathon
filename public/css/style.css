@@ -471,6 +471,9 @@
   .ml-4 {
     margin-left: calc(var(--spacing) * 4);
   }
+  .ml-auto {
+    margin-left: auto;
+  }
   .line-clamp-1 {
     overflow: hidden;
     display: -webkit-box;
@@ -647,6 +650,9 @@
   }
   .min-w-0 {
     min-width: 0;
+  }
+  .min-w-\[74px\] {
+    min-width: 74px;
   }
   .flex-1 {
     flex: 1;
@@ -1299,6 +1305,9 @@
   .pb-3 {
     padding-bottom: calc(var(--spacing) * 3);
   }
+  .pb-8 {
+    padding-bottom: calc(var(--spacing) * 8);
+  }
   .pb-28 {
     padding-bottom: calc(var(--spacing) * 28);
   }
@@ -1372,6 +1381,9 @@
     font-size: var(--text-xs);
     line-height: var(--tw-leading, var(--text-xs--line-height));
   }
+  .text-\[0\.95rem\] {
+    font-size: 0.95rem;
+  }
   .text-\[9px\] {
     font-size: 9px;
   }
@@ -1380,6 +1392,9 @@
   }
   .text-\[11px\] {
     font-size: 11px;
+  }
+  .text-\[16px\] {
+    font-size: 16px;
   }
   .leading-none {
     --tw-leading: 1;
@@ -2125,6 +2140,11 @@
   .sm\:py-20 {
     @media (width >= 40rem) {
       padding-block: calc(var(--spacing) * 20);
+    }
+  }
+  .sm\:pb-10 {
+    @media (width >= 40rem) {
+      padding-bottom: calc(var(--spacing) * 10);
     }
   }
   .sm\:text-2xl {

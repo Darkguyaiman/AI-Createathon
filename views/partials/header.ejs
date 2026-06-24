@@ -49,13 +49,13 @@
 
   <!-- Nav -->
   <nav class="sticky top-0 w-full z-50 bg-background brutal-border border-x-0 border-t-0 h-24 flex items-center">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex items-center justify-between gap-3 min-w-0">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex items-center justify-between gap-2 min-w-0">
       <!-- Logo -->
-      <a href="/" class="flex items-center gap-3 sm:gap-4 group min-w-0 shrink">
+      <a href="/" class="flex items-center gap-2 sm:gap-4 group min-w-0 shrink">
         <div class="bg-primary p-2 brutal-border text-white transform group-hover:rotate-6 transition-transform shrink-0">
           <span class="material-symbols-outlined" style="font-size: 28px; display: block;">smart_toy</span>
         </div>
-        <span class="site-wordmark min-w-0 text-xl sm:text-2xl lg:text-3xl font-black text-on-surface uppercase tracking-tight font-heading leading-none whitespace-nowrap">AI-<span class="text-primary">CREATEATHON</span></span>
+        <span class="site-wordmark min-w-0 text-[0.95rem] sm:text-2xl lg:text-3xl font-black text-on-surface uppercase tracking-tight font-heading leading-none whitespace-nowrap">AI-<span class="text-primary">CREATEATHON</span></span>
       </a>
 
       <!-- Desktop Navigation -->
@@ -69,8 +69,23 @@
         <a class="hover:text-primary transition-colors <%= typeof activePage !== 'undefined' && activePage === 'team' ? 'text-primary underline decoration-4 decoration-primary underline-offset-4' : 'text-on-surface' %>" href="/team">TEAM</a>
       </div>
 
+      <!-- Desktop actions -->
+      <div class="hidden lg:flex items-center gap-3 shrink-0">
+        <% if (typeof session !== 'undefined' && session.isAdmin) { %>
+          <a href="/admin/dashboard" class="inline-flex items-center gap-2 bg-inverse-surface text-pure-white font-mono text-[10px] xl:text-xs px-4 xl:px-6 py-3 brutal-border brutal-shadow-sm active:translate-x-1 active:translate-y-1 active:shadow-none transition-all uppercase font-black whitespace-nowrap">
+            <span class="material-symbols-outlined text-[18px]">dashboard</span>
+            DASHBOARD
+          </a>
+        <% } else { %>
+          <a href="/login" class="inline-flex items-center gap-2 bg-primary text-on-primary font-heading text-[10px] xl:text-sm px-4 xl:px-6 py-3 brutal-border brutal-shadow-sm active:translate-x-1 active:translate-y-1 active:shadow-none transition-all uppercase font-black whitespace-nowrap">
+            <span class="material-symbols-outlined text-[18px]">lock</span>
+            ADMIN LOGIN
+          </a>
+        <% } %>
+      </div>
+
       <!-- Mobile menu button -->
-      <button id="mobile-menu-btn" class="lg:hidden p-2 text-on-surface border-2 border-on-surface bg-white shadow-brutal-sm hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all focus:outline-none shrink-0" aria-label="Toggle Menu" aria-controls="mobile-menu" aria-expanded="false" type="button">
+      <button id="mobile-menu-btn" class="lg:hidden p-2 text-on-surface border-2 border-on-surface bg-white shadow-brutal-sm hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all focus:outline-none shrink-0 ml-auto" aria-label="Toggle Menu" aria-controls="mobile-menu" aria-expanded="false" type="button">
         <i class="fa-solid fa-bars text-lg"></i>
       </button>
     </div>
