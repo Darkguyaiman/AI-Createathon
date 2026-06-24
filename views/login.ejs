@@ -17,7 +17,7 @@
 
           <!-- Flash Message Warnings -->
           <% if (typeof error_msg !== 'undefined' && error_msg) { %>
-            <div class="mb-6 p-4 bg-pure-white brutal-border brutal-shadow-sm text-primary text-xs flex items-center gap-3">
+            <div class="mb-6 p-4 bg-pure-white brutal-border brutal-shadow-sm text-primary text-xs flex items-center gap-3 transition-all duration-300 ease-out" data-toast>
               <span class="material-symbols-outlined text-primary text-lg font-bold">error</span>
               <p class="font-bold"><%= error_msg %></p>
             </div>

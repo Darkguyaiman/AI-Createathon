@@ -1,5 +1,6 @@
 const express = require('express');
 const session = require('express-session');
+const http = require('http');
 const path = require('path');
 require('dotenv').config();
 
@@ -8,8 +9,10 @@ const createSessionStore = require('./config/sessionStore');
 const { attachSessionLocals } = require('./middleware/viewLocals');
 const adminRoutes = require('./routes/adminRoutes');
 const publicRoutes = require('./routes/publicRoutes');
+const liveUpdates = require('./services/liveUpdates');
 
 const app = express();
+const server = http.createServer(app);
 const PORT = process.env.PORT || 3000;
 
 app.set('view engine', 'ejs');
@@ -32,8 +35,9 @@ db.initDatabase().then(() => {
   app.use(attachSessionLocals);
   app.use('/', publicRoutes);
   app.use('/admin', adminRoutes);
+  liveUpdates.init(server);
 
-  app.listen(PORT, () => {
+  server.listen(PORT, () => {
     console.log(`AI Createathon website running locally at http://localhost:${PORT}`);
   });
 }).catch(err => {

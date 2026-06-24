@@ -7,6 +7,7 @@ const postModel = require('../models/postModel');
 const scoreModel = require('../models/scoreModel');
 const settingModel = require('../models/settingModel');
 const voteModel = require('../models/voteModel');
+const liveUpdates = require('../services/liveUpdates');
 const { redirectWithFlash, renderWithAlerts } = require('../utils/flash');
 
 async function showDashboard(req, res) {
@@ -453,6 +454,7 @@ async function toggleVoting(req, res) {
 async function resetVotes(req, res) {
   try {
     await voteModel.resetAll();
+    await liveUpdates.broadcastVotingUpdate();
     redirectWithFlash(req, res, '/admin/settings', 'success', 'All public Choice votes have been successfully reset.');
   } catch (error) {
     console.error(error);

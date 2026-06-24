@@ -4,6 +4,7 @@ const postModel = require('../models/postModel');
 const settingModel = require('../models/settingModel');
 const voteModel = require('../models/voteModel');
 const dashboardModel = require('../models/dashboardModel');
+const liveUpdates = require('../services/liveUpdates');
 const { redirectWithFlash, renderWithAlerts } = require('../utils/flash');
 
 function getVisitorIp(req) {
@@ -97,6 +98,7 @@ async function castVote(req, res) {
     }
 
     await voteModel.create({ groupId, voterIp: visitorIp });
+    await liveUpdates.broadcastVotingUpdate();
     redirectWithFlash(req, res, '/voting', 'success', 'Thank you! Your vote has been cast successfully.');
   } catch (error) {
     if (error.code === 'ER_DUP_ENTRY') {

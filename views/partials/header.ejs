@@ -28,6 +28,13 @@
 
   <!-- Smooth scroll -->
   <script src="/vendor/lenis/lenis.min.js" defer></script>
+  <style>
+    @media (max-width: 339px) {
+      .site-wordmark {
+        font-size: 0.85rem;
+      }
+    }
+  </style>
 </head>
 <body class="bg-background text-on-surface font-sans selection:bg-primary selection:text-white overflow-x-hidden transition-colors duration-300">
   
@@ -42,17 +49,17 @@
 
   <!-- Nav -->
   <nav class="sticky top-0 w-full z-50 bg-background brutal-border border-x-0 border-t-0 h-24 flex items-center">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex justify-between items-center">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex items-center justify-between gap-3 min-w-0">
       <!-- Logo -->
-      <a href="/" class="flex items-center gap-4 group">
-        <div class="bg-primary p-2 brutal-border text-white transform group-hover:rotate-6 transition-transform">
-          <span class="material-symbols-outlined" style="font-size: 32px; display: block;">smart_toy</span>
+      <a href="/" class="flex items-center gap-3 sm:gap-4 group min-w-0 shrink">
+        <div class="bg-primary p-2 brutal-border text-white transform group-hover:rotate-6 transition-transform shrink-0">
+          <span class="material-symbols-outlined" style="font-size: 28px; display: block;">smart_toy</span>
         </div>
-        <span class="text-3xl font-black text-on-surface uppercase tracking-tight font-heading">AI-<span class="text-primary">CREATEATHON</span></span>
+        <span class="site-wordmark min-w-0 text-xl sm:text-2xl lg:text-3xl font-black text-on-surface uppercase tracking-tight font-heading leading-none whitespace-nowrap">AI-<span class="text-primary">CREATEATHON</span></span>
       </a>
 
       <!-- Desktop Navigation -->
-      <div class="hidden md:flex items-center gap-10 font-mono text-sm font-black uppercase">
+      <div class="hidden lg:flex items-center justify-center gap-6 xl:gap-8 font-mono text-[11px] xl:text-sm font-black uppercase min-w-0 flex-1">
         <a class="hover:text-primary transition-colors <%= typeof activePage !== 'undefined' && activePage === 'home' ? 'text-primary underline decoration-4 decoration-primary underline-offset-4' : 'text-on-surface' %>" href="/">HOME</a>
         <a class="hover:text-primary transition-colors <%= typeof activePage !== 'undefined' && activePage === 'updates' ? 'text-primary underline decoration-4 decoration-primary underline-offset-4' : 'text-on-surface' %>" href="/updates">UPDATES</a>
         <a class="hover:text-primary transition-colors <%= typeof activePage !== 'undefined' && activePage === 'voting' ? 'text-primary underline decoration-4 decoration-primary underline-offset-4' : 'text-on-surface' %>" href="/voting">VOTING</a>
@@ -62,43 +69,30 @@
         <a class="hover:text-primary transition-colors <%= typeof activePage !== 'undefined' && activePage === 'team' ? 'text-primary underline decoration-4 decoration-primary underline-offset-4' : 'text-on-surface' %>" href="/team">TEAM</a>
       </div>
 
-      <!-- Right buttons -->
-      <div class="hidden md:flex items-center gap-4">
-        <% if (typeof session !== 'undefined' && session.isAdmin) { %>
-          <a href="/admin/dashboard" class="bg-inverse-surface text-pure-white font-mono text-xs px-6 py-3.5 brutal-border brutal-shadow-sm active:translate-x-1 active:translate-y-1 active:shadow-none transition-all uppercase font-black">
-            DASHBOARD
-          </a>
-        <% } else { %>
-          <a href="/login" class="bg-primary text-on-primary font-heading text-sm px-6 py-3.5 brutal-border brutal-shadow-sm active:translate-x-1 active:translate-y-1 active:shadow-none transition-all uppercase font-black">
-            ADMIN LOGIN
-          </a>
-        <% } %>
-      </div>
-
       <!-- Mobile menu button -->
-      <button id="mobile-menu-btn" class="md:hidden p-2 text-on-surface border-2 border-on-surface bg-white shadow-brutal-sm hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all focus:outline-none" aria-label="Toggle Menu">
+      <button id="mobile-menu-btn" class="lg:hidden p-2 text-on-surface border-2 border-on-surface bg-white shadow-brutal-sm hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all focus:outline-none shrink-0" aria-label="Toggle Menu" aria-controls="mobile-menu" aria-expanded="false" type="button">
         <i class="fa-solid fa-bars text-lg"></i>
       </button>
     </div>
 
     <!-- Mobile Navigation Drawer -->
-    <div id="mobile-menu" class="hidden absolute top-24 left-0 w-full bg-background brutal-border border-x-0 border-t-0 p-6 flex flex-col gap-4 font-mono text-sm uppercase z-50">
-      <a class="block py-2 hover:text-primary transition-colors <%= typeof activePage !== 'undefined' && activePage === 'home' ? 'text-primary font-black' : 'text-on-surface' %>" href="/">HOME</a>
-      <a class="block py-2 hover:text-primary transition-colors <%= typeof activePage !== 'undefined' && activePage === 'updates' ? 'text-primary font-black' : 'text-on-surface' %>" href="/updates">UPDATES</a>
-      <a class="block py-2 hover:text-primary transition-colors <%= typeof activePage !== 'undefined' && activePage === 'voting' ? 'text-primary font-black' : 'text-on-surface' %>" href="/voting">VOTING</a>
-      <% if (typeof votingActive !== 'undefined' && votingActive) { %>
-        <a class="block py-2 hover:text-primary transition-colors <%= typeof activePage !== 'undefined' && activePage === 'leaderboard' ? 'text-primary font-black' : 'text-on-surface' %>" href="/leaderboard">LEADERBOARD</a>
-      <% } %>
-      <a class="block py-2 hover:text-primary transition-colors <%= typeof activePage !== 'undefined' && activePage === 'team' ? 'text-primary font-black' : 'text-on-surface' %>" href="/team">TEAM</a>
-      <% if (typeof session !== 'undefined' && session.isAdmin) { %>
-        <a href="/admin/dashboard" class="block text-center bg-inverse-surface text-pure-white font-mono text-xs py-3 brutal-border font-black">
-          DASHBOARD
-        </a>
-      <% } else { %>
-        <a href="/login" class="block text-center bg-primary text-on-primary font-heading text-sm py-3 brutal-border font-black">
+    <div id="mobile-menu" class="absolute top-full left-0 w-full z-50 overflow-hidden px-4 sm:px-6 lg:hidden pointer-events-none" aria-hidden="true">
+      <div
+        id="mobile-menu-panel"
+        class="mx-auto max-w-7xl bg-background brutal-border border-x-0 border-t-0 p-5 sm:p-6 pb-8 sm:pb-10 flex flex-col gap-3 font-mono text-sm uppercase shadow-brutal-sm"
+        style="max-height: 0px; opacity: 0; transform: translateY(-12px); transition: max-height 280ms cubic-bezier(0.16, 1, 0.3, 1), opacity 180ms ease, transform 280ms cubic-bezier(0.16, 1, 0.3, 1);"
+      >
+        <a class="block py-2 hover:text-primary transition-colors <%= typeof activePage !== 'undefined' && activePage === 'home' ? 'text-primary font-black' : 'text-on-surface' %>" href="/">HOME</a>
+        <a class="block py-2 hover:text-primary transition-colors <%= typeof activePage !== 'undefined' && activePage === 'updates' ? 'text-primary font-black' : 'text-on-surface' %>" href="/updates">UPDATES</a>
+        <a class="block py-2 hover:text-primary transition-colors <%= typeof activePage !== 'undefined' && activePage === 'voting' ? 'text-primary font-black' : 'text-on-surface' %>" href="/voting">VOTING</a>
+        <% if (typeof votingActive !== 'undefined' && votingActive) { %>
+          <a class="block py-2 hover:text-primary transition-colors <%= typeof activePage !== 'undefined' && activePage === 'leaderboard' ? 'text-primary font-black' : 'text-on-surface' %>" href="/leaderboard">LEADERBOARD</a>
+        <% } %>
+        <a class="block py-2 hover:text-primary transition-colors <%= typeof activePage !== 'undefined' && activePage === 'team' ? 'text-primary font-black' : 'text-on-surface' %>" href="/team">TEAM</a>
+        <a href="/login" class="block text-center bg-primary text-on-primary font-heading text-sm py-3 brutal-border font-black mt-2 mb-1">
           ADMIN LOGIN
         </a>
-      <% } %>
+      </div>
     </div>
   </nav>
 
@@ -106,14 +100,49 @@
   <script>
     const mobileMenuBtn = document.getElementById('mobile-menu-btn');
     const mobileMenu = document.getElementById('mobile-menu');
+    const mobileMenuPanel = document.getElementById('mobile-menu-panel');
     const menuIcon = mobileMenuBtn?.querySelector('i');
+    let mobileMenuOpen = false;
+
+    const syncMobileMenu = (open) => {
+      if (!mobileMenu || !mobileMenuPanel || !mobileMenuBtn) return;
+
+      mobileMenuOpen = open;
+      mobileMenuBtn.setAttribute('aria-expanded', String(open));
+      mobileMenu.setAttribute('aria-hidden', String(!open));
+      mobileMenu.style.pointerEvents = open ? 'auto' : 'none';
+      mobileMenuPanel.style.maxHeight = open ? `${mobileMenuPanel.scrollHeight + 32}px` : '0px';
+      mobileMenuPanel.style.opacity = open ? '1' : '0';
+      mobileMenuPanel.style.transform = open ? 'translateY(0)' : 'translateY(-12px)';
+
+      if (menuIcon) {
+        menuIcon.className = open ? 'fa-solid fa-xmark text-lg' : 'fa-solid fa-bars text-lg';
+      }
+    };
 
     mobileMenuBtn?.addEventListener('click', () => {
-      mobileMenu.classList.toggle('hidden');
-      if (mobileMenu.classList.contains('hidden')) {
-        menuIcon.className = 'fa-solid fa-bars text-xl';
-      } else {
-        menuIcon.className = 'fa-solid fa-xmark text-xl';
+      syncMobileMenu(!mobileMenuOpen);
+    });
+
+    mobileMenu?.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => syncMobileMenu(false));
+    });
+
+    document.addEventListener('click', event => {
+      if (!mobileMenuOpen) return;
+      if (mobileMenu?.contains(event.target) || mobileMenuBtn?.contains(event.target)) return;
+      syncMobileMenu(false);
+    });
+
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape') {
+        syncMobileMenu(false);
+      }
+    });
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth >= 1024) {
+        syncMobileMenu(false);
       }
     });
 

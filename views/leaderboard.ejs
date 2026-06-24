@@ -26,7 +26,7 @@
         </div>
         <div class="text-left font-mono">
           <p class="text-[9px] text-on-surface/50 uppercase font-bold tracking-wider">Total Public Votes</p>
-          <p class="text-2xl font-black text-on-surface"><%= totalVotes %></p>
+          <p class="text-2xl font-black text-on-surface" data-live-total-votes><%= totalVotes %></p>
         </div>
       </div>
 
@@ -39,21 +39,21 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
     <% if (typeof success_msg !== 'undefined' && success_msg) { %>
-      <div class="mb-8 p-4 bg-pure-white brutal-border brutal-shadow text-emerald-700 font-mono text-xs flex items-center gap-3 fade-up">
+      <div class="mb-8 p-4 bg-pure-white brutal-border brutal-shadow text-emerald-700 font-mono text-xs flex items-center gap-3 fade-up transition-all duration-300 ease-out" data-toast>
         <span class="material-symbols-outlined text-emerald-500 text-lg">check_circle</span>
         <p class="font-bold"><%= success_msg %></p>
       </div>
     <% } %>
 
     <% if (typeof error_msg !== 'undefined' && error_msg) { %>
-      <div class="mb-8 p-4 bg-pure-white brutal-border brutal-shadow text-primary font-mono text-xs flex items-center gap-3 fade-up">
+      <div class="mb-8 p-4 bg-pure-white brutal-border brutal-shadow text-primary font-mono text-xs flex items-center gap-3 fade-up transition-all duration-300 ease-out" data-toast>
         <span class="material-symbols-outlined text-primary text-lg">error</span>
         <p class="font-bold"><%= error_msg %></p>
       </div>
     <% } %>
 
     <!-- LEADERBOARD TABLE -->
-    <div class="bg-pure-white brutal-border p-6 md:p-8 brutal-shadow fade-up">
+    <div class="bg-pure-white brutal-border p-6 md:p-8 brutal-shadow fade-up" data-live-leaderboard>
       <% if (leaderboard && leaderboard.length > 0) { %>
         <div class="overflow-x-auto">
           <table class="w-full text-left text-xs sm:text-sm font-mono border-collapse">
@@ -66,7 +66,7 @@
                 <th class="py-4 px-4 text-center brutal-border-sm border-t-0 border-r-0">Combined Score</th>
               </tr>
             </thead>
-            <tbody class="divide-y-2 divide-inverse-surface">
+            <tbody class="divide-y-2 divide-inverse-surface" data-live-leaderboard-body>
               <% leaderboard.forEach((item, index) => { %>
                 <tr class="hover:bg-background/40 transition-colors">
                   <!-- Rank -->
@@ -93,7 +93,7 @@
                   </td>
                   <!-- Public Votes -->
                   <td class="py-5 px-4 text-center brutal-border-sm border-b-0">
-                    <div class="font-black text-base text-on-surface"><%= item.vote_count %></div>
+                    <div class="font-black text-base text-on-surface" data-live-vote-count><%= item.vote_count %></div>
                     <div class="text-[9px] text-on-surface/50 font-bold uppercase mt-1.5"><%= item.public_pct %>% weight</div>
                   </td>
                   <!-- Judge Score -->

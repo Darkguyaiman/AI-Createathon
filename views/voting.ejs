@@ -31,7 +31,7 @@
         </div>
         <div class="text-left font-mono">
           <p class="text-[9px] text-on-surface/50 uppercase font-bold tracking-wider">Total Votes Cast</p>
-          <p class="text-2xl font-black text-on-surface"><%= totalVotes %></p>
+          <p class="text-2xl font-black text-on-surface" data-live-total-votes><%= totalVotes %></p>
         </div>
       </div>
 
@@ -44,14 +44,14 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     
     <% if (typeof success_msg !== 'undefined' && success_msg) { %>
-      <div class="mb-8 p-4 bg-pure-white brutal-border brutal-shadow text-emerald-700 font-mono text-xs flex items-center gap-3 fade-up">
+      <div class="mb-8 p-4 bg-pure-white brutal-border brutal-shadow text-emerald-700 font-mono text-xs flex items-center gap-3 fade-up transition-all duration-300 ease-out" data-toast>
         <span class="material-symbols-outlined text-emerald-500 text-lg">check_circle</span>
         <p class="font-bold"><%= success_msg %></p>
       </div>
     <% } %>
 
     <% if (typeof error_msg !== 'undefined' && error_msg) { %>
-      <div class="mb-8 p-4 bg-pure-white brutal-border brutal-shadow text-primary font-mono text-xs flex items-center gap-3 fade-up">
+      <div class="mb-8 p-4 bg-pure-white brutal-border brutal-shadow text-primary font-mono text-xs flex items-center gap-3 fade-up transition-all duration-300 ease-out" data-toast>
         <span class="material-symbols-outlined text-primary text-lg">error</span>
         <p class="font-bold"><%= error_msg %></p>
       </div>
@@ -59,7 +59,7 @@
 
     <!-- LEADERBOARD BAR CHART -->
     <% if (groups.length > 0) { %>
-      <div class="mb-16 bg-pure-white brutal-border p-6 md:p-8 brutal-shadow fade-up">
+      <div class="mb-16 bg-pure-white brutal-border p-6 md:p-8 brutal-shadow fade-up" data-live-voting-board>
         <h3 class="text-xl font-black text-on-surface mb-6 flex items-center gap-2 uppercase tracking-tight border-b-4 border-inverse-surface pb-3 font-heading">
           <span class="material-symbols-outlined text-primary" style="font-size: 28px;">bar_chart</span> Current Live Standings
         </h3>
@@ -72,18 +72,21 @@
           <% groups.forEach(group => { %>
             <% 
               const percentage = totalVotes > 0 ? Math.round((group.vote_count / totalVotes) * 100) : 0;
-              const barWidth = Math.max(Math.round((group.vote_count / maxVotes) * 100), 5);
+              const barWidth = group.vote_count > 0 ? Math.max(Math.round((group.vote_count / maxVotes) * 100), 5) : 0;
             %>
-            <div class="space-y-2">
+            <div class="space-y-2 live-voting-row" data-group-id="<%= group.id %>">
               <div class="flex items-center justify-between text-xs font-bold text-on-surface">
                 <span class="flex items-center gap-2 text-sm font-sans font-black uppercase tracking-tight">
                   <img src="<%= group.logo_path %>" alt="" class="w-6 h-6 border-2 border-inverse-surface object-cover">
                   <%= group.name %>
                 </span>
-                <span><%= group.vote_count %> vote<%= group.vote_count !== 1 ? 's' : '' %> (<%= percentage %>%)</span>
+                <span>
+                  <span data-live-vote-count><%= group.vote_count %></span> vote<%= group.vote_count !== 1 ? 's' : '' %>
+                  (<span data-live-vote-percent><%= percentage %></span>%)
+                </span>
               </div>
               <div class="w-full bg-background brutal-border h-5 overflow-hidden">
-                <div class="bg-primary border-r-4 border-inverse-surface h-full transition-all duration-1000" style="width: <%= barWidth %>%"></div>
+                <div class="bg-primary <%= barWidth > 0 ? 'border-r-4' : 'border-r-0' %> border-inverse-surface h-full transition-all duration-1000" data-live-bar style="width: <%= barWidth %>%"></div>
               </div>
             </div>
           <% }) %>
@@ -146,7 +149,7 @@
                   <i class="fa-solid fa-circle-check text-emerald-500"></i> Vote Registered
                 </button>
               <% } else { %>
-                <form action="/vote" method="POST">
+                <form action="/vote" method="POST" data-live-vote-form>
                   <input type="hidden" name="groupId" value="<%= group.id %>">
                   <button type="submit" class="w-full bg-primary text-white font-heading font-black text-sm uppercase py-4 brutal-border brutal-shadow-sm hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all flex items-center justify-center gap-1.5">
                     <span class="material-symbols-outlined">bolt</span> Vote for <%= group.name %>
