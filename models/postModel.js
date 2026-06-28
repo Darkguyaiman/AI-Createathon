@@ -9,6 +9,18 @@ async function findAllWithAuthors() {
   `);
 }
 
+async function findRecentWithAuthors(limit = 3) {
+  const safeLimit = Math.max(parseInt(limit, 10) || 3, 1);
+
+  return db.query(`
+    SELECT p.*, a.username as author
+    FROM posts p
+    LEFT JOIN admins a ON p.admin_id = a.id
+    ORDER BY p.created_at DESC
+    LIMIT ${safeLimit}
+  `);
+}
+
 async function findById(id) {
   const posts = await db.query('SELECT * FROM posts WHERE id = ?', [id]);
   return posts[0];
@@ -34,6 +46,7 @@ async function remove(id) {
 
 module.exports = {
   findAllWithAuthors,
+  findRecentWithAuthors,
   findById,
   create,
   update,

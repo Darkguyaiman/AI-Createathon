@@ -22,7 +22,7 @@
           </div>
 
           <div class="inline-flex items-center gap-5 bg-pure-white text-on-surface p-4 pr-6 brutal-border brutal-shadow-sm">
-            <img src="/assets/must.png" alt="Malaysia University of Science and Technology logo" class="w-20 h-20 sm:w-24 sm:h-24 object-contain">
+            <img src="/assets/must.png" alt="Malaysia University of Science and Technology logo" class="w-20 h-20 sm:w-24 sm:h-24 object-contain" loading="lazy" decoding="async">
             <div>
               <p class="font-mono text-[10px] font-black uppercase text-primary">Hosted at</p>
               <p class="font-heading text-sm font-black uppercase leading-tight">Malaysia University<br>of Science &amp; Technology</p>
@@ -62,7 +62,7 @@
             <ul class="space-y-4 text-xs font-black uppercase">
               <li class="flex items-center gap-3"><span class="material-symbols-outlined text-primary">calendar_today</span> 8 July 2026</li>
               <li class="flex items-center gap-3"><span class="material-symbols-outlined text-primary">schedule</span> 10:00 AM</li>
-              <li class="flex items-start gap-3"><span class="material-symbols-outlined text-primary">location_on</span> <span>4A1, MUST University</span></li>
+              <li class="flex items-start gap-3"><span class="material-symbols-outlined text-primary">location_on</span> <span>4B1, MUST University</span></li>
             </ul>
           </div>
         </div>
@@ -99,8 +99,10 @@
       }
     });
   </script>
-  <script src="/socket.io/socket.io.js"></script>
-  <script src="/js/live-voting.js" defer></script>
+  <% if (typeof activePage !== 'undefined' && (activePage === 'voting' || activePage === 'leaderboard')) { %>
+    <script src="/socket.io/socket.io.js" defer></script>
+    <script src="/js/live-voting.js" defer></script>
+  <% } %>
   <script src="/js/toasts.js" defer></script>
 </body>
 </html>

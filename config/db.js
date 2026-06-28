@@ -11,6 +11,11 @@ const dbConfig = {
   multipleStatements: true // Required to run the schema file which has multiple queries
 };
 
+function parsePositiveInt(value, fallback) {
+  const parsed = parseInt(value, 10);
+  return Number.isInteger(parsed) && parsed > 0 ? parsed : fallback;
+}
+
 let pool;
 
 async function initDatabase() {
@@ -34,9 +39,11 @@ async function initDatabase() {
     pool = mysql.createPool({
       ...dbConfig,
       database: dbName,
-      connectionLimit: 10,
+      connectionLimit: parsePositiveInt(process.env.DB_CONNECTION_LIMIT, 20),
       waitForConnections: true,
-      queueLimit: 0
+      queueLimit: parseInt(process.env.DB_QUEUE_LIMIT || '0', 10) || 0,
+      enableKeepAlive: true,
+      keepAliveInitialDelay: 0
     });
 
     // 4. Check if tables exist. If admins doesn't exist, seed database

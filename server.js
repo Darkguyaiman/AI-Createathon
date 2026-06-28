@@ -18,10 +18,29 @@ const PORT = process.env.PORT || 3000;
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
+const staticOptions = {
+  etag: true,
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.html') || filePath.endsWith('.json') || filePath.endsWith('.webmanifest')) {
+      res.setHeader('Cache-Control', 'public, max-age=300');
+      return;
+    }
+
+    if (/\.(?:css|js)$/i.test(filePath)) {
+      res.setHeader('Cache-Control', 'public, max-age=3600, must-revalidate');
+      return;
+    }
+
+    if (/\.(?:avif|webp|png|jpe?g|gif|svg|ico|woff2?|ttf)$/i.test(filePath)) {
+      res.setHeader('Cache-Control', 'public, max-age=2592000, immutable');
+    }
+  }
+};
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
-app.use('/vendor/lenis', express.static(path.join(__dirname, 'node_modules', 'lenis', 'dist')));
+app.use(express.static(path.join(__dirname, 'public'), staticOptions));
+app.use('/vendor/lenis', express.static(path.join(__dirname, 'node_modules', 'lenis', 'dist'), staticOptions));
 
 db.initDatabase().then(() => {
   app.use(session({

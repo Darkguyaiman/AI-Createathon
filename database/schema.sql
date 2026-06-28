@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS `participants` (
   `avatar_path` VARCHAR(255) DEFAULT '/uploads/default-avatar.png',
   `group_id` INT DEFAULT NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  KEY `idx_participants_group_name` (`group_id`, `name`),
   FOREIGN KEY (`group_id`) REFERENCES `groups`(`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
@@ -40,6 +41,8 @@ CREATE TABLE IF NOT EXISTS `posts` (
   `image_path` VARCHAR(255) DEFAULT NULL,
   `admin_id` INT DEFAULT NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  KEY `idx_posts_created_at` (`created_at`),
+  KEY `idx_posts_admin_created` (`admin_id`, `created_at`),
   FOREIGN KEY (`admin_id`) REFERENCES `admins`(`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
@@ -50,6 +53,7 @@ CREATE TABLE IF NOT EXISTS `live_votes` (
   `voter_ip` VARCHAR(45) NOT NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   UNIQUE KEY `voter_unique_ip` (`voter_ip`), -- Enforces 1 vote total per visitor IP
+  KEY `idx_live_votes_group` (`group_id`),
   FOREIGN KEY (`group_id`) REFERENCES `groups`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
@@ -64,6 +68,8 @@ CREATE TABLE IF NOT EXISTS `judge_scores` (
   `feedback` TEXT DEFAULT NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   UNIQUE KEY `judge_unique_group` (`judge_name`, `group_id`), -- One score per judge per group
+  KEY `idx_judge_scores_group` (`group_id`),
+  KEY `idx_judge_scores_created_at` (`created_at`),
   FOREIGN KEY (`group_id`) REFERENCES `groups`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
@@ -78,7 +84,8 @@ CREATE TABLE IF NOT EXISTS `sessions` (
   `session_id` VARCHAR(128) COLLATE utf8mb4_bin NOT NULL,
   `expires` INT(11) UNSIGNED NOT NULL,
   `data` MEDIUMTEXT COLLATE utf8mb4_bin,
-  PRIMARY KEY (`session_id`)
+  PRIMARY KEY (`session_id`),
+  KEY `idx_sessions_expires` (`expires`)
 ) ENGINE=InnoDB;
 
 -- Seed default settings

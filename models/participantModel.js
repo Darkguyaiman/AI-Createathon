@@ -18,6 +18,27 @@ async function findByGroupId(groupId) {
   return db.query('SELECT name, avatar_path FROM participants WHERE group_id = ?', [groupId]);
 }
 
+async function findAllGroupedByGroupId() {
+  const rows = await db.query(`
+    SELECT group_id, name, avatar_path
+    FROM participants
+    WHERE group_id IS NOT NULL
+    ORDER BY name ASC
+  `);
+
+  return rows.reduce((groups, participant) => {
+    const groupId = participant.group_id;
+    if (!groups[groupId]) {
+      groups[groupId] = [];
+    }
+    groups[groupId].push({
+      name: participant.name,
+      avatar_path: participant.avatar_path
+    });
+    return groups;
+  }, {});
+}
+
 async function countByGroupId(groupId) {
   const rows = await db.query('SELECT COUNT(*) as count FROM participants WHERE group_id = ?', [groupId]);
   return rows[0].count;
@@ -50,6 +71,7 @@ module.exports = {
   findAllWithGroupNames,
   findById,
   findByGroupId,
+  findAllGroupedByGroupId,
   countByGroupId,
   countAll,
   create,

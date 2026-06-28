@@ -35,7 +35,7 @@
             <div class="w-14 h-14 brutal-border bg-pure-white flex items-center justify-center text-on-surface">
               <span class="material-symbols-outlined text-3xl">location_on</span>
             </div>
-            <p class="font-mono font-bold text-sm leading-tight uppercase">4A1, MUST UNIVERSITY,<br/>MALAYSIA</p>
+            <p class="font-mono font-bold text-sm leading-tight uppercase">4B1, MUST UNIVERSITY,<br/>MALAYSIA</p>
           </div>
         </div>
       </div>
@@ -284,7 +284,7 @@
               <% if (post.image_path) { %>
                 <div class="mt-6 flex justify-start">
                   <div class="brutal-border bg-background overflow-hidden inline-block">
-                    <img src="<%= post.image_path %>" alt="<%= post.title %>" class="max-h-[520px] w-auto max-w-full block">
+            <img src="<%= post.image_path %>" alt="<%= post.title %>" class="max-h-[520px] w-auto max-w-full block" loading="lazy" decoding="async">
                   </div>
                 </div>
               <% } %>
@@ -332,7 +332,7 @@
 
       <div class="lg:col-span-6 min-h-[380px] md:min-h-[500px] relative fade-up scroll-circle-stage">
         <div class="absolute inset-0 brutal-border border-primary/80 z-[4]"></div>
-        <img src="/assets/shape-circle-big.svg" alt="" class="scroll-circle-asset absolute w-[380px] md:w-[480px] max-w-none opacity-80" aria-hidden="true" data-scroll-motion="rotate">
+        <img src="/assets/shape-circle-big.svg" alt="" class="scroll-circle-asset absolute w-[380px] md:w-[480px] max-w-none opacity-80" aria-hidden="true" data-scroll-motion="rotate" loading="lazy" decoding="async">
         <div class="absolute inset-x-8 top-8 h-1 bg-primary z-[5]"></div>
         <div class="absolute inset-x-8 bottom-8 h-1 bg-pure-white/25 z-[5]"></div>
         <div class="absolute left-8 top-8 bottom-8 w-1 bg-pure-white/25 z-[5]"></div>
@@ -350,7 +350,7 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-24 relative">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
       <div class="lg:col-span-5 order-2 lg:order-1 min-h-[380px] md:min-h-[560px] relative fade-up phoenix-stage">
-        <img src="/assets/phoenix.svg" alt="" class="phoenix-asset absolute w-[320px] md:w-[450px] max-w-none" aria-hidden="true" data-scroll-motion="bob">
+        <img src="/assets/phoenix.svg" alt="" class="phoenix-asset absolute w-[320px] md:w-[450px] max-w-none" aria-hidden="true" data-scroll-motion="bob" loading="lazy" decoding="async">
         <div class="absolute inset-6 brutal-border border-primary z-[4]"></div>
         <div class="absolute left-0 top-1/2 h-8 w-full -translate-y-1/2 bg-primary/20 z-[1]"></div>
       </div>
@@ -585,7 +585,7 @@
           <span class="material-symbols-outlined">close</span>
         </button>
       </div>
-      <img src="/assets/tng-qr.png" alt="DuitNow QR code for sponsoring AI Createathon" class="qr-modal-image brutal-border bg-white">
+      <img src="/assets/tng-qr.png" alt="DuitNow QR code for sponsoring AI Createathon" class="qr-modal-image brutal-border bg-white" loading="lazy" decoding="async">
       <div class="mt-6 flex flex-col sm:flex-row gap-4">
         <a href="/assets/tng-qr.png" download="ai-createathon-duitnow-qr.png" class="inline-flex items-center justify-center gap-3 bg-primary text-on-primary font-heading text-sm px-6 py-3.5 brutal-border brutal-shadow-sm active:translate-x-1 active:translate-y-1 active:shadow-none transition-all uppercase font-black">
           Download QR

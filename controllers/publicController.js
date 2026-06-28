@@ -13,7 +13,7 @@ function getVisitorIp(req) {
 
 async function showHome(req, res) {
   try {
-    const allPosts = await postModel.findAllWithAuthors();
+    const allPosts = await postModel.findRecentWithAuthors(4);
     const posts = allPosts.slice(0, 3);
     const hasMore = allPosts.length > 3;
     renderWithAlerts(req, res, 'index', { activePage: 'home', posts, hasMore });
@@ -60,11 +60,13 @@ async function showVoting(req, res) {
     const votingActive = await settingModel.isVotingActive();
     const hasVoted = await voteModel.hasVoted(visitorIp);
     const totalVotes = await voteModel.countAll();
-    const groups = await groupModel.findAllWithVoteCounts();
-
-    for (const group of groups) {
-      group.members = await participantModel.findByGroupId(group.id);
-    }
+    const [groups, participantsByGroupId] = await Promise.all([
+      groupModel.findAllWithVoteCounts(),
+      participantModel.findAllGroupedByGroupId()
+    ]);
+    groups.forEach(group => {
+      group.members = participantsByGroupId[group.id] || [];
+    });
 
     renderWithAlerts(req, res, 'voting', {
       activePage: 'voting',

@@ -26,8 +26,9 @@
   <!-- Compiled Tailwind CSS -->
   <link rel="stylesheet" href="/css/style.css">
 
-  <!-- Smooth scroll -->
-  <script src="/vendor/lenis/lenis.min.js" defer></script>
+  <% if (typeof activePage !== 'undefined' && activePage === 'home') { %>
+    <script src="/vendor/lenis/lenis.min.js" defer></script>
+  <% } %>
   <style>
     @media (max-width: 339px) {
       .site-wordmark {

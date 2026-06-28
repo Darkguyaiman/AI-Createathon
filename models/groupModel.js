@@ -11,20 +11,26 @@ async function findById(id) {
 
 async function findAllWithVoteCounts() {
   return db.query(`
-    SELECT g.*, COUNT(v.id) as vote_count
+    SELECT g.*, COALESCE(v.vote_count, 0) as vote_count
     FROM \`groups\` g
-    LEFT JOIN live_votes v ON g.id = v.group_id
-    GROUP BY g.id
+    LEFT JOIN (
+      SELECT group_id, COUNT(*) as vote_count
+      FROM live_votes
+      GROUP BY group_id
+    ) v ON v.group_id = g.id
     ORDER BY vote_count DESC, g.name ASC
   `);
 }
 
 async function findAllWithVoteCountsUnsorted() {
   return db.query(`
-    SELECT g.*, COUNT(v.id) as vote_count
+    SELECT g.*, COALESCE(v.vote_count, 0) as vote_count
     FROM \`groups\` g
-    LEFT JOIN live_votes v ON g.id = v.group_id
-    GROUP BY g.id
+    LEFT JOIN (
+      SELECT group_id, COUNT(*) as vote_count
+      FROM live_votes
+      GROUP BY group_id
+    ) v ON v.group_id = g.id
   `);
 }
 
