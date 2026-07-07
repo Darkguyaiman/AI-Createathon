@@ -1,6 +1,7 @@
 const express = require('express');
 const session = require('express-session');
 const http = require('http');
+const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
 
@@ -17,6 +18,16 @@ const PORT = process.env.PORT || 3000;
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+
+function getFileVersion(filePath) {
+  try {
+    return Math.floor(fs.statSync(filePath).mtimeMs).toString(36);
+  } catch (err) {
+    return Date.now().toString(36);
+  }
+}
+
+app.locals.cssVersion = getFileVersion(path.join(__dirname, 'public', 'css', 'style.css'));
 
 const staticOptions = {
   etag: true,
