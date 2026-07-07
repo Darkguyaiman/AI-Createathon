@@ -23,13 +23,17 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <div>
         <label for="memberName" class="block text-xs uppercase font-extrabold tracking-wider text-slate-400 mb-2">Full Name</label>
-        <input type="text" id="memberName" name="name" required placeholder="e.g. John Doe" value="<%= isEditing ? participant.name : '' %>"
-               class="block w-full px-4 py-3 bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-red/35 focus:border-accent-red transition-all">
+        <div class="relative" data-participant-combobox>
+          <input type="text" id="memberName" name="name" required autocomplete="off" placeholder="Search or enter a full name" value="<%= isEditing ? participant.name : '' %>"
+                 class="block w-full px-4 py-3 bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-red/35 focus:border-accent-red transition-all"
+                 role="combobox" aria-expanded="false" aria-controls="participantSuggestions">
+          <div id="participantSuggestions" data-participant-suggestions style="max-height: 14rem; overflow-y: auto;" class="hidden absolute z-20 mt-2 w-full bg-slate-950 border border-slate-800 shadow-2xl"></div>
+        </div>
       </div>
 
       <div>
-        <label for="memberEmail" class="block text-xs uppercase font-extrabold tracking-wider text-slate-400 mb-2">Email Address</label>
-        <input type="email" id="memberEmail" name="email" required placeholder="e.g. john@must.edu.my" value="<%= isEditing ? participant.email : '' %>"
+        <label for="memberStudentId" class="block text-xs uppercase font-extrabold tracking-wider text-slate-400 mb-2">Student ID</label>
+        <input type="text" id="memberStudentId" name="studentId" required placeholder="e.g. D26050023" value="<%= isEditing ? participant.student_id : '' %>"
                class="block w-full px-4 py-3 bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-red/35 focus:border-accent-red transition-all">
       </div>
     </div>
@@ -47,7 +51,7 @@
       </div>
 
       <div>
-        <label for="memberAvatar" class="block text-xs uppercase font-extrabold tracking-wider text-slate-400 mb-2">Profile Picture / Avatar</label>
+        <label for="memberAvatar" class="block text-xs uppercase font-extrabold tracking-wider text-slate-400 mb-2">Profile Picture / Avatar <span class="text-slate-600">(Optional)</span></label>
         <% if (isEditing && participant.avatar_path) { %>
           <div class="mb-3 flex items-center gap-3 text-xs text-slate-400">
             <img src="<%= participant.avatar_path %>" alt="" class="w-10 h-10 object-cover border border-slate-800">
@@ -64,5 +68,107 @@
     </button>
   </form>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const suggestions = [
+      { name: 'ADAM TAN KENJI', studentId: 'D26050092' },
+      { name: 'AHMAD MUSTAQIM BIN ISKANDAR', studentId: 'D26050023' },
+      { name: 'CHAMNE A/P UVARAJA', studentId: 'D26050016' },
+      { name: 'DANISH HAKIM BIN NOR HISHAM', studentId: 'D26050039' },
+      { name: 'DAVID JEEVAN RAJ A/L RAMES', studentId: 'D26050012' },
+      { name: 'DEEPASRI YOGINI A/P KANNIAPPAN', studentId: 'D26050020' },
+      { name: 'DHARISHINIE A/P MUNIANDY', studentId: 'D26050108' },
+      { name: 'DINESHKUMAR A/L RAGHURAMAN', studentId: 'B25090006' },
+      { name: 'GOKKUL A/L HARITHARAN', studentId: 'D26050095' },
+      { name: 'HADIRAH ALYA BINTI HAMBRI', studentId: 'D26050079' },
+      { name: 'KEFLLY BIN KEFLON', studentId: 'D24060026' },
+      { name: 'KHOO JIN HUAH', studentId: 'D26050002' },
+      { name: 'KOK XIAN LONG', studentId: 'B26010051' },
+      { name: 'MARCUS HOY JIT HONG', studentId: 'D26050003' },
+      { name: 'MOHAMED AIMAN', studentId: 'D25010001' },
+      { name: 'MUHAMAD AIMAN SAIFULLAH BIN NOR AZIZI', studentId: 'D26050088' },
+      { name: 'MUHAMAD NAZMI BIN HAIROL AZLAN', studentId: 'D26050083' },
+      { name: 'MUHAMMAD ALIFF IZHAR BIN SUFARDI', studentId: 'D26050060' },
+      { name: 'MUHAMMAD AMIRUL HAFIZ BIN MOHD ARSHAD', studentId: 'D26050094' },
+      { name: 'MUHAMMAD AQIL MUQRIBIN ROSDIN', studentId: 'D26050005' },
+      { name: 'MUHAMMAD ARIF HAZIQ BIN MOHD ZAKI', studentId: 'D26050038' },
+      { name: 'MUHAMMAD DANIAL AIMAN BIN RIDWAN', studentId: 'D25080022' },
+      { name: 'MUHAMMAD SHAH IMAN BIN ABDULLAH', studentId: 'D26050053' },
+      { name: 'MUHAMMAD ZAIRUL HAKIMI BIN AZMI', studentId: 'D25080021' },
+      { name: 'MUKHRIZ BIN MURAD', studentId: 'D26050009' },
+      { name: 'NESHA A/P THILAGAN', studentId: 'D26050096' },
+      { name: 'NOR ATIKAH BINTI ADI DARMA', studentId: 'D26050001' },
+      { name: 'NUR HANA QAIREEN SABRINA BINTI ARIS', studentId: 'D26050011' },
+      { name: 'NUR HIDAYAH FATIMAH BINTI PARDY', studentId: 'D26050004' },
+      { name: 'NURPUTRI ALEEYA ZAFIRA BINTI AHMAD SUKRI', studentId: 'D26050007' },
+      { name: 'PUTERI NURATIQAH MAISARAH BINTI HAIRUL HALIM SHAH', studentId: 'D26050036' },
+      { name: 'RIRIS ARISKA BINTI SAMIUN', studentId: 'D26050010' },
+      { name: 'SHARVESH A/L LETCHUMANAN', studentId: 'D26050091' },
+      { name: 'SITI NUR SYAZWANI BINTI ZAINAL', studentId: 'D26050015' },
+      { name: 'THAYAAL A/L KALAIARASAN', studentId: 'D26050014' },
+      { name: 'TRISHER DEVAN A/L COOMERLAN NAIDU', studentId: 'D26050026' },
+      { name: 'VANISA A/P SELVARAJAH', studentId: 'D26050017' },
+      { name: 'VANITHA A/P ANANTHAN', studentId: 'D26050029' },
+      { name: 'VICNNY A/L NGAH SANI', studentId: 'D25080013' },
+      { name: 'YOGGA A/L SURIS', studentId: 'B25080289' },
+      { name: 'ZACKRY LO ZI QI', studentId: 'D26050069' }
+    ];
+
+    const nameInput = document.getElementById('memberName');
+    const studentIdInput = document.getElementById('memberStudentId');
+    const menu = document.querySelector('[data-participant-suggestions]');
+
+    if (!nameInput || !studentIdInput || !menu) return;
+
+    const closeMenu = () => {
+      menu.classList.add('hidden');
+      nameInput.setAttribute('aria-expanded', 'false');
+    };
+
+    const selectSuggestion = (person) => {
+      nameInput.value = person.name;
+      studentIdInput.value = person.studentId;
+      closeMenu();
+      studentIdInput.focus();
+    };
+
+    const renderSuggestions = () => {
+      const query = nameInput.value.trim().toLowerCase();
+      const matches = suggestions
+        .filter(person => !query || person.name.toLowerCase().includes(query) || person.studentId.toLowerCase().includes(query));
+
+      if (matches.length === 0) {
+        menu.innerHTML = '<div class="px-4 py-3 text-xs text-slate-500">No suggestions. You can keep typing a new participant.</div>';
+      } else {
+        menu.innerHTML = matches.map((person, index) => `
+          <button type="button" data-suggestion-index="${index}" class="w-full text-left px-4 py-3 border-b border-slate-800 last:border-b-0 hover:bg-slate-900 focus:bg-slate-900 focus:outline-none">
+            <span class="block text-sm font-bold text-white">${person.name}</span>
+            <span class="block text-[10px] font-mono uppercase text-accent-red mt-1">${person.studentId}</span>
+          </button>
+        `).join('');
+
+        Array.from(menu.querySelectorAll('[data-suggestion-index]')).forEach(button => {
+          button.addEventListener('mousedown', (event) => {
+            event.preventDefault();
+            selectSuggestion(matches[parseInt(button.dataset.suggestionIndex, 10)]);
+          });
+        });
+      }
+
+      menu.classList.remove('hidden');
+      nameInput.setAttribute('aria-expanded', 'true');
+    };
+
+    nameInput.addEventListener('input', renderSuggestions);
+    nameInput.addEventListener('focus', renderSuggestions);
+    nameInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') closeMenu();
+    });
+    document.addEventListener('click', (event) => {
+      if (!event.target.closest('[data-participant-combobox]')) closeMenu();
+    });
+  });
+</script>
 
 <%- include('../partials/admin-footer') %>

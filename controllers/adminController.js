@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+const XLSX = require('xlsx');
 const adminModel = require('../models/adminModel');
 const dashboardModel = require('../models/dashboardModel');
 const groupModel = require('../models/groupModel');
@@ -9,6 +10,40 @@ const settingModel = require('../models/settingModel');
 const voteModel = require('../models/voteModel');
 const liveUpdates = require('../services/liveUpdates');
 const { redirectWithFlash, renderWithAlerts } = require('../utils/flash');
+
+const scoreCriteria = [
+  { key: 'creativityInnovation', field: 'score_creativity_innovation', label: 'Creativity and Innovation', max: 30 },
+  { key: 'effectiveAi', field: 'score_effective_ai', label: 'Effective Use of AI', max: 25 },
+  { key: 'technicalQuality', field: 'score_technical_quality', label: 'Technical Quality', max: 20 },
+  { key: 'presentation', field: 'score_presentation', label: 'Presentation and Explanation', max: 15 },
+  { key: 'practicalityImpact', field: 'score_practicality_impact', label: 'Practicality and Impact', max: 10 }
+];
+
+function parseScoreCriteria(body) {
+  return scoreCriteria.reduce((scores, criterion) => {
+    scores[criterion.key] = parseInt(body[criterion.field], 10);
+    return scores;
+  }, {});
+}
+
+function getScoreValidationError(scores) {
+  const invalidCriterion = scoreCriteria.find(criterion => (
+    Number.isNaN(scores[criterion.key]) ||
+    scores[criterion.key] < 0 ||
+    scores[criterion.key] > criterion.max
+  ));
+
+  if (!invalidCriterion) {
+    return null;
+  }
+
+  return `${invalidCriterion.label} must be between 0 and ${invalidCriterion.max} points.`;
+}
+
+function toSpreadsheetText(value) {
+  const text = String(value ?? '');
+  return /^[=+\-@]/.test(text) ? `'${text}` : text;
+}
 
 async function showDashboard(req, res) {
   try {
@@ -39,19 +74,60 @@ async function showRegistration(req, res) {
   }
 }
 
-function showNewGroup(req, res) {
-  renderWithAlerts(req, res, 'admin/group-form', { activePage: 'registration', group: null });
+async function exportAttendance(req, res) {
+  try {
+    const participants = await participantModel.findAllAttendance();
+    const generatedAt = new Date().toISOString().slice(0, 10);
+    const rows = [
+      ['Name', 'Student ID'],
+      ...participants.map(participant => [
+        toSpreadsheetText(participant.name),
+        toSpreadsheetText(participant.student_id)
+      ])
+    ];
+
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.aoa_to_sheet(rows);
+    worksheet['!cols'] = [{ wch: 42 }, { wch: 18 }];
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Attendance');
+
+    const buffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'buffer' });
+
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', `attachment; filename="ai-createathon-attendance-${generatedAt}.xlsx"`);
+    res.send(buffer);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error exporting attendance document');
+  }
+}
+
+async function showNewGroup(req, res) {
+  try {
+    const assignableParticipants = await participantModel.findAssignableForGroup();
+    renderWithAlerts(req, res, 'admin/group-form', {
+      activePage: 'registration',
+      group: null,
+      assignableParticipants
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error loading team form');
+  }
 }
 
 async function showEditGroup(req, res) {
   try {
-    const group = await groupModel.findById(req.params.id);
+    const [group, assignableParticipants] = await Promise.all([
+      groupModel.findById(req.params.id),
+      participantModel.findAssignableForGroup(req.params.id)
+    ]);
 
     if (!group) {
       return redirectWithFlash(req, res, '/admin/registration', 'error', 'Team not found.');
     }
 
-    renderWithAlerts(req, res, 'admin/group-form', { activePage: 'registration', group });
+    renderWithAlerts(req, res, 'admin/group-form', { activePage: 'registration', group, assignableParticipants });
   } catch (error) {
     console.error(error);
     redirectWithFlash(req, res, '/admin/registration', 'error', 'Error loading team edit form.');
@@ -88,15 +164,23 @@ async function showEditParticipant(req, res) {
 
 async function createGroup(req, res) {
   const { name, description } = req.body;
+  const participantIds = Array.isArray(req.body.participantIds)
+    ? req.body.participantIds
+    : (req.body.participantIds ? [req.body.participantIds] : []);
 
   if (!name) {
     return redirectWithFlash(req, res, '/admin/groups/new', 'error', 'Team name is required.');
   }
 
+  if (participantIds.length === 0) {
+    return redirectWithFlash(req, res, '/admin/groups/new', 'error', 'Add at least one participant before creating a team.');
+  }
+
   const logoPath = req.file ? '/uploads/' + req.file.filename : '/uploads/default-group.svg';
 
   try {
-    await groupModel.create({ name, description, logoPath });
+    const result = await groupModel.create({ name, description, logoPath });
+    await participantModel.syncGroupAssignments(result.insertId, participantIds);
     redirectWithFlash(req, res, '/admin/registration', 'success', `Team "${name}" created successfully!`);
   } catch (error) {
     if (error.code === 'ER_DUP_ENTRY') {
@@ -111,6 +195,9 @@ async function createGroup(req, res) {
 async function updateGroup(req, res) {
   const { name, description } = req.body;
   const groupId = req.params.id;
+  const participantIds = Array.isArray(req.body.participantIds)
+    ? req.body.participantIds
+    : (req.body.participantIds ? [req.body.participantIds] : []);
 
   if (!name) {
     return redirectWithFlash(req, res, `/admin/groups/${encodeURIComponent(groupId)}/edit`, 'error', 'Team name is required.');
@@ -125,6 +212,7 @@ async function updateGroup(req, res) {
 
     const logoPath = req.file ? '/uploads/' + req.file.filename : existingGroup.logo_path;
     await groupModel.update(groupId, { name, description, logoPath });
+    await participantModel.syncGroupAssignments(groupId, participantIds);
     redirectWithFlash(req, res, '/admin/registration', 'success', `Team "${name}" updated successfully.`);
   } catch (error) {
     if (error.code === 'ER_DUP_ENTRY') {
@@ -137,21 +225,21 @@ async function updateGroup(req, res) {
 }
 
 async function createParticipant(req, res) {
-  const { name, email, groupId } = req.body;
+  const { name, studentId, groupId } = req.body;
 
-  if (!name || !email) {
-    return redirectWithFlash(req, res, '/admin/participants/new', 'error', 'Name and email are required.');
+  if (!name || !studentId) {
+    return redirectWithFlash(req, res, '/admin/participants/new', 'error', 'Name and student ID are required.');
   }
 
   const avatarPath = req.file ? '/uploads/' + req.file.filename : '/uploads/default-avatar.svg';
   const assignedGroupId = groupId ? parseInt(groupId, 10) : null;
 
   try {
-    await participantModel.create({ name, email, avatarPath, groupId: assignedGroupId });
+    await participantModel.create({ name, studentId, avatarPath, groupId: assignedGroupId });
     redirectWithFlash(req, res, '/admin/registration', 'success', `Participant "${name}" registered successfully!`);
   } catch (error) {
     if (error.code === 'ER_DUP_ENTRY') {
-      redirectWithFlash(req, res, '/admin/participants/new', 'error', 'A participant with this email address already exists.');
+      redirectWithFlash(req, res, '/admin/participants/new', 'error', 'A participant with this student ID already exists.');
     } else {
       console.error(error);
       redirectWithFlash(req, res, '/admin/participants/new', 'error', 'Error registering participant.');
@@ -160,11 +248,11 @@ async function createParticipant(req, res) {
 }
 
 async function updateParticipant(req, res) {
-  const { name, email, groupId } = req.body;
+  const { name, studentId, groupId } = req.body;
   const participantId = req.params.id;
 
-  if (!name || !email) {
-    return redirectWithFlash(req, res, `/admin/participants/${encodeURIComponent(participantId)}/edit`, 'error', 'Name and email are required.');
+  if (!name || !studentId) {
+    return redirectWithFlash(req, res, `/admin/participants/${encodeURIComponent(participantId)}/edit`, 'error', 'Name and student ID are required.');
   }
 
   const assignedGroupId = groupId ? parseInt(groupId, 10) : null;
@@ -177,11 +265,11 @@ async function updateParticipant(req, res) {
     }
 
     const avatarPath = req.file ? '/uploads/' + req.file.filename : existingParticipant.avatar_path;
-    await participantModel.update(participantId, { name, email, avatarPath, groupId: assignedGroupId });
+    await participantModel.update(participantId, { name, studentId, avatarPath, groupId: assignedGroupId });
     redirectWithFlash(req, res, '/admin/registration', 'success', `Participant "${name}" updated successfully.`);
   } catch (error) {
     if (error.code === 'ER_DUP_ENTRY') {
-      redirectWithFlash(req, res, `/admin/participants/${encodeURIComponent(participantId)}/edit`, 'error', 'A participant with this email address already exists.');
+      redirectWithFlash(req, res, `/admin/participants/${encodeURIComponent(participantId)}/edit`, 'error', 'A participant with this student ID already exists.');
     } else {
       console.error(error);
       redirectWithFlash(req, res, `/admin/participants/${encodeURIComponent(participantId)}/edit`, 'error', 'Error updating participant.');
@@ -337,27 +425,24 @@ async function showEditScore(req, res) {
 }
 
 async function saveScore(req, res) {
-  const { group_id, judge_name, score_innovation, score_design, score_execution, feedback } = req.body;
+  const { group_id, judge_name, feedback } = req.body;
 
   if (!group_id || !judge_name) {
     return redirectWithFlash(req, res, '/admin/scores/new', 'error', 'Judge name and target team are required.');
   }
 
-  const innovation = parseInt(score_innovation, 10);
-  const design = parseInt(score_design, 10);
-  const execution = parseInt(score_execution, 10);
+  const scores = parseScoreCriteria(req.body);
 
-  if (innovation < 1 || innovation > 10 || design < 1 || design > 10 || execution < 1 || execution > 10) {
-    return redirectWithFlash(req, res, `/admin/scores/new?groupId=${encodeURIComponent(group_id)}`, 'error', 'Scoring metrics must range from 1 to 10.');
+  const validationError = getScoreValidationError(scores);
+  if (validationError) {
+    return redirectWithFlash(req, res, `/admin/scores/new?groupId=${encodeURIComponent(group_id)}`, 'error', validationError);
   }
 
   try {
     await scoreModel.upsert({
       groupId: group_id,
       judgeName: judge_name,
-      innovation,
-      design,
-      execution,
+      ...scores,
       feedback
     });
 
@@ -369,24 +454,18 @@ async function saveScore(req, res) {
 }
 
 async function updateScore(req, res) {
-  const { group_id, judge_name, score_innovation, score_design, score_execution, feedback } = req.body;
+  const { group_id, judge_name, feedback } = req.body;
   const scoreId = req.params.id;
 
   if (!group_id || !judge_name) {
     return redirectWithFlash(req, res, `/admin/scores/${encodeURIComponent(scoreId)}/edit`, 'error', 'Judge name and target team are required.');
   }
 
-  const innovation = parseInt(score_innovation, 10);
-  const design = parseInt(score_design, 10);
-  const execution = parseInt(score_execution, 10);
+  const scores = parseScoreCriteria(req.body);
 
-  if (
-    Number.isNaN(innovation) || Number.isNaN(design) || Number.isNaN(execution) ||
-    innovation < 1 || innovation > 10 ||
-    design < 1 || design > 10 ||
-    execution < 1 || execution > 10
-  ) {
-    return redirectWithFlash(req, res, `/admin/scores/${encodeURIComponent(scoreId)}/edit`, 'error', 'Scoring metrics must range from 1 to 10.');
+  const validationError = getScoreValidationError(scores);
+  if (validationError) {
+    return redirectWithFlash(req, res, `/admin/scores/${encodeURIComponent(scoreId)}/edit`, 'error', validationError);
   }
 
   try {
@@ -399,9 +478,7 @@ async function updateScore(req, res) {
     await scoreModel.update(scoreId, {
       groupId: group_id,
       judgeName: judge_name,
-      innovation,
-      design,
-      execution,
+      ...scores,
       feedback
     });
 
@@ -615,6 +692,7 @@ async function updateAdmin(req, res) {
 module.exports = {
   showDashboard,
   showRegistration,
+  exportAttendance,
   showNewGroup,
   showEditGroup,
   createGroup,

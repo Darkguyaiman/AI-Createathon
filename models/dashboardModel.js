@@ -22,9 +22,11 @@ async function getLeaderboard(totalVotes) {
       g.name,
       g.logo_path,
       COALESCE(v.vote_count, 0) as vote_count,
-      COALESCE(s.avg_inno, 0) as avg_inno,
-      COALESCE(s.avg_des, 0) as avg_des,
-      COALESCE(s.avg_exec, 0) as avg_exec,
+      COALESCE(s.avg_creativity, 0) as avg_creativity,
+      COALESCE(s.avg_ai, 0) as avg_ai,
+      COALESCE(s.avg_technical, 0) as avg_technical,
+      COALESCE(s.avg_presentation, 0) as avg_presentation,
+      COALESCE(s.avg_practicality, 0) as avg_practicality,
       COALESCE(s.score_count, 0) as score_count,
       COALESCE(p.member_count, 0) as member_count
     FROM \`groups\` g
@@ -36,9 +38,11 @@ async function getLeaderboard(totalVotes) {
     LEFT JOIN (
       SELECT
         group_id,
-        AVG(score_innovation) as avg_inno,
-        AVG(score_design) as avg_des,
-        AVG(score_execution) as avg_exec,
+        AVG(score_creativity_innovation) as avg_creativity,
+        AVG(score_effective_ai) as avg_ai,
+        AVG(score_technical_quality) as avg_technical,
+        AVG(score_presentation) as avg_presentation,
+        AVG(score_practicality_impact) as avg_practicality,
         COUNT(*) as score_count
       FROM judge_scores
       GROUP BY group_id
@@ -52,13 +56,15 @@ async function getLeaderboard(totalVotes) {
   `);
 
   const leaderboard = groups.map(group => {
-    const avgInno = group.avg_inno ? parseFloat(group.avg_inno) : 0;
-    const avgDes = group.avg_des ? parseFloat(group.avg_des) : 0;
-    const avgExec = group.avg_exec ? parseFloat(group.avg_exec) : 0;
-    const judge_avg_raw = (avgInno + avgDes + avgExec).toFixed(1);
+    const avgCreativity = group.avg_creativity ? parseFloat(group.avg_creativity) : 0;
+    const avgAi = group.avg_ai ? parseFloat(group.avg_ai) : 0;
+    const avgTechnical = group.avg_technical ? parseFloat(group.avg_technical) : 0;
+    const avgPresentation = group.avg_presentation ? parseFloat(group.avg_presentation) : 0;
+    const avgPracticality = group.avg_practicality ? parseFloat(group.avg_practicality) : 0;
+    const judge_avg_raw = (avgCreativity + avgAi + avgTechnical + avgPresentation + avgPracticality).toFixed(1);
     const rawJudge = parseFloat(judge_avg_raw);
     const publicScore = totalVotes > 0 ? (group.vote_count / totalVotes) * 40 : 0;
-    const judgeScore = (rawJudge / 30) * 60;
+    const judgeScore = (rawJudge / 100) * 60;
 
     return {
       id: group.id,
@@ -71,7 +77,7 @@ async function getLeaderboard(totalVotes) {
       raw_votes: Number(group.vote_count) || 0,
       raw_judge: rawJudge,
       public_pct: totalVotes > 0 ? ((group.vote_count / totalVotes) * 100).toFixed(1) : '0.0',
-      judge_pct: ((rawJudge / 30) * 100).toFixed(1),
+      judge_pct: rawJudge.toFixed(1),
       combined_score: (publicScore + judgeScore).toFixed(1)
     };
   });

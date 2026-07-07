@@ -69,6 +69,53 @@ async function initDatabase() {
         await pool.query(`UPDATE \`admins\` SET \`role\` = 'super' WHERE \`username\` = 'admin';`);
         console.log('"role" column added and configured.');
       }
+
+      const [participantStudentIdColumns] = await pool.query(`SHOW COLUMNS FROM \`participants\` LIKE 'student_id'`);
+      const [participantEmailColumns] = await pool.query(`SHOW COLUMNS FROM \`participants\` LIKE 'email'`);
+
+      if (participantStudentIdColumns.length === 0 && participantEmailColumns.length > 0) {
+        console.log('Renaming participant "email" column to "student_id"...');
+        await pool.query(`ALTER TABLE \`participants\` CHANGE COLUMN \`email\` \`student_id\` VARCHAR(100) UNIQUE NOT NULL;`);
+        console.log('Participant student ID column configured.');
+      } else if (participantStudentIdColumns.length === 0) {
+        console.log('Adding participant "student_id" column...');
+        await pool.query(`ALTER TABLE \`participants\` ADD COLUMN \`student_id\` VARCHAR(100) UNIQUE NOT NULL AFTER \`name\`;`);
+        console.log('Participant student ID column added.');
+      }
+
+      const scoringColumns = [
+        ['score_creativity_innovation', 'judge_name'],
+        ['score_effective_ai', 'score_creativity_innovation'],
+        ['score_technical_quality', 'score_effective_ai'],
+        ['score_presentation', 'score_technical_quality'],
+        ['score_practicality_impact', 'score_presentation']
+      ];
+
+      for (const [columnName, afterColumn] of scoringColumns) {
+        const [scoreColumns] = await pool.query(`SHOW COLUMNS FROM \`judge_scores\` LIKE ?`, [columnName]);
+        if (scoreColumns.length === 0) {
+          console.log(`Adding judge scoring column "${columnName}"...`);
+          await pool.query(`ALTER TABLE \`judge_scores\` ADD COLUMN \`${columnName}\` INT DEFAULT 0 AFTER \`${afterColumn}\`;`);
+        }
+      }
+
+      const [oldInnovationColumns] = await pool.query(`SHOW COLUMNS FROM \`judge_scores\` LIKE 'score_innovation'`);
+      if (oldInnovationColumns.length > 0) {
+        await pool.query(`
+          UPDATE \`judge_scores\`
+          SET
+            \`score_creativity_innovation\` = ROUND(\`score_innovation\` * 3),
+            \`score_effective_ai\` = ROUND(\`score_design\` * 2.5),
+            \`score_technical_quality\` = ROUND(\`score_execution\` * 2),
+            \`score_presentation\` = 0,
+            \`score_practicality_impact\` = 0
+          WHERE \`score_creativity_innovation\` = 0
+            AND \`score_effective_ai\` = 0
+            AND \`score_technical_quality\` = 0
+            AND \`score_presentation\` = 0
+            AND \`score_practicality_impact\` = 0
+        `);
+      }
     }
   } catch (error) {
     console.error('Error initializing MySQL database:', error.message);

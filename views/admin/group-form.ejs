@@ -5,7 +5,7 @@
   <div>
     <p class="font-mono text-xs font-black uppercase tracking-widest text-primary mb-2">Registration</p>
     <h1 class="text-3xl font-extrabold tracking-tight"><%= isEditing ? 'Edit Team' : 'Create New Team' %></h1>
-    <p class="text-sm text-slate-400 mt-1"><%= isEditing ? 'Update this project group and keep the roster aligned.' : 'Add a project group before assigning participants to it.' %></p>
+    <p class="text-sm text-slate-400 mt-1"><%= isEditing ? 'Update this project group and keep the roster aligned.' : 'Create a project group and assign at least one participant straight away.' %></p>
   </div>
   <a href="/admin/registration" class="inline-flex items-center justify-center gap-2 bg-slate-900 text-slate-300 px-4 py-3 text-xs font-bold uppercase tracking-wider border border-slate-800 transition-colors">
     <i class="fa-solid fa-arrow-left"></i> Back to registration
@@ -19,7 +19,7 @@
     <i class="fa-solid fa-people-group text-accent-teal"></i> Team Details
   </h3>
 
-  <form action="<%= isEditing ? '/admin/groups/' + group.id + '/edit' : '/admin/groups' %>" method="POST" enctype="multipart/form-data" class="space-y-4">
+  <form action="<%= isEditing ? '/admin/groups/' + group.id + '/edit' : '/admin/groups' %>" method="POST" enctype="multipart/form-data" class="space-y-4" data-group-form data-require-participant="<%= isEditing ? 'false' : 'true' %>">
     <div>
       <label for="groupName" class="block text-xs uppercase font-extrabold tracking-wider text-slate-400 mb-2">Team Name</label>
       <input type="text" id="groupName" name="name" required placeholder="e.g. Prompt Engineers" value="<%= isEditing ? group.name : '' %>"
@@ -33,7 +33,7 @@
     </div>
 
     <div>
-      <label for="groupLogo" class="block text-xs uppercase font-extrabold tracking-wider text-slate-400 mb-2">Team Logo / Picture</label>
+      <label for="groupLogo" class="block text-xs uppercase font-extrabold tracking-wider text-slate-400 mb-2">Team Logo / Picture <span class="text-slate-600">(Optional)</span></label>
       <% if (isEditing && group.logo_path) { %>
         <div class="mb-3 flex items-center gap-3 text-xs text-slate-400">
           <img src="<%= group.logo_path %>" alt="" class="w-12 h-12 object-cover border border-slate-800">
@@ -44,10 +44,67 @@
              class="block w-full text-xs text-slate-400 file:mr-4 file:py-2.5 file:px-4 file:border-0 file:text-xs file:font-bold file:bg-slate-900 file:text-slate-200 hover:file:bg-slate-800 file:cursor-pointer">
     </div>
 
+    <div>
+      <div class="flex items-center justify-between gap-4 mb-2">
+        <label class="block text-xs uppercase font-extrabold tracking-wider text-slate-400">Team Participants <span class="<%= isEditing ? 'text-slate-600' : 'text-accent-teal' %>">(<%= isEditing ? 'Optional' : 'Required' %>)</span></label>
+        <span class="text-[10px] font-mono uppercase text-slate-500"><%= (typeof assignableParticipants !== 'undefined' ? assignableParticipants.length : 0) %> available</span>
+      </div>
+
+      <% if (typeof assignableParticipants !== 'undefined' && assignableParticipants.length > 0) { %>
+        <p data-participant-error class="hidden mb-2 text-xs font-bold text-accent-red">Select at least one participant before creating a team.</p>
+        <div class="max-h-80 overflow-y-auto border border-slate-800 bg-slate-900 divide-y divide-slate-800">
+          <% assignableParticipants.forEach(member => { %>
+            <% const checked = isEditing && member.group_id == group.id; %>
+            <label class="flex items-center gap-3 p-3 hover:bg-slate-850 cursor-pointer">
+              <input type="checkbox" name="participantIds" value="<%= member.id %>" <%= checked ? 'checked' : '' %>
+                     class="w-4 h-4 accent-teal-400 bg-slate-950 border-slate-700">
+              <img src="<%= member.avatar_path %>" alt="" class="w-9 h-9 object-cover border border-slate-800">
+              <span class="min-w-0">
+                <span class="block text-sm font-bold text-white truncate"><%= member.name %></span>
+                <span class="block text-[10px] font-mono uppercase text-slate-400"><%= member.student_id %></span>
+              </span>
+            </label>
+          <% }) %>
+        </div>
+      <% } else { %>
+        <div class="p-4 border border-slate-800 bg-slate-900 text-xs text-slate-500">
+          <%= isEditing ? 'No unassigned participants are available right now.' : 'No unassigned participants are available yet. Register a participant first, then create the team.' %>
+        </div>
+      <% } %>
+    </div>
+
     <button type="submit" class="w-full mt-4 py-3 px-4 bg-accent-teal hover:bg-teal-400 text-slate-950 font-extrabold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2">
       <i class="fa-solid <%= isEditing ? 'fa-floppy-disk' : 'fa-plus' %>"></i> <%= isEditing ? 'Update Team' : 'Save Team' %>
     </button>
   </form>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.querySelector('[data-group-form]');
+    if (!form || form.dataset.requireParticipant !== 'true') return;
+
+    const checkboxes = Array.from(form.querySelectorAll('input[name="participantIds"]'));
+    const error = form.querySelector('[data-participant-error]');
+
+    form.addEventListener('submit', (event) => {
+      const hasParticipant = checkboxes.some(checkbox => checkbox.checked);
+
+      if (!hasParticipant) {
+        event.preventDefault();
+        if (error) error.classList.remove('hidden');
+        if (checkboxes[0]) checkboxes[0].focus();
+      }
+    });
+
+    checkboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', () => {
+        if (error && checkboxes.some(item => item.checked)) {
+          error.classList.add('hidden');
+        }
+      });
+    });
+  });
+</script>
 
 <%- include('../partials/admin-footer') %>

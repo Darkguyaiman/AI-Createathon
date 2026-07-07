@@ -47,7 +47,8 @@
             LIVE!
           </div>
 
-          <h3 class="text-xs uppercase tracking-widest text-primary font-black font-mono mb-4">Countdown to Kickoff</h3>
+          <h3 id="countdown-title" class="text-xs uppercase tracking-widest text-primary font-black font-mono mb-2">Countdown to Kickoff</h3>
+          <p id="countdown-message" class="font-heading text-2xl uppercase leading-none font-black text-on-surface">Get ready to prompt.</p>
           
           <!-- Countdown Timer container -->
           <div id="countdown" class="grid grid-cols-4 gap-2.5 text-center my-6 font-mono">
@@ -626,36 +627,290 @@
 
 <!-- Countdown Timer JavaScript -->
 <script>
-  // Event Date: 8 July 2026 10:00 AM
-  const eventDate = new Date('2026-07-08T10:00:00').getTime();
+  const countdownDemo = {
+    enabled: true,
+    phase: 'kickoff-countdown', // Change this to the desired phase key for demo
+    secondsIntoPhase: 0
+  };
+  const countdownDemoLoadedAt = Date.now();
+
+  const eventSchedule = [
+    {
+      key: 'kickoff-countdown',
+      title: 'Event Starts In',
+      message: 'Final countdown.',
+      start: '2026-07-08T09:59:50+08:00',
+      end: '2026-07-08T10:00:00+08:00',
+      mode: 'seconds'
+    },
+    {
+      key: 'prompt',
+      title: "Let's Prompt",
+      message: "Let's Prompt",
+      start: '2026-07-08T10:00:00+08:00',
+      end: '2026-07-08T10:01:00+08:00'
+    },
+    {
+      key: 'registration',
+      title: 'Registration Is Open',
+      message: 'Registration is open.',
+      start: '2026-07-08T10:01:00+08:00',
+      end: '2026-07-08T10:30:00+08:00'
+    },
+    {
+      key: 'opening',
+      title: 'Opening Ceremony',
+      message: 'Listen up. The opening ceremony is starting and rules are being stated.',
+      start: '2026-07-08T10:30:00+08:00',
+      end: '2026-07-08T11:00:00+08:00'
+    },
+    {
+      key: 'development',
+      title: 'Development Session',
+      message: "Better start prompting or you'll be left behind.",
+      start: '2026-07-08T11:00:00+08:00',
+      end: '2026-07-08T13:59:50+08:00'
+    },
+    {
+      key: 'development-countdown',
+      title: 'Time Is Almost Up',
+      message: 'Final 10 seconds.',
+      start: '2026-07-08T13:59:50+08:00',
+      end: '2026-07-08T14:00:00+08:00',
+      mode: 'seconds'
+    },
+    {
+      key: 'lunch',
+      title: 'Time Is Up',
+      message: 'Hope you prompted well. Hope you are hungry.',
+      start: '2026-07-08T14:00:00+08:00',
+      end: '2026-07-08T14:30:00+08:00'
+    },
+    {
+      key: 'review',
+      title: 'Submission Review',
+      message: 'We are checking your work.',
+      start: '2026-07-08T14:30:00+08:00',
+      end: '2026-07-08T15:00:00+08:00'
+    },
+    {
+      key: 'voting',
+      title: 'Voting Session',
+      message: 'Voting is open.',
+      start: '2026-07-08T15:00:00+08:00',
+      end: '2026-07-08T16:00:00+08:00'
+    }
+  ].map(phase => ({
+    ...phase,
+    startTime: new Date(phase.start).getTime(),
+    endTime: new Date(phase.end).getTime()
+  }));
+
+  const kickoffCountdownStart = new Date('2026-07-08T09:59:50+08:00').getTime();
+  const demoPhaseStarts = {
+    beforeKickoff: new Date('2026-07-08T09:50:00+08:00').getTime(),
+    scheduleComplete: new Date('2026-07-08T16:00:00+08:00').getTime()
+  };
+  const completedConfettiPhases = new Set();
+
+  function getCountdownNow() {
+    if (!countdownDemo.enabled) return Date.now();
+
+    const demoElapsed = Date.now() - countdownDemoLoadedAt;
+    const specialDemoTime = demoPhaseStarts[countdownDemo.phase];
+    if (specialDemoTime) return specialDemoTime + demoElapsed;
+
+    const demoPhase = eventSchedule.find(phase => phase.key === countdownDemo.phase);
+    if (!demoPhase) return Date.now();
+
+    return demoPhase.startTime + Math.max(0, countdownDemo.secondsIntoPhase) * 1000 + demoElapsed;
+  }
+
+  function launchCountdownConfetti() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const container = document.createElement('div');
+    container.setAttribute('aria-hidden', 'true');
+    container.style.cssText = 'position:fixed;inset:0;z-index:9999;pointer-events:none;overflow:hidden;';
+    document.body.appendChild(container);
+
+    const colors = ['#b7102a', '#ffffff', '#facc15', '#22c55e', '#38bdf8', '#fb7185'];
+    const startTime = Date.now();
+    const fireworkDuration = 10000;
+
+    function burst() {
+      const originX = 12 + Math.random() * 76;
+      const originY = 12 + Math.random() * 46;
+      const pieces = 42;
+      const ring = document.createElement('span');
+
+      ring.style.cssText = [
+        'position:absolute',
+        `left:${originX}%`,
+        `top:${originY}%`,
+        'width:18px',
+        'height:18px',
+        'border:4px solid #ffffff',
+        'box-shadow:0 0 0 4px rgba(183,16,42,0.65), 0 0 36px rgba(250,204,21,0.9)',
+        'border-radius:999px',
+        'transform:translate(-50%, -50%) scale(0.1)',
+        'will-change:transform,opacity'
+      ].join(';');
+      container.appendChild(ring);
+      ring.animate(
+        [
+          { transform: 'translate(-50%, -50%) scale(0.1)', opacity: 1 },
+          { transform: 'translate(-50%, -50%) scale(8)', opacity: 0 }
+        ],
+        {
+          duration: 900,
+          easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+          fill: 'forwards'
+        }
+      );
+      window.setTimeout(() => ring.remove(), 950);
+
+      for (let index = 0; index < pieces; index += 1) {
+        const piece = document.createElement('span');
+        const angle = (Math.PI * 2 * index) / pieces + (Math.random() - 0.5) * 0.35;
+        const distance = 16 + Math.random() * 34;
+        const endX = Math.cos(angle) * distance;
+        const endY = Math.sin(angle) * distance + 18;
+        const rotation = (Math.random() - 0.5) * 1080;
+        const duration = 1300 + Math.random() * 900;
+        const size = 6 + Math.random() * 10;
+
+        piece.style.cssText = [
+          'position:absolute',
+          `left:${originX}%`,
+          `top:${originY}%`,
+          `width:${size}px`,
+          `height:${size * 1.6}px`,
+          `background:${colors[index % colors.length]}`,
+          'border:2px solid #161d16',
+          'box-shadow:0 0 14px rgba(255,255,255,0.8)',
+          'transform:translate(-50%, -50%) rotate(0deg)',
+          'will-change:transform,opacity'
+        ].join(';');
+        container.appendChild(piece);
+
+        piece.animate(
+          [
+            { transform: 'translate(-50%, -50%) scale(1.25) rotate(0deg)', opacity: 1 },
+            { transform: `translate(calc(-50% + ${endX}vw), calc(-50% + ${endY}vh)) scale(0.35) rotate(${rotation}deg)`, opacity: 0 }
+          ],
+          {
+            duration,
+            easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+            fill: 'forwards'
+          }
+        );
+        window.setTimeout(() => piece.remove(), duration + 100);
+      }
+    }
+
+    burst();
+    const fireworkInterval = window.setInterval(() => {
+      if (Date.now() - startTime >= fireworkDuration) {
+        window.clearInterval(fireworkInterval);
+        return;
+      }
+      burst();
+    }, 420);
+
+    window.setTimeout(() => {
+      window.clearInterval(fireworkInterval);
+      container.remove();
+    }, fireworkDuration + 1800);
+  }
+
+  function triggerCompletedCountdownConfetti(now) {
+    eventSchedule
+      .filter(phase => phase.mode === 'seconds')
+      .forEach(phase => {
+        const hasJustEnded = now >= phase.endTime && now - phase.endTime < 1250;
+        if (hasJustEnded && !completedConfettiPhases.has(phase.key)) {
+          completedConfettiPhases.add(phase.key);
+          launchCountdownConfetti();
+        }
+      });
+  }
+
+  function renderTimer(diff, labels = ['Hours', 'Mins', 'Secs']) {
+    const safeDiff = Math.max(0, diff);
+    const totalSeconds = Math.floor(safeDiff / 1000);
+    const days = Math.floor(totalSeconds / 86400);
+    const hours = Math.floor((totalSeconds % 86400) / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    const units = days > 0
+      ? [
+          ['days', days, 'Days'],
+          ['hours', hours, 'Hours'],
+          ['minutes', minutes, 'Mins'],
+          ['seconds', seconds, 'Secs']
+        ]
+      : [
+          ['hours', hours, labels[0]],
+          ['minutes', minutes, labels[1]],
+          ['seconds', seconds, labels[2]]
+        ];
+
+    return units.map(([id, value, label], index) => `
+      <div class="bg-background brutal-border-sm p-3 shadow-brutal-sm ${units.length === 3 && index === 0 ? 'col-start-1' : ''}">
+        <span id="${id}" class="text-3xl font-black ${index === 0 || id === 'seconds' ? 'text-primary' : 'text-on-surface'}">${value.toString().padStart(2, '0')}</span>
+        <p class="text-[9px] uppercase font-bold text-on-surface/70 mt-1">${label}</p>
+      </div>
+    `).join('');
+  }
 
   function updateCountdown() {
-    const now = new Date().getTime();
-    const diff = eventDate - now;
+    const now = getCountdownNow();
+    triggerCompletedCountdownConfetti(now);
+    const titleEl = document.getElementById('countdown-title');
+    const messageEl = document.getElementById('countdown-message');
+    const countdownEl = document.getElementById('countdown');
+    if (!titleEl || !messageEl || !countdownEl) return;
 
-    if (diff <= 0) {
-      document.getElementById('countdown').innerHTML = `
-        <div class="col-span-4 bg-primary text-white py-4 px-2 brutal-border text-center font-extrabold text-sm uppercase tracking-wider animate-pulse font-mono">
-          <i class="fa-solid fa-play mr-2"></i>Createathon is LIVE!
+    const activePhase = eventSchedule.find(phase => now >= phase.startTime && now < phase.endTime);
+
+    if (now < kickoffCountdownStart) {
+      titleEl.textContent = 'Countdown to Kickoff';
+      messageEl.textContent = 'Get ready to prompt.';
+      countdownEl.className = 'grid grid-cols-4 gap-2.5 text-center my-6 font-mono';
+      countdownEl.innerHTML = renderTimer(kickoffCountdownStart - now);
+      return;
+    }
+
+    if (!activePhase) {
+      titleEl.textContent = 'Voting Complete';
+      messageEl.textContent = 'Thanks for prompting with us.';
+      countdownEl.className = 'grid grid-cols-4 gap-2.5 text-center my-6 font-mono';
+      countdownEl.innerHTML = `
+        <div class="col-span-4 bg-primary text-white py-4 px-2 brutal-border text-center font-extrabold text-sm uppercase tracking-wider font-mono">
+          Createathon schedule complete.
         </div>
       `;
       return;
     }
 
-    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    const s = Math.floor((diff % (1000 * 60)) / 1000);
+    const diff = activePhase.endTime - now;
+    titleEl.textContent = activePhase.title;
+    messageEl.textContent = activePhase.message;
 
-    const daysEl = document.getElementById('days');
-    const hoursEl = document.getElementById('hours');
-    const minsEl = document.getElementById('minutes');
-    const secsEl = document.getElementById('seconds');
+    if (activePhase.mode === 'seconds') {
+      countdownEl.className = 'grid grid-cols-1 gap-2.5 text-center my-6 font-mono';
+      countdownEl.innerHTML = `
+        <div class="bg-primary text-white py-5 px-4 brutal-border text-center font-extrabold uppercase tracking-wider font-mono animate-pulse">
+          <span class="block text-6xl font-black leading-none">${Math.ceil(Math.max(0, diff) / 1000)}</span>
+          <span class="block text-[10px] mt-2">Seconds</span>
+        </div>
+      `;
+      return;
+    }
 
-    if (daysEl) daysEl.innerText = d.toString().padStart(2, '0');
-    if (hoursEl) hoursEl.innerText = h.toString().padStart(2, '0');
-    if (minsEl) minsEl.innerText = m.toString().padStart(2, '0');
-    if (secsEl) secsEl.innerText = s.toString().padStart(2, '0');
+    countdownEl.className = 'grid grid-cols-3 gap-2.5 text-center my-6 font-mono';
+    countdownEl.innerHTML = renderTimer(diff);
   }
 
   // Initial and tick

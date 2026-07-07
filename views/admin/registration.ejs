@@ -7,6 +7,11 @@
   </div>
 
   <div class="flex flex-col sm:flex-row gap-3">
+    <% if (typeof session !== 'undefined' && session.role === 'super') { %>
+      <a href="/admin/registration/attendance-export" class="admin-export-button inline-flex items-center justify-center gap-2 bg-green-500 text-slate-950 px-4 py-3 text-xs font-extrabold uppercase tracking-wider border border-slate-800 transition-all">
+        <i class="fa-solid fa-file-excel"></i> Excel Attendance
+      </a>
+    <% } %>
     <a href="/admin/groups/new" id="newTeamBtn" class="inline-flex items-center justify-center gap-2 bg-accent-teal text-slate-950 px-4 py-3 text-xs font-extrabold uppercase tracking-wider border border-slate-800 transition-all">
       <i class="fa-solid fa-plus"></i> New Team
     </a>
@@ -95,7 +100,7 @@
               <img src="<%= p.avatar_path %>" alt="" class="w-10 h-10 object-cover border border-slate-800">
               <div class="min-w-0">
                 <h4 class="font-bold text-white text-sm truncate"><%= p.name %></h4>
-                <p class="text-[10px] text-slate-400 truncate"><%= p.email %></p>
+                <p class="text-[10px] text-slate-400 truncate"><%= p.student_id %></p>
                 <% if (p.group_name) { %>
                   <span class="inline-block mt-1 text-[9px] font-bold text-accent-teal bg-accent-teal/5 border border-accent-teal/10 px-2 py-0.5"><%= p.group_name %></span>
                 <% } else { %>

@@ -99,7 +99,7 @@
           <div class="text-[9px] text-on-surface/50 font-bold uppercase mt-1.5">${escapeHTML(item.public_pct)}% weight</div>
         </td>
         <td class="py-5 px-4 text-center brutal-border-sm border-b-0">
-          <div class="font-black text-base text-on-surface">${escapeHTML(item.judge_avg_raw)} / 30</div>
+          <div class="font-black text-base text-on-surface">${escapeHTML(item.judge_avg_raw)} / 100</div>
           <div class="text-[9px] text-on-surface/50 font-bold uppercase mt-1.5">${escapeHTML(item.judge_pct)}% weight</div>
         </td>
         <td class="py-5 px-4 text-center font-black text-lg text-primary brutal-border-sm border-b-0 border-r-0">${escapeHTML(item.combined_score)} / 100</td>

@@ -35,6 +35,7 @@ function handleUpload(fieldName) {
 
 router.get('/dashboard', adminController.showDashboard);
 router.get('/registration', adminController.showRegistration);
+router.get('/registration/attendance-export', requireSuperAdmin, adminController.exportAttendance);
 router.get('/groups/new', adminController.showNewGroup);
 router.get('/groups/:id/edit', adminController.showEditGroup);
 router.post('/groups', handleUpload('logo'), adminController.createGroup);

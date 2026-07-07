@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS `groups` (
 CREATE TABLE IF NOT EXISTS `participants` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `name` VARCHAR(100) NOT NULL,
-  `email` VARCHAR(100) UNIQUE NOT NULL,
+  `student_id` VARCHAR(100) UNIQUE NOT NULL,
   `avatar_path` VARCHAR(255) DEFAULT '/uploads/default-avatar.png',
   `group_id` INT DEFAULT NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -62,9 +62,11 @@ CREATE TABLE IF NOT EXISTS `judge_scores` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `group_id` INT NOT NULL,
   `judge_name` VARCHAR(100) NOT NULL,
-  `score_innovation` INT DEFAULT 0, -- Rating e.g. 1 to 10
-  `score_design` INT DEFAULT 0,       -- Rating e.g. 1 to 10
-  `score_execution` INT DEFAULT 0,    -- Rating e.g. 1 to 10
+  `score_creativity_innovation` INT DEFAULT 0,
+  `score_effective_ai` INT DEFAULT 0,
+  `score_technical_quality` INT DEFAULT 0,
+  `score_presentation` INT DEFAULT 0,
+  `score_practicality_impact` INT DEFAULT 0,
   `feedback` TEXT DEFAULT NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   UNIQUE KEY `judge_unique_group` (`judge_name`, `group_id`), -- One score per judge per group

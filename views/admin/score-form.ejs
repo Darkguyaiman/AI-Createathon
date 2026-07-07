@@ -37,22 +37,34 @@
       </select>
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 border-t border-slate-900 pt-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 border-t border-slate-900 pt-4">
       <div>
-        <label for="scoreInnovation" class="block text-[10px] uppercase font-extrabold tracking-wider text-slate-400 mb-1.5 text-center">Innovation (1-10)</label>
-        <input type="number" id="scoreInnovation" name="score_innovation" min="1" max="10" required placeholder="8" value="<%= isEditing ? score.score_innovation : '' %>"
+        <label for="scoreCreativityInnovation" class="block text-[10px] uppercase font-extrabold tracking-wider text-slate-400 mb-1.5 text-center">Creativity & Innovation (30%)</label>
+        <input type="number" id="scoreCreativityInnovation" name="score_creativity_innovation" min="0" max="30" step="1" required placeholder="24" value="<%= isEditing ? score.score_creativity_innovation : '' %>" data-score-field data-score-label="Creativity and Innovation" data-score-max="30"
                class="block w-full px-3 py-2.5 bg-slate-900 border border-slate-800 text-white text-center text-sm focus:outline-none focus:ring-2 focus:ring-accent-teal/35 focus:border-accent-teal transition-all">
       </div>
 
       <div>
-        <label for="scoreDesign" class="block text-[10px] uppercase font-extrabold tracking-wider text-slate-400 mb-1.5 text-center">Design/UX (1-10)</label>
-        <input type="number" id="scoreDesign" name="score_design" min="1" max="10" required placeholder="7" value="<%= isEditing ? score.score_design : '' %>"
+        <label for="scoreEffectiveAi" class="block text-[10px] uppercase font-extrabold tracking-wider text-slate-400 mb-1.5 text-center">Effective Use of AI (25%)</label>
+        <input type="number" id="scoreEffectiveAi" name="score_effective_ai" min="0" max="25" step="1" required placeholder="20" value="<%= isEditing ? score.score_effective_ai : '' %>" data-score-field data-score-label="Effective Use of AI" data-score-max="25"
                class="block w-full px-3 py-2.5 bg-slate-900 border border-slate-800 text-white text-center text-sm focus:outline-none focus:ring-2 focus:ring-accent-teal/35 focus:border-accent-teal transition-all">
       </div>
 
       <div>
-        <label for="scoreExecution" class="block text-[10px] uppercase font-extrabold tracking-wider text-slate-400 mb-1.5 text-center">Execution (1-10)</label>
-        <input type="number" id="scoreExecution" name="score_execution" min="1" max="10" required placeholder="9" value="<%= isEditing ? score.score_execution : '' %>"
+        <label for="scoreTechnicalQuality" class="block text-[10px] uppercase font-extrabold tracking-wider text-slate-400 mb-1.5 text-center">Technical Quality (20%)</label>
+        <input type="number" id="scoreTechnicalQuality" name="score_technical_quality" min="0" max="20" step="1" required placeholder="16" value="<%= isEditing ? score.score_technical_quality : '' %>" data-score-field data-score-label="Technical Quality" data-score-max="20"
+               class="block w-full px-3 py-2.5 bg-slate-900 border border-slate-800 text-white text-center text-sm focus:outline-none focus:ring-2 focus:ring-accent-teal/35 focus:border-accent-teal transition-all">
+      </div>
+
+      <div>
+        <label for="scorePresentation" class="block text-[10px] uppercase font-extrabold tracking-wider text-slate-400 mb-1.5 text-center">Presentation & Explanation (15%)</label>
+        <input type="number" id="scorePresentation" name="score_presentation" min="0" max="15" step="1" required placeholder="12" value="<%= isEditing ? score.score_presentation : '' %>" data-score-field data-score-label="Presentation and Explanation" data-score-max="15"
+               class="block w-full px-3 py-2.5 bg-slate-900 border border-slate-800 text-white text-center text-sm focus:outline-none focus:ring-2 focus:ring-accent-teal/35 focus:border-accent-teal transition-all">
+      </div>
+
+      <div>
+        <label for="scorePracticalityImpact" class="block text-[10px] uppercase font-extrabold tracking-wider text-slate-400 mb-1.5 text-center">Practicality & Impact (10%)</label>
+        <input type="number" id="scorePracticalityImpact" name="score_practicality_impact" min="0" max="10" step="1" required placeholder="8" value="<%= isEditing ? score.score_practicality_impact : '' %>" data-score-field data-score-label="Practicality and Impact" data-score-max="10"
                class="block w-full px-3 py-2.5 bg-slate-900 border border-slate-800 text-white text-center text-sm focus:outline-none focus:ring-2 focus:ring-accent-teal/35 focus:border-accent-teal transition-all">
       </div>
     </div>
@@ -68,5 +80,36 @@
     </button>
   </form>
 </div>
+
+<script>
+  document.querySelectorAll('[data-score-field]').forEach((input) => {
+    const max = Number(input.dataset.scoreMax);
+    const label = input.dataset.scoreLabel;
+
+    const validateScore = () => {
+      const value = Number(input.value);
+
+      if (input.value === '') {
+        input.setCustomValidity('');
+        return;
+      }
+
+      if (!Number.isInteger(value)) {
+        input.setCustomValidity(`${label} must be a whole number.`);
+        return;
+      }
+
+      if (value < 0 || value > max) {
+        input.setCustomValidity(`${label} must be between 0 and ${max} points.`);
+        return;
+      }
+
+      input.setCustomValidity('');
+    };
+
+    input.addEventListener('input', validateScore);
+    input.addEventListener('blur', validateScore);
+  });
+</script>
 
 <%- include('../partials/admin-footer') %>

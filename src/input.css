@@ -63,6 +63,28 @@
     overflow: clip;
   }
 
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-primary) #e5e7eb;
+  }
+
+  *::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: #e5e7eb;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: var(--color-primary);
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background: #8f0c21;
+  }
+
   body {
     transition: background-color 0.7s cubic-bezier(0.16, 1, 0.3, 1), color 0.7s cubic-bezier(0.16, 1, 0.3, 1);
   }
@@ -575,7 +597,8 @@
 
   .evaluator-signature {
     position: absolute;
-    inset: 0.75rem;
+    inset-block: 0.75rem;
+    left: 50%;
     z-index: 1;
     display: flex;
     flex-direction: column;
@@ -583,25 +606,27 @@
     justify-content: center;
     color: #b7102a;
     font-family: 'Great Vibes', cursive;
-    font-size: clamp(3.35rem, 8.5vw, 6.8rem);
-    line-height: 0.86;
+    width: max-content;
+    min-width: 150%;
+    font-size: clamp(4.8rem, 12vw, 9.6rem);
+    line-height: 0.96;
+    gap: 0.16em;
     opacity: 0.22;
-    overflow: hidden;
+    overflow: visible;
     pointer-events: none;
-    transform: rotate(-5deg);
+    transform: translateX(-50%) rotate(-5deg);
     transition: color 0.24s ease-out, opacity 0.24s ease-out, transform 0.24s ease-out;
   }
 
   .evaluator-signature span {
     display: block;
-    max-width: 100%;
     white-space: nowrap;
   }
 
   .evaluator-card:hover .evaluator-signature {
     color: #ffffff;
     opacity: 0.28;
-    transform: rotate(-5deg) scale(1.03);
+    transform: translateX(-50%) rotate(-5deg) scale(1.03);
   }
 
   .evaluator-card > img {
@@ -1103,6 +1128,14 @@
   .admin-app .admin-main button[type="submit"],
   .admin-app .admin-main a[class*="bg-accent"],
   .admin-app .admin-main a[class*="bg-slate"] {
+    border: 3px solid #161d16 !important;
+    font-family: var(--font-heading);
+    box-shadow: 4px 4px 0 #161d16;
+  }
+
+  .admin-app .admin-main .admin-export-button {
+    background-color: #22c55e !important;
+    color: #161d16 !important;
     border: 3px solid #161d16 !important;
     font-family: var(--font-heading);
     box-shadow: 4px 4px 0 #161d16;

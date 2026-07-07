@@ -44,22 +44,30 @@
             </div>
           </div>
 
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center bg-slate-950 py-3 border border-slate-850 my-3">
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 text-center bg-slate-950 py-3 border border-slate-850 my-3">
             <div>
-              <p class="text-[9px] uppercase font-bold text-slate-500">Innovation</p>
-              <p class="text-sm font-bold text-white"><%= entry.score_innovation %> / 10</p>
+              <p class="text-[9px] uppercase font-bold text-slate-500">Creativity</p>
+              <p class="text-sm font-bold text-white"><%= entry.score_creativity_innovation %> / 30</p>
             </div>
             <div>
-              <p class="text-[9px] uppercase font-bold text-slate-500">Design</p>
-              <p class="text-sm font-bold text-white"><%= entry.score_design %> / 10</p>
+              <p class="text-[9px] uppercase font-bold text-slate-500">AI Use</p>
+              <p class="text-sm font-bold text-white"><%= entry.score_effective_ai %> / 25</p>
             </div>
             <div>
-              <p class="text-[9px] uppercase font-bold text-slate-500">Execution</p>
-              <p class="text-sm font-bold text-white"><%= entry.score_execution %> / 10</p>
+              <p class="text-[9px] uppercase font-bold text-slate-500">Technical</p>
+              <p class="text-sm font-bold text-white"><%= entry.score_technical_quality %> / 20</p>
             </div>
-            <div class="sm:border-l border-slate-800">
+            <div>
+              <p class="text-[9px] uppercase font-bold text-slate-500">Presentation</p>
+              <p class="text-sm font-bold text-white"><%= entry.score_presentation %> / 15</p>
+            </div>
+            <div>
+              <p class="text-[9px] uppercase font-bold text-slate-500">Impact</p>
+              <p class="text-sm font-bold text-white"><%= entry.score_practicality_impact %> / 10</p>
+            </div>
+            <div class="lg:border-l border-slate-800">
               <p class="text-[9px] uppercase font-bold text-accent-teal">Total</p>
-              <p class="text-sm font-extrabold text-accent-teal"><%= entry.score_innovation + entry.score_design + entry.score_execution %> / 30</p>
+              <p class="text-sm font-extrabold text-accent-teal"><%= entry.score_creativity_innovation + entry.score_effective_ai + entry.score_technical_quality + entry.score_presentation + entry.score_practicality_impact %> / 100</p>
             </div>
           </div>
 
