@@ -22,6 +22,11 @@ async function findById(id) {
   return participants[0];
 }
 
+async function findByStudentId(studentId) {
+  const participants = await db.query('SELECT * FROM participants WHERE student_id = ?', [studentId]);
+  return participants[0];
+}
+
 async function findByGroupId(groupId) {
   return db.query('SELECT name, student_id, avatar_path FROM participants WHERE group_id = ?', [groupId]);
 }
@@ -89,6 +94,32 @@ async function findAssignableForGroup(groupId = null) {
   `, params);
 }
 
+async function findUnavailableForGroup(participantIds = [], groupId = null) {
+  const ids = participantIds
+    .map(id => parseInt(id, 10))
+    .filter(id => Number.isInteger(id) && id > 0);
+
+  if (ids.length === 0) {
+    return [];
+  }
+
+  const placeholders = ids.map(() => '?').join(', ');
+  const params = [...ids];
+  let where = `id IN (${placeholders}) AND group_id IS NOT NULL`;
+
+  if (groupId) {
+    where += ' AND group_id <> ?';
+    params.push(groupId);
+  }
+
+  return db.query(`
+    SELECT id, name, student_id, group_id
+    FROM participants
+    WHERE ${where}
+    ORDER BY name ASC
+  `, params);
+}
+
 async function syncGroupAssignments(groupId, participantIds = []) {
   const ids = participantIds
     .map(id => parseInt(id, 10))
@@ -115,6 +146,7 @@ module.exports = {
   findAllWithGroupNames,
   findAllAttendance,
   findById,
+  findByStudentId,
   findByGroupId,
   findAllGroupedByGroupId,
   countByGroupId,
@@ -122,6 +154,7 @@ module.exports = {
   create,
   update,
   findAssignableForGroup,
+  findUnavailableForGroup,
   syncGroupAssignments,
   remove
 };

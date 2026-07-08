@@ -45,6 +45,11 @@ function toSpreadsheetText(value) {
   return /^[=+\-@]/.test(text) ? `'${text}` : text;
 }
 
+function formatAssignedParticipantError(participants) {
+  const names = participants.map(participant => `${participant.name} (${participant.student_id})`).join(', ');
+  return `These participants are already assigned to another team: ${names}.`;
+}
+
 async function showDashboard(req, res) {
   try {
     const stats = await dashboardModel.getDashboardStats();
@@ -179,9 +184,15 @@ async function createGroup(req, res) {
   const logoPath = req.file ? '/uploads/' + req.file.filename : '/uploads/default-group.svg';
 
   try {
+    const unavailableParticipants = await participantModel.findUnavailableForGroup(participantIds);
+
+    if (unavailableParticipants.length > 0) {
+      return redirectWithFlash(req, res, '/admin/groups/new', 'error', formatAssignedParticipantError(unavailableParticipants));
+    }
+
     const result = await groupModel.create({ name, description, logoPath });
     await participantModel.syncGroupAssignments(result.insertId, participantIds);
-    redirectWithFlash(req, res, '/admin/registration', 'success', `Team "${name}" created successfully!`);
+    redirectWithFlash(req, res, '/admin/groups/new', 'success', `Team "${name}" created successfully!`);
   } catch (error) {
     if (error.code === 'ER_DUP_ENTRY') {
       redirectWithFlash(req, res, '/admin/groups/new', 'error', 'A team with this name already exists.');
@@ -203,11 +214,21 @@ async function updateGroup(req, res) {
     return redirectWithFlash(req, res, `/admin/groups/${encodeURIComponent(groupId)}/edit`, 'error', 'Team name is required.');
   }
 
+  if (participantIds.length === 0) {
+    return redirectWithFlash(req, res, `/admin/groups/${encodeURIComponent(groupId)}/edit`, 'error', 'Add at least one participant before saving this team.');
+  }
+
   try {
     const existingGroup = await groupModel.findById(groupId);
 
     if (!existingGroup) {
       return redirectWithFlash(req, res, '/admin/registration', 'error', 'Team not found.');
+    }
+
+    const unavailableParticipants = await participantModel.findUnavailableForGroup(participantIds, groupId);
+
+    if (unavailableParticipants.length > 0) {
+      return redirectWithFlash(req, res, `/admin/groups/${encodeURIComponent(groupId)}/edit`, 'error', formatAssignedParticipantError(unavailableParticipants));
     }
 
     const logoPath = req.file ? '/uploads/' + req.file.filename : existingGroup.logo_path;
@@ -225,7 +246,9 @@ async function updateGroup(req, res) {
 }
 
 async function createParticipant(req, res) {
-  const { name, studentId, groupId } = req.body;
+  const { groupId } = req.body;
+  const name = req.body.name ? req.body.name.trim() : '';
+  const studentId = req.body.studentId ? req.body.studentId.trim() : '';
 
   if (!name || !studentId) {
     return redirectWithFlash(req, res, '/admin/participants/new', 'error', 'Name and student ID are required.');
@@ -235,8 +258,14 @@ async function createParticipant(req, res) {
   const assignedGroupId = groupId ? parseInt(groupId, 10) : null;
 
   try {
+    const existingParticipant = await participantModel.findByStudentId(studentId);
+
+    if (existingParticipant) {
+      return redirectWithFlash(req, res, '/admin/participants/new', 'error', `Student ID "${studentId}" is already registered to ${existingParticipant.name}.`);
+    }
+
     await participantModel.create({ name, studentId, avatarPath, groupId: assignedGroupId });
-    redirectWithFlash(req, res, '/admin/registration', 'success', `Participant "${name}" registered successfully!`);
+    redirectWithFlash(req, res, '/admin/participants/new', 'success', `Participant "${name}" registered successfully!`);
   } catch (error) {
     if (error.code === 'ER_DUP_ENTRY') {
       redirectWithFlash(req, res, '/admin/participants/new', 'error', 'A participant with this student ID already exists.');
@@ -248,7 +277,9 @@ async function createParticipant(req, res) {
 }
 
 async function updateParticipant(req, res) {
-  const { name, studentId, groupId } = req.body;
+  const { groupId } = req.body;
+  const name = req.body.name ? req.body.name.trim() : '';
+  const studentId = req.body.studentId ? req.body.studentId.trim() : '';
   const participantId = req.params.id;
 
   if (!name || !studentId) {
@@ -262,6 +293,12 @@ async function updateParticipant(req, res) {
 
     if (!existingParticipant) {
       return redirectWithFlash(req, res, '/admin/registration', 'error', 'Participant not found.');
+    }
+
+    const duplicateParticipant = await participantModel.findByStudentId(studentId);
+
+    if (duplicateParticipant && parseInt(duplicateParticipant.id, 10) !== parseInt(participantId, 10)) {
+      return redirectWithFlash(req, res, `/admin/participants/${encodeURIComponent(participantId)}/edit`, 'error', `Student ID "${studentId}" is already registered to ${duplicateParticipant.name}.`);
     }
 
     const avatarPath = req.file ? '/uploads/' + req.file.filename : existingParticipant.avatar_path;
@@ -290,10 +327,10 @@ async function deleteGroup(req, res) {
 async function deleteParticipant(req, res) {
   try {
     await participantModel.remove(req.body.participantId);
-    redirectWithFlash(req, res, '/admin/registration', 'success', 'Participant registration deleted.');
+    redirectWithFlash(req, res, '/admin/registration?tab=participants', 'success', 'Participant registration deleted.');
   } catch (error) {
     console.error(error);
-    redirectWithFlash(req, res, '/admin/registration', 'error', 'Error deleting participant.');
+    redirectWithFlash(req, res, '/admin/registration?tab=participants', 'error', 'Error deleting participant.');
   }
 }
 

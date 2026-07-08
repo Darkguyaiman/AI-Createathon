@@ -47,14 +47,23 @@
     </div>
 
     <% if (groups.length > 0) { %>
-      <div class="space-y-4 max-h-[620px] overflow-y-auto pr-2 scrollbar-thin">
+      <div class="relative mb-4">
+        <i class="fa-solid fa-magnifying-glass absolute left-4 text-xs text-slate-500" style="top: 50%; transform: translateY(-50%);"></i>
+        <input type="search" data-registration-search="teams" placeholder="Search teams by name or description"
+               class="block w-full pl-10 pr-4 py-3 bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-teal/35 focus:border-accent-teal transition-all">
+      </div>
+      <div class="space-y-4 max-h-[620px] overflow-y-auto pr-2 scrollbar-thin" data-registration-list="teams">
         <% groups.forEach(group => { %>
-          <div class="p-4 bg-slate-900 border border-slate-800 flex items-center justify-between gap-4">
+          <% const memberCount = participants.filter(participant => participant.group_id === group.id).length; %>
+          <div class="p-4 bg-slate-900 border border-slate-800 flex items-center justify-between gap-4" data-registration-item="teams" data-search-text="<%= `${group.name} ${group.description || ''}`.toLowerCase() %>">
             <div class="flex items-center gap-3 min-w-0">
               <img src="<%= group.logo_path %>" alt="" class="w-12 h-12 object-cover border border-slate-800">
               <div class="min-w-0">
                 <h4 class="font-bold text-white text-sm truncate"><%= group.name %></h4>
                 <p class="text-[10px] text-slate-400 line-clamp-1"><%= group.description || 'No description available' %></p>
+                <span class="inline-block mt-1 text-[9px] font-bold text-accent-teal bg-accent-teal/5 border border-accent-teal/10 px-2 py-0.5">
+                  <%= memberCount %> <%= memberCount === 1 ? 'member' : 'members' %>
+                </span>
               </div>
             </div>
 
@@ -71,6 +80,9 @@
             </div>
           </div>
         <% }) %>
+      </div>
+      <div data-registration-empty="teams" class="hidden p-6 text-center bg-slate-900 border border-slate-850 text-xs text-slate-500">
+        No teams match that search.
       </div>
     <% } else { %>
       <div class="p-8 text-center bg-slate-900 border border-slate-850">
@@ -93,9 +105,14 @@
     </div>
 
     <% if (participants.length > 0) { %>
-      <div class="space-y-4 max-h-[620px] overflow-y-auto pr-2 scrollbar-thin">
+      <div class="relative mb-4">
+        <i class="fa-solid fa-magnifying-glass absolute left-4 text-xs text-slate-500" style="top: 50%; transform: translateY(-50%);"></i>
+        <input type="search" data-registration-search="participants" placeholder="Search participants by name or student ID"
+               class="block w-full pl-10 pr-4 py-3 bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-red/35 focus:border-accent-red transition-all">
+      </div>
+      <div class="space-y-4 max-h-[620px] overflow-y-auto pr-2 scrollbar-thin" data-registration-list="participants">
         <% participants.forEach(p => { %>
-          <div class="p-4 bg-slate-900 border border-slate-800 flex items-center justify-between gap-4">
+          <div class="p-4 bg-slate-900 border border-slate-800 flex items-center justify-between gap-4" data-registration-item="participants" data-search-text="<%= `${p.name} ${p.student_id}`.toLowerCase() %>">
             <div class="flex items-center gap-3 min-w-0">
               <img src="<%= p.avatar_path %>" alt="" class="w-10 h-10 object-cover border border-slate-800">
               <div class="min-w-0">
@@ -122,6 +139,9 @@
             </div>
           </div>
         <% }) %>
+      </div>
+      <div data-registration-empty="participants" class="hidden p-6 text-center bg-slate-900 border border-slate-850 text-xs text-slate-500">
+        No participants match that search.
       </div>
     <% } else { %>
       <div class="p-8 text-center bg-slate-900 border border-slate-850">
@@ -178,8 +198,28 @@
       tab.addEventListener('click', () => setActiveTab(tab.dataset.registrationTab));
     });
 
-    // Explicitly initialize state on page load
-    setActiveTab('teams');
+    document.querySelectorAll('[data-registration-search]').forEach(input => {
+      input.addEventListener('input', () => {
+        const target = input.dataset.registrationSearch;
+        const query = input.value.trim().toLowerCase();
+        const items = Array.from(document.querySelectorAll(`[data-registration-item="${target}"]`));
+        const list = document.querySelector(`[data-registration-list="${target}"]`);
+        const empty = document.querySelector(`[data-registration-empty="${target}"]`);
+        let visibleCount = 0;
+
+        items.forEach(item => {
+          const isVisible = !query || item.dataset.searchText.includes(query);
+          item.classList.toggle('hidden', !isVisible);
+          if (isVisible) visibleCount += 1;
+        });
+
+        if (list) list.classList.toggle('hidden', visibleCount === 0);
+        if (empty) empty.classList.toggle('hidden', visibleCount !== 0);
+      });
+    });
+
+    const requestedTab = new URLSearchParams(window.location.search).get('tab');
+    setActiveTab(['teams', 'participants'].includes(requestedTab) ? requestedTab : 'teams');
   });
 </script>
 

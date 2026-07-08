@@ -7,7 +7,7 @@
     <h1 class="text-3xl font-extrabold tracking-tight"><%= isEditing ? 'Edit Participant' : 'Register Participant' %></h1>
     <p class="text-sm text-slate-400 mt-1"><%= isEditing ? 'Update participant details and team assignment.' : 'Create a participant record and optionally assign them to a team.' %></p>
   </div>
-  <a href="/admin/registration" class="inline-flex items-center justify-center gap-2 bg-slate-900 text-slate-300 px-4 py-3 text-xs font-bold uppercase tracking-wider border border-slate-800 transition-colors">
+  <a href="/admin/registration?tab=participants" class="inline-flex items-center justify-center gap-2 bg-slate-900 text-slate-300 px-4 py-3 text-xs font-bold uppercase tracking-wider border border-slate-800 transition-colors">
     <i class="fa-solid fa-arrow-left"></i> Back to registration
   </a>
 </div>
@@ -142,7 +142,7 @@
         menu.innerHTML = '<div class="px-4 py-3 text-xs text-slate-500">No suggestions. You can keep typing a new participant.</div>';
       } else {
         menu.innerHTML = matches.map((person, index) => `
-          <button type="button" data-suggestion-index="${index}" class="w-full text-left px-4 py-3 border-b border-slate-800 last:border-b-0 hover:bg-slate-900 focus:bg-slate-900 focus:outline-none">
+          <button type="button" data-suggestion-index="${index}" class="w-full text-left px-4 py-3 border-b border-slate-800 last:border-b-0 focus:bg-slate-900 focus:outline-none">
             <span class="block text-sm font-bold text-white">${person.name}</span>
             <span class="block text-[10px] font-mono uppercase text-accent-red mt-1">${person.studentId}</span>
           </button>

@@ -19,7 +19,7 @@
     <i class="fa-solid fa-people-group text-accent-teal"></i> Team Details
   </h3>
 
-  <form action="<%= isEditing ? '/admin/groups/' + group.id + '/edit' : '/admin/groups' %>" method="POST" enctype="multipart/form-data" class="space-y-4" data-group-form data-require-participant="<%= isEditing ? 'false' : 'true' %>">
+  <form action="<%= isEditing ? '/admin/groups/' + group.id + '/edit' : '/admin/groups' %>" method="POST" enctype="multipart/form-data" class="space-y-4" data-group-form data-require-participant="true">
     <div>
       <label for="groupName" class="block text-xs uppercase font-extrabold tracking-wider text-slate-400 mb-2">Team Name</label>
       <input type="text" id="groupName" name="name" required placeholder="e.g. Prompt Engineers" value="<%= isEditing ? group.name : '' %>"
@@ -46,16 +46,21 @@
 
     <div>
       <div class="flex items-center justify-between gap-4 mb-2">
-        <label class="block text-xs uppercase font-extrabold tracking-wider text-slate-400">Team Participants <span class="<%= isEditing ? 'text-slate-600' : 'text-accent-teal' %>">(<%= isEditing ? 'Optional' : 'Required' %>)</span></label>
+        <label class="block text-xs uppercase font-extrabold tracking-wider text-slate-400">Team Participants <span class="text-accent-teal">(Required)</span></label>
         <span class="text-[10px] font-mono uppercase text-slate-500"><%= (typeof assignableParticipants !== 'undefined' ? assignableParticipants.length : 0) %> available</span>
       </div>
+      <p data-participant-error class="hidden mb-2 text-xs font-bold text-accent-red">Select at least one participant before saving this team.</p>
 
       <% if (typeof assignableParticipants !== 'undefined' && assignableParticipants.length > 0) { %>
-        <p data-participant-error class="hidden mb-2 text-xs font-bold text-accent-red">Select at least one participant before creating a team.</p>
-        <div class="max-h-80 overflow-y-auto border border-slate-800 bg-slate-900 divide-y divide-slate-800">
+        <div class="relative mb-3">
+          <i class="fa-solid fa-magnifying-glass absolute left-4 text-xs text-slate-500" style="top: 50%; transform: translateY(-50%);"></i>
+          <input type="search" data-participant-search placeholder="Search participants by name or student ID"
+                 class="block w-full pl-10 pr-4 py-3 bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-teal/35 focus:border-accent-teal transition-all">
+        </div>
+        <div class="max-h-80 overflow-y-auto border border-slate-800 bg-slate-900 divide-y divide-slate-800" data-participant-list>
           <% assignableParticipants.forEach(member => { %>
             <% const checked = isEditing && member.group_id == group.id; %>
-            <label class="flex items-center gap-3 p-3 hover:bg-slate-850 cursor-pointer">
+            <label class="flex items-center gap-3 p-3 hover:bg-slate-850 cursor-pointer" data-participant-option data-search-text="<%= `${member.name} ${member.student_id}`.toLowerCase() %>">
               <input type="checkbox" name="participantIds" value="<%= member.id %>" <%= checked ? 'checked' : '' %>
                      class="w-4 h-4 accent-teal-400 bg-slate-950 border-slate-700">
               <img src="<%= member.avatar_path %>" alt="" class="w-9 h-9 object-cover border border-slate-800">
@@ -66,9 +71,12 @@
             </label>
           <% }) %>
         </div>
+        <div data-participant-empty class="hidden p-4 border border-slate-800 bg-slate-900 text-xs text-slate-500">
+          No available participants match that search.
+        </div>
       <% } else { %>
         <div class="p-4 border border-slate-800 bg-slate-900 text-xs text-slate-500">
-          <%= isEditing ? 'No unassigned participants are available right now.' : 'No unassigned participants are available yet. Register a participant first, then create the team.' %>
+          <%= isEditing ? 'No participants are available for this team. Register an unassigned participant before saving.' : 'No unassigned participants are available yet. Register a participant first, then create the team.' %>
         </div>
       <% } %>
     </div>
@@ -82,28 +90,53 @@
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     const form = document.querySelector('[data-group-form]');
-    if (!form || form.dataset.requireParticipant !== 'true') return;
+    if (!form) return;
 
     const checkboxes = Array.from(form.querySelectorAll('input[name="participantIds"]'));
     const error = form.querySelector('[data-participant-error]');
+    const searchInput = form.querySelector('[data-participant-search]');
+    const participantOptions = Array.from(form.querySelectorAll('[data-participant-option]'));
+    const participantList = form.querySelector('[data-participant-list]');
+    const empty = form.querySelector('[data-participant-empty]');
+    const requiresParticipant = form.dataset.requireParticipant === 'true';
 
-    form.addEventListener('submit', (event) => {
-      const hasParticipant = checkboxes.some(checkbox => checkbox.checked);
+    if (searchInput) {
+      searchInput.addEventListener('input', () => {
+        const query = searchInput.value.trim().toLowerCase();
+        let visibleCount = 0;
 
-      if (!hasParticipant) {
-        event.preventDefault();
-        if (error) error.classList.remove('hidden');
-        if (checkboxes[0]) checkboxes[0].focus();
-      }
-    });
+        participantOptions.forEach(option => {
+          const isVisible = !query || option.dataset.searchText.includes(query);
+          option.classList.toggle('hidden', !isVisible);
+          if (isVisible) visibleCount += 1;
+        });
 
-    checkboxes.forEach(checkbox => {
-      checkbox.addEventListener('change', () => {
-        if (error && checkboxes.some(item => item.checked)) {
-          error.classList.add('hidden');
+        if (participantList) participantList.classList.toggle('hidden', visibleCount === 0);
+        if (empty) empty.classList.toggle('hidden', visibleCount !== 0);
+      });
+    }
+
+    if (requiresParticipant) {
+      form.addEventListener('submit', (event) => {
+        const hasParticipant = checkboxes.some(checkbox => checkbox.checked);
+
+        if (!hasParticipant) {
+          const firstVisibleCheckbox = checkboxes.find(checkbox => !checkbox.closest('[data-participant-option]')?.classList.contains('hidden'));
+
+          event.preventDefault();
+          if (error) error.classList.remove('hidden');
+          if (firstVisibleCheckbox || checkboxes[0]) (firstVisibleCheckbox || checkboxes[0]).focus();
         }
       });
-    });
+
+      checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', () => {
+          if (error && checkboxes.some(item => item.checked)) {
+            error.classList.add('hidden');
+          }
+        });
+      });
+    }
   });
 </script>
 
