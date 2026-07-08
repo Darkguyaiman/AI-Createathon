@@ -48,6 +48,18 @@ async function update(id, { name, description, logoPath }) {
   );
 }
 
+async function setVotingEnabled(id, enabled) {
+  return db.query(
+    'UPDATE `groups` SET voting_enabled = ? WHERE id = ?',
+    [enabled ? 1 : 0, id]
+  );
+}
+
+async function openOnlyVoting(id) {
+  await db.query('UPDATE `groups` SET voting_enabled = 0');
+  return setVotingEnabled(id, true);
+}
+
 async function remove(id) {
   return db.query('DELETE FROM `groups` WHERE id = ?', [id]);
 }
@@ -59,5 +71,7 @@ module.exports = {
   findAllWithVoteCountsUnsorted,
   create,
   update,
+  setVotingEnabled,
+  openOnlyVoting,
   remove
 };

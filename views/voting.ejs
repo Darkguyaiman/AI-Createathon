@@ -104,6 +104,7 @@
     <% if (groups.length > 0) { %>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
         <% groups.forEach(group => { %>
+          <% const teamVotingOpen = Number(group.voting_enabled) === 1; %>
           <div class="brutal-border brutal-shadow hover-brutal bg-pure-white p-6 md:p-8 flex flex-col justify-between fade-up">
             <!-- Group Header -->
             <div>
@@ -139,10 +140,14 @@
             </div>
 
             <!-- Voting Action Button -->
-            <div class="pt-4 border-t-4 border-inverse-surface/10 mt-4">
+            <div class="pt-4 border-t-4 border-inverse-surface/10 mt-4" data-team-vote-action data-group-id="<%= group.id %>" data-group-name="<%= group.name %>" data-has-voted="<%= hasVoted ? 'true' : 'false' %>">
               <% if (!votingActive) { %>
                 <button disabled class="w-full py-3 bg-background text-on-surface/40 font-mono font-bold text-xs uppercase border-brutal cursor-not-allowed text-center">
                   <i class="fa-solid fa-ban mr-1.5"></i> Voting Closed
+                </button>
+              <% } else if (!teamVotingOpen) { %>
+                <button disabled class="w-full py-3 bg-background text-on-surface/40 font-mono font-bold text-xs uppercase border-brutal cursor-not-allowed text-center">
+                  <i class="fa-solid fa-lock mr-1.5"></i> Team Voting Closed
                 </button>
               <% } else if (hasVoted) { %>
                 <button disabled class="w-full py-3 bg-pure-white text-emerald-600 font-mono font-bold text-xs uppercase border-brutal shadow-brutal-sm cursor-not-allowed flex items-center justify-center gap-1.5">

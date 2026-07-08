@@ -324,6 +324,53 @@ async function deleteGroup(req, res) {
   }
 }
 
+async function toggleGroupVoting(req, res) {
+  const groupId = req.params.id;
+
+  try {
+    const group = await groupModel.findById(groupId);
+
+    if (!group) {
+      return redirectWithFlash(req, res, '/admin/registration', 'error', 'Team not found.');
+    }
+
+    const nextState = Number(group.voting_enabled) !== 1;
+    await groupModel.setVotingEnabled(groupId, nextState);
+    await liveUpdates.broadcastVotingUpdate();
+
+    redirectWithFlash(
+      req,
+      res,
+      '/admin/registration',
+      'success',
+      `Voting for "${group.name}" is now ${nextState ? 'open' : 'closed'}.`
+    );
+  } catch (error) {
+    console.error(error);
+    redirectWithFlash(req, res, '/admin/registration', 'error', 'Error updating team voting state.');
+  }
+}
+
+async function openOnlyGroupVoting(req, res) {
+  const groupId = req.params.id;
+
+  try {
+    const group = await groupModel.findById(groupId);
+
+    if (!group) {
+      return redirectWithFlash(req, res, '/admin/registration', 'error', 'Team not found.');
+    }
+
+    await groupModel.openOnlyVoting(groupId);
+    await liveUpdates.broadcastVotingUpdate();
+
+    redirectWithFlash(req, res, '/admin/registration', 'success', `Only "${group.name}" is open for public voting.`);
+  } catch (error) {
+    console.error(error);
+    redirectWithFlash(req, res, '/admin/registration', 'error', 'Error opening voting for this team.');
+  }
+}
+
 async function deleteParticipant(req, res) {
   try {
     await participantModel.remove(req.body.participantId);
@@ -557,6 +604,7 @@ function showPasswordForm(req, res) {
 async function toggleVoting(req, res) {
   try {
     const votingActive = await settingModel.toggleVotingActive();
+    await liveUpdates.broadcastVotingUpdate();
     const msg = votingActive ? 'Live public voting is now open!' : 'Live public voting has been paused.';
     redirectWithFlash(req, res, req.headers.referer || '/admin/settings', 'success', msg);
   } catch (error) {
@@ -734,6 +782,8 @@ module.exports = {
   showEditGroup,
   createGroup,
   updateGroup,
+  toggleGroupVoting,
+  openOnlyGroupVoting,
   showNewParticipant,
   showEditParticipant,
   createParticipant,

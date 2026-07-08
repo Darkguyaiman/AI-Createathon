@@ -55,19 +55,37 @@
       <div class="space-y-4 max-h-[620px] overflow-y-auto pr-2 scrollbar-thin" data-registration-list="teams">
         <% groups.forEach(group => { %>
           <% const memberCount = participants.filter(participant => participant.group_id === group.id).length; %>
+          <% const teamVotingOpen = Number(group.voting_enabled) === 1; %>
           <div class="p-4 bg-slate-900 border border-slate-800 flex items-center justify-between gap-4" data-registration-item="teams" data-search-text="<%= `${group.name} ${group.description || ''}`.toLowerCase() %>">
             <div class="flex items-center gap-3 min-w-0">
               <img src="<%= group.logo_path %>" alt="" class="w-12 h-12 object-cover border border-slate-800">
               <div class="min-w-0">
                 <h4 class="font-bold text-white text-sm truncate"><%= group.name %></h4>
                 <p class="text-[10px] text-slate-400 line-clamp-1"><%= group.description || 'No description available' %></p>
-                <span class="inline-block mt-1 text-[9px] font-bold text-accent-teal bg-accent-teal/5 border border-accent-teal/10 px-2 py-0.5">
-                  <%= memberCount %> <%= memberCount === 1 ? 'member' : 'members' %>
-                </span>
+                <div class="mt-1 flex flex-wrap gap-1.5">
+                  <span class="inline-block text-[9px] font-bold text-accent-teal bg-accent-teal/5 border border-accent-teal/10 px-2 py-0.5">
+                    <%= memberCount %> <%= memberCount === 1 ? 'member' : 'members' %>
+                  </span>
+                  <% if (teamVotingOpen) { %>
+                    <span class="inline-block text-[9px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 uppercase">Voting Open</span>
+                  <% } else { %>
+                    <span class="inline-block text-[9px] font-bold text-slate-400 bg-slate-950 border border-slate-800 px-2 py-0.5 uppercase">Voting Closed</span>
+                  <% } %>
+                </div>
               </div>
             </div>
 
-            <div class="flex items-center gap-2">
+            <div class="flex flex-wrap items-center justify-end gap-2">
+              <form action="/admin/groups/<%= group.id %>/open-only-voting" method="POST">
+                <button type="submit" class="px-3 py-2.5 bg-slate-950 hover:bg-accent-teal hover:text-slate-950 text-slate-400 border border-slate-850 hover:border-accent-teal transition-colors text-[10px] font-black uppercase" aria-label="Open voting only for <%= group.name %>">
+                  Open Only
+                </button>
+              </form>
+              <form action="/admin/groups/<%= group.id %>/toggle-voting" method="POST">
+                <button type="submit" class="px-3 py-2.5 <%= teamVotingOpen ? 'bg-emerald-500/10 hover:bg-slate-950 text-emerald-400 hover:text-slate-400 border-emerald-500/20' : 'bg-slate-950 hover:bg-emerald-500/10 text-slate-400 hover:text-emerald-400 border-slate-850 hover:border-emerald-500/20' %> border transition-colors text-[10px] font-black uppercase" aria-label="<%= teamVotingOpen ? 'Close' : 'Open' %> voting for <%= group.name %>">
+                  <%= teamVotingOpen ? 'Close Vote' : 'Open Vote' %>
+                </button>
+              </form>
               <a href="/admin/groups/<%= group.id %>/edit" class="p-2.5 bg-slate-950 hover:bg-slate-800 hover:text-white text-slate-400 border border-slate-850 transition-colors" aria-label="Edit <%= group.name %>">
                 <i class="fa-solid fa-pen-to-square text-xs"></i>
               </a>

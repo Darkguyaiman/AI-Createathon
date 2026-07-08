@@ -6,9 +6,34 @@ const voteModel = require('../models/voteModel');
 const dashboardModel = require('../models/dashboardModel');
 const liveUpdates = require('../services/liveUpdates');
 const { redirectWithFlash, renderWithAlerts } = require('../utils/flash');
+const crypto = require('crypto');
 
-function getVisitorIp(req) {
-  return req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+const VOTER_COOKIE_NAME = 'ai_createathon_voter_id';
+const VOTER_COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 30;
+
+function parseCookies(req) {
+  const cookieHeader = req.headers.cookie || '';
+
+  return cookieHeader.split(';').reduce((cookies, cookie) => {
+    const [rawName, ...rawValueParts] = cookie.trim().split('=');
+    if (!rawName) return cookies;
+
+    cookies[rawName] = decodeURIComponent(rawValueParts.join('=') || '');
+    return cookies;
+  }, {});
+}
+
+function getVoterId(req, res) {
+  const cookies = parseCookies(req);
+  const existingVoterId = cookies[VOTER_COOKIE_NAME];
+
+  if (existingVoterId) {
+    return existingVoterId;
+  }
+
+  const voterId = crypto.randomUUID();
+  res.setHeader('Set-Cookie', `${VOTER_COOKIE_NAME}=${encodeURIComponent(voterId)}; Max-Age=${VOTER_COOKIE_MAX_AGE_SECONDS}; Path=/; SameSite=Lax; HttpOnly`);
+  return voterId;
 }
 
 async function showHome(req, res) {
@@ -56,9 +81,9 @@ async function showLeaderboard(req, res) {
 
 async function showVoting(req, res) {
   try {
-    const visitorIp = getVisitorIp(req);
+    const voterId = getVoterId(req, res);
     const votingActive = await settingModel.isVotingActive();
-    const hasVoted = await voteModel.hasVoted(visitorIp);
+    const hasVoted = await voteModel.hasVoted(voterId);
     const totalVotes = await voteModel.countAll();
     const [groups, participantsByGroupId] = await Promise.all([
       groupModel.findAllWithVoteCounts(),
@@ -87,7 +112,7 @@ function showTeam(req, res) {
 
 async function castVote(req, res) {
   try {
-    const visitorIp = getVisitorIp(req);
+    const voterId = getVoterId(req, res);
     const { groupId } = req.body;
 
     if (!groupId) {
@@ -99,7 +124,16 @@ async function castVote(req, res) {
       return redirectWithFlash(req, res, '/voting', 'error', 'Public voting is currently closed.');
     }
 
-    await voteModel.create({ groupId, voterIp: visitorIp });
+    const group = await groupModel.findById(groupId);
+    if (!group) {
+      return redirectWithFlash(req, res, '/voting', 'error', 'Selected team was not found.');
+    }
+
+    if (Number(group.voting_enabled) !== 1) {
+      return redirectWithFlash(req, res, '/voting', 'error', `Voting for "${group.name}" is not open yet.`);
+    }
+
+    await voteModel.create({ groupId, voterIp: voterId });
     await liveUpdates.broadcastVotingUpdate();
     redirectWithFlash(req, res, '/voting', 'success', 'Thank you! Your vote has been cast successfully.');
   } catch (error) {

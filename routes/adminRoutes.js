@@ -40,6 +40,8 @@ router.get('/groups/new', adminController.showNewGroup);
 router.get('/groups/:id/edit', adminController.showEditGroup);
 router.post('/groups', handleUpload('logo'), adminController.createGroup);
 router.post('/groups/:id/edit', handleUpload('logo'), adminController.updateGroup);
+router.post('/groups/:id/toggle-voting', adminController.toggleGroupVoting);
+router.post('/groups/:id/open-only-voting', adminController.openOnlyGroupVoting);
 router.post('/groups/delete', adminController.deleteGroup);
 router.get('/participants/new', adminController.showNewParticipant);
 router.get('/participants/:id/edit', adminController.showEditParticipant);

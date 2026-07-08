@@ -31,6 +31,43 @@
     return `#${index + 1}`;
   };
 
+  const renderVoteAction = ({ votingActive, group, hasVoted }) => {
+    const groupName = escapeHTML(group.name);
+
+    if (!votingActive) {
+      return `
+        <button disabled class="w-full py-3 bg-background text-on-surface/40 font-mono font-bold text-xs uppercase border-brutal cursor-not-allowed text-center">
+          <i class="fa-solid fa-ban mr-1.5"></i> Voting Closed
+        </button>
+      `;
+    }
+
+    if (!group.voting_enabled) {
+      return `
+        <button disabled class="w-full py-3 bg-background text-on-surface/40 font-mono font-bold text-xs uppercase border-brutal cursor-not-allowed text-center">
+          <i class="fa-solid fa-lock mr-1.5"></i> Team Voting Closed
+        </button>
+      `;
+    }
+
+    if (hasVoted) {
+      return `
+        <button disabled class="w-full py-3 bg-pure-white text-emerald-600 font-mono font-bold text-xs uppercase border-brutal shadow-brutal-sm cursor-not-allowed flex items-center justify-center gap-1.5">
+          <i class="fa-solid fa-circle-check text-emerald-500"></i> Vote Registered
+        </button>
+      `;
+    }
+
+    return `
+      <form action="/vote" method="POST" data-live-vote-form>
+        <input type="hidden" name="groupId" value="${escapeHTML(group.id)}">
+        <button type="submit" class="w-full bg-primary text-white font-heading font-black text-sm uppercase py-4 brutal-border brutal-shadow-sm hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all flex items-center justify-center gap-1.5">
+          <span class="material-symbols-outlined">bolt</span> Vote for ${groupName}
+        </button>
+      </form>
+    `;
+  };
+
   const updateVotingBoard = (snapshot) => {
     if (!votingRoot || !snapshot) return;
 
@@ -63,6 +100,22 @@
           bar.classList.add('border-r-0');
         }
       }
+    });
+
+    const voteActionNodes = new Map(
+      Array.from(document.querySelectorAll('[data-team-vote-action]')).map(node => [Number(node.dataset.groupId), node])
+    );
+
+    snapshot.groups.forEach(group => {
+      const actionNode = voteActionNodes.get(Number(group.id));
+      if (!actionNode) return;
+
+      const hasVoted = actionNode.dataset.hasVoted === 'true';
+      actionNode.innerHTML = renderVoteAction({
+        votingActive: Boolean(snapshot.votingActive),
+        group,
+        hasVoted
+      });
     });
   };
 

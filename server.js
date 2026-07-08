@@ -28,6 +28,7 @@ function getFileVersion(filePath) {
 }
 
 app.locals.cssVersion = getFileVersion(path.join(__dirname, 'public', 'css', 'style.css'));
+app.locals.liveVotingJsVersion = getFileVersion(path.join(__dirname, 'public', 'js', 'live-voting.js'));
 
 const staticOptions = {
   etag: true,

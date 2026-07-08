@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS `groups` (
   `name` VARCHAR(100) UNIQUE NOT NULL,
   `description` TEXT,
   `logo_path` VARCHAR(255) DEFAULT '/uploads/default-group.png',
+  `voting_enabled` TINYINT(1) NOT NULL DEFAULT 1,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 

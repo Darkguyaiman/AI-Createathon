@@ -116,6 +116,13 @@ async function initDatabase() {
             AND \`score_practicality_impact\` = 0
         `);
       }
+
+      const [groupVotingColumns] = await pool.query(`SHOW COLUMNS FROM \`groups\` LIKE 'voting_enabled'`);
+      if (groupVotingColumns.length === 0) {
+        console.log('Adding per-team voting toggle column...');
+        await pool.query(`ALTER TABLE \`groups\` ADD COLUMN \`voting_enabled\` TINYINT(1) NOT NULL DEFAULT 1 AFTER \`logo_path\`;`);
+        console.log('Per-team voting toggle column added.');
+      }
     }
   } catch (error) {
     console.error('Error initializing MySQL database:', error.message);

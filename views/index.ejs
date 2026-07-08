@@ -712,6 +712,7 @@
     scheduleComplete: new Date('2026-07-08T16:00:00+08:00').getTime()
   };
   const completedConfettiPhases = new Set();
+  let previousCountdownNow = null;
 
   function getCountdownNow() {
     if (!countdownDemo.enabled) return Date.now();
@@ -825,15 +826,22 @@
   }
 
   function triggerCompletedCountdownConfetti(now) {
+    if (previousCountdownNow === null) {
+      previousCountdownNow = now;
+      return;
+    }
+
     eventSchedule
       .filter(phase => phase.mode === 'seconds')
       .forEach(phase => {
-        const hasJustEnded = now >= phase.endTime && now - phase.endTime < 1250;
-        if (hasJustEnded && !completedConfettiPhases.has(phase.key)) {
+        const crossedEndTime = previousCountdownNow < phase.endTime && now >= phase.endTime;
+        if (crossedEndTime && !completedConfettiPhases.has(phase.key)) {
           completedConfettiPhases.add(phase.key);
           launchCountdownConfetti();
         }
       });
+
+    previousCountdownNow = now;
   }
 
   function renderTimer(diff, labels = ['Hours', 'Mins', 'Secs']) {
@@ -872,7 +880,10 @@
     const countdownEl = document.getElementById('countdown');
     if (!titleEl || !messageEl || !countdownEl) return;
 
-    const activePhase = eventSchedule.find(phase => now >= phase.startTime && now < phase.endTime);
+    const activePhase = eventSchedule.find(phase => (
+      now >= phase.startTime &&
+      (now < phase.endTime || (phase.mode === 'seconds' && now - phase.endTime < 1000))
+    ));
 
     if (now < kickoffCountdownStart) {
       titleEl.textContent = 'Countdown to Kickoff';

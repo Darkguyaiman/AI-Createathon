@@ -101,7 +101,7 @@
   </script>
   <% if (typeof activePage !== 'undefined' && (activePage === 'voting' || activePage === 'leaderboard')) { %>
     <script src="/socket.io/socket.io.js" defer></script>
-    <script src="/js/live-voting.js" defer></script>
+    <script src="/js/live-voting.js?v=<%= liveVotingJsVersion %>" defer></script>
   <% } %>
   <script src="/js/toasts.js" defer></script>
 </body>
