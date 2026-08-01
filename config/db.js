@@ -127,6 +127,12 @@ async function initDatabase() {
   } catch (error) {
     console.error('Error initializing MySQL database:', error.message);
     console.error('Please make sure MySQL server is running and configured correctly in your .env file.');
+    // Re-throw so the app does not start accepting traffic without a pool.
+    throw error;
+  }
+
+  if (!pool) {
+    throw new Error('Database pool was not created during initialization.');
   }
 }
 

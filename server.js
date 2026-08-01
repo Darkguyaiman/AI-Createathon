@@ -55,6 +55,10 @@ app.use(express.static(path.join(__dirname, 'public'), staticOptions));
 app.use('/vendor/lenis', express.static(path.join(__dirname, 'node_modules', 'lenis', 'dist'), staticOptions));
 
 db.initDatabase().then(() => {
+  if (!db.getPool()) {
+    throw new Error('Database pool not initialized. Run initDatabase first.');
+  }
+
   app.use(session({
     store: createSessionStore(session),
     secret: process.env.SESSION_SECRET || 'ai_createathon_super_secret_session_key_2026',
@@ -73,6 +77,7 @@ db.initDatabase().then(() => {
   });
 }).catch(err => {
   console.error('Failed to initialize database pool on startup:', err.message);
+  process.exit(1);
 });
 
 module.exports = app;
